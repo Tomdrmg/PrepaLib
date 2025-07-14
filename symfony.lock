@@ -241,7 +241,7 @@
             "./assets/bootstrap.js",
             "./assets/controllers.json",
             "./assets/controllers/csrf_protection_controller.js",
-            "./assets/controllers/hello_controller.js"
+            "./assets/controllers/header_controller.js"
         ]
     },
     "symfony/translation": {
@@ -279,6 +279,18 @@
             "ref": "e4b951d7de760751e170c6d2e3b565cf9ed5182f"
         }
     },
+    "symfony/ux-twig-component": {
+        "version": "2.27",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.13",
+            "ref": "f367ae2a1faf01c503de2171f1ec22567febeead"
+        },
+        "files": [
+            "./config/packages/twig_component.yaml"
+        ]
+    },
     "symfony/validator": {
         "version": "7.3",
         "recipe": {
@@ -315,6 +327,25 @@
         "files": [
             "./config/packages/messenger.yaml"
         ]
+    },
+    "symfony/webpack-encore-bundle": {
+        "version": "2.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.0",
+            "ref": "9ef5412a4a2a8415aca3a3f2b4edd3866aab9a19"
+        },
+        "files": [
+            "./assets/app.js",
+            "./assets/styles/app.css",
+            "./config/packages/webpack_encore.yaml",
+            "./package.json",
+            "./webpack.config.js"
+        ]
+    },
+    "symfonycasts/sass-bundle": {
+        "version": "v0.8.2"
     },
     "twig/extra-bundle": {
         "version": "v3.21.0"

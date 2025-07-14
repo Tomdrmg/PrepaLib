@@ -1,0 +1,384 @@
+#main-home {
+    .first-pane {
+        background: radial-gradient(ellipse at bottom, $bg-color-variant 0%, $bg-color 100%) fixed;
+        position: relative;
+        overflow: hidden;
+
+        @keyframes snow {
+            0%   { transform: translateY(0) translateX(0px); }
+            10%  { transform: translateY(10dvh) translateX(4px); }
+            20%  { transform: translateY(20dvh) translateX(-3px); }
+            30%  { transform: translateY(30dvh) translateX(5px); }
+            40%  { transform: translateY(40dvh) translateX(-4px); }
+            50%  { transform: translateY(50dvh) translateX(3px); }
+            60%  { transform: translateY(60dvh) translateX(-5px); }
+            70%  { transform: translateY(70dvh) translateX(2px); }
+            80%  { transform: translateY(80dvh) translateX(-3px); }
+            90%  { transform: translateY(90dvh) translateX(4px); }
+            100% { transform: translateY(100dvh) translateX(0px); }
+        }
+
+        &::after {
+            /*To generate snowflakes:
+                from random import *
+
+                particules = 100
+                alphamin = 0.6
+                alphamax = 1
+                minpos = 0.01
+                maxpos = 0.99
+
+                tab = [(random() * (maxpos - minpos) + minpos, random() * (maxpos - minpos) + minpos, random() * (alphamax - alphamin) + alphamin) for _ in range(particules)]
+
+                for i in range(2*particules):
+                print(f"calc(100dvw * {tab[i%particules][0]:.3f}) calc(100dvh * {tab[i%particules][1] - i//particules:.3f}) 0 0 rgba(255, 255, 255, {tab[i%particules][2]:.3f}),")
+            */
+
+            animation: snow 20s linear infinite;
+            top: 0;
+            left: 0;
+            height: 7px;
+            width: 7px;
+            border-radius: 100%;
+            content: "";
+            position: absolute;
+            box-shadow:
+                calc(100dvw * 0.298) calc(100dvh * 0.718) 0 0 rgba(255, 255, 255, 0.799),
+                calc(100dvw * 0.027) calc(100dvh * 0.793) 0 0 rgba(255, 255, 255, 0.793),
+                calc(100dvw * 0.841) calc(100dvh * 0.321) 0 0 rgba(255, 255, 255, 0.798),
+                calc(100dvw * 0.970) calc(100dvh * 0.446) 0 0 rgba(255, 255, 255, 0.934),
+                calc(100dvw * 0.027) calc(100dvh * 0.791) 0 0 rgba(255, 255, 255, 0.631),
+                calc(100dvw * 0.795) calc(100dvh * 0.182) 0 0 rgba(255, 255, 255, 0.697),
+                calc(100dvw * 0.539) calc(100dvh * 0.639) 0 0 rgba(255, 255, 255, 0.781),
+                calc(100dvw * 0.277) calc(100dvh * 0.199) 0 0 rgba(255, 255, 255, 0.690),
+                calc(100dvw * 0.689) calc(100dvh * 0.538) 0 0 rgba(255, 255, 255, 0.656),
+                calc(100dvw * 0.618) calc(100dvh * 0.495) 0 0 rgba(255, 255, 255, 0.716),
+                calc(100dvw * 0.227) calc(100dvh * 0.424) 0 0 rgba(255, 255, 255, 0.809),
+                calc(100dvw * 0.749) calc(100dvh * 0.961) 0 0 rgba(255, 255, 255, 0.776),
+                calc(100dvw * 0.691) calc(100dvh * 0.385) 0 0 rgba(255, 255, 255, 0.847),
+                calc(100dvw * 0.695) calc(100dvh * 0.156) 0 0 rgba(255, 255, 255, 0.841),
+                calc(100dvw * 0.892) calc(100dvh * 0.559) 0 0 rgba(255, 255, 255, 0.774),
+                calc(100dvw * 0.446) calc(100dvh * 0.954) 0 0 rgba(255, 255, 255, 0.956),
+                calc(100dvw * 0.533) calc(100dvh * 0.701) 0 0 rgba(255, 255, 255, 0.649),
+                calc(100dvw * 0.722) calc(100dvh * 0.267) 0 0 rgba(255, 255, 255, 0.913),
+                calc(100dvw * 0.721) calc(100dvh * 0.140) 0 0 rgba(255, 255, 255, 0.809),
+                calc(100dvw * 0.319) calc(100dvh * 0.446) 0 0 rgba(255, 255, 255, 0.772),
+                calc(100dvw * 0.956) calc(100dvh * 0.978) 0 0 rgba(255, 255, 255, 0.895),
+                calc(100dvw * 0.469) calc(100dvh * 0.373) 0 0 rgba(255, 255, 255, 0.996),
+                calc(100dvw * 0.486) calc(100dvh * 0.264) 0 0 rgba(255, 255, 255, 0.607),
+                calc(100dvw * 0.747) calc(100dvh * 0.756) 0 0 rgba(255, 255, 255, 0.668),
+                calc(100dvw * 0.989) calc(100dvh * 0.785) 0 0 rgba(255, 255, 255, 0.831),
+                calc(100dvw * 0.567) calc(100dvh * 0.682) 0 0 rgba(255, 255, 255, 0.702),
+                calc(100dvw * 0.988) calc(100dvh * 0.165) 0 0 rgba(255, 255, 255, 0.640),
+                calc(100dvw * 0.468) calc(100dvh * 0.688) 0 0 rgba(255, 255, 255, 0.605),
+                calc(100dvw * 0.843) calc(100dvh * 0.969) 0 0 rgba(255, 255, 255, 0.669),
+                calc(100dvw * 0.824) calc(100dvh * 0.140) 0 0 rgba(255, 255, 255, 0.711),
+                calc(100dvw * 0.540) calc(100dvh * 0.639) 0 0 rgba(255, 255, 255, 0.808),
+                calc(100dvw * 0.682) calc(100dvh * 0.587) 0 0 rgba(255, 255, 255, 0.779),
+                calc(100dvw * 0.526) calc(100dvh * 0.327) 0 0 rgba(255, 255, 255, 0.617),
+                calc(100dvw * 0.279) calc(100dvh * 0.376) 0 0 rgba(255, 255, 255, 0.950),
+                calc(100dvw * 0.689) calc(100dvh * 0.670) 0 0 rgba(255, 255, 255, 0.837),
+                calc(100dvw * 0.045) calc(100dvh * 0.537) 0 0 rgba(255, 255, 255, 0.901),
+                calc(100dvw * 0.313) calc(100dvh * 0.678) 0 0 rgba(255, 255, 255, 0.630),
+                calc(100dvw * 0.941) calc(100dvh * 0.908) 0 0 rgba(255, 255, 255, 0.821),
+                calc(100dvw * 0.786) calc(100dvh * 0.441) 0 0 rgba(255, 255, 255, 0.729),
+                calc(100dvw * 0.432) calc(100dvh * 0.454) 0 0 rgba(255, 255, 255, 0.775),
+                calc(100dvw * 0.585) calc(100dvh * 0.081) 0 0 rgba(255, 255, 255, 0.682),
+                calc(100dvw * 0.943) calc(100dvh * 0.907) 0 0 rgba(255, 255, 255, 0.688),
+                calc(100dvw * 0.963) calc(100dvh * 0.912) 0 0 rgba(255, 255, 255, 0.775),
+                calc(100dvw * 0.119) calc(100dvh * 0.867) 0 0 rgba(255, 255, 255, 0.607),
+                calc(100dvw * 0.838) calc(100dvh * 0.823) 0 0 rgba(255, 255, 255, 0.837),
+                calc(100dvw * 0.593) calc(100dvh * 0.885) 0 0 rgba(255, 255, 255, 0.910),
+                calc(100dvw * 0.288) calc(100dvh * 0.676) 0 0 rgba(255, 255, 255, 0.847),
+                calc(100dvw * 0.656) calc(100dvh * 0.803) 0 0 rgba(255, 255, 255, 0.735),
+                calc(100dvw * 0.343) calc(100dvh * 0.391) 0 0 rgba(255, 255, 255, 0.761),
+                calc(100dvw * 0.036) calc(100dvh * 0.510) 0 0 rgba(255, 255, 255, 0.611),
+                calc(100dvw * 0.411) calc(100dvh * 0.917) 0 0 rgba(255, 255, 255, 0.713),
+                calc(100dvw * 0.445) calc(100dvh * 0.335) 0 0 rgba(255, 255, 255, 0.949),
+                calc(100dvw * 0.804) calc(100dvh * 0.393) 0 0 rgba(255, 255, 255, 0.623),
+                calc(100dvw * 0.256) calc(100dvh * 0.063) 0 0 rgba(255, 255, 255, 0.872),
+                calc(100dvw * 0.055) calc(100dvh * 0.255) 0 0 rgba(255, 255, 255, 0.685),
+                calc(100dvw * 0.714) calc(100dvh * 0.233) 0 0 rgba(255, 255, 255, 0.966),
+                calc(100dvw * 0.113) calc(100dvh * 0.944) 0 0 rgba(255, 255, 255, 0.842),
+                calc(100dvw * 0.899) calc(100dvh * 0.550) 0 0 rgba(255, 255, 255, 0.861),
+                calc(100dvw * 0.332) calc(100dvh * 0.110) 0 0 rgba(255, 255, 255, 0.901),
+                calc(100dvw * 0.705) calc(100dvh * 0.096) 0 0 rgba(255, 255, 255, 0.737),
+                calc(100dvw * 0.108) calc(100dvh * 0.897) 0 0 rgba(255, 255, 255, 0.663),
+                calc(100dvw * 0.742) calc(100dvh * 0.920) 0 0 rgba(255, 255, 255, 0.894),
+                calc(100dvw * 0.807) calc(100dvh * 0.185) 0 0 rgba(255, 255, 255, 0.868),
+                calc(100dvw * 0.356) calc(100dvh * 0.057) 0 0 rgba(255, 255, 255, 0.792),
+                calc(100dvw * 0.294) calc(100dvh * 0.202) 0 0 rgba(255, 255, 255, 0.807),
+                calc(100dvw * 0.402) calc(100dvh * 0.852) 0 0 rgba(255, 255, 255, 0.608),
+                calc(100dvw * 0.129) calc(100dvh * 0.049) 0 0 rgba(255, 255, 255, 0.647),
+                calc(100dvw * 0.139) calc(100dvh * 0.285) 0 0 rgba(255, 255, 255, 0.637),
+                calc(100dvw * 0.118) calc(100dvh * 0.744) 0 0 rgba(255, 255, 255, 0.823),
+                calc(100dvw * 0.939) calc(100dvh * 0.458) 0 0 rgba(255, 255, 255, 0.739),
+                calc(100dvw * 0.159) calc(100dvh * 0.507) 0 0 rgba(255, 255, 255, 0.718),
+                calc(100dvw * 0.182) calc(100dvh * 0.067) 0 0 rgba(255, 255, 255, 0.815),
+                calc(100dvw * 0.470) calc(100dvh * 0.407) 0 0 rgba(255, 255, 255, 0.811),
+                calc(100dvw * 0.428) calc(100dvh * 0.174) 0 0 rgba(255, 255, 255, 0.776),
+                calc(100dvw * 0.365) calc(100dvh * 0.237) 0 0 rgba(255, 255, 255, 0.611),
+                calc(100dvw * 0.687) calc(100dvh * 0.279) 0 0 rgba(255, 255, 255, 0.840),
+                calc(100dvw * 0.092) calc(100dvh * 0.303) 0 0 rgba(255, 255, 255, 0.755),
+                calc(100dvw * 0.470) calc(100dvh * 0.616) 0 0 rgba(255, 255, 255, 0.989),
+                calc(100dvw * 0.118) calc(100dvh * 0.335) 0 0 rgba(255, 255, 255, 0.794),
+                calc(100dvw * 0.250) calc(100dvh * 0.114) 0 0 rgba(255, 255, 255, 0.811),
+                calc(100dvw * 0.659) calc(100dvh * 0.633) 0 0 rgba(255, 255, 255, 0.897),
+                calc(100dvw * 0.263) calc(100dvh * 0.210) 0 0 rgba(255, 255, 255, 0.969),
+                calc(100dvw * 0.375) calc(100dvh * 0.422) 0 0 rgba(255, 255, 255, 0.610),
+                calc(100dvw * 0.929) calc(100dvh * 0.747) 0 0 rgba(255, 255, 255, 0.710),
+                calc(100dvw * 0.287) calc(100dvh * 0.363) 0 0 rgba(255, 255, 255, 0.789),
+                calc(100dvw * 0.954) calc(100dvh * 0.469) 0 0 rgba(255, 255, 255, 0.815),
+                calc(100dvw * 0.809) calc(100dvh * 0.927) 0 0 rgba(255, 255, 255, 0.630),
+                calc(100dvw * 0.989) calc(100dvh * 0.060) 0 0 rgba(255, 255, 255, 0.992),
+                calc(100dvw * 0.963) calc(100dvh * 0.322) 0 0 rgba(255, 255, 255, 0.742),
+                calc(100dvw * 0.039) calc(100dvh * 0.791) 0 0 rgba(255, 255, 255, 0.816),
+                calc(100dvw * 0.294) calc(100dvh * 0.908) 0 0 rgba(255, 255, 255, 0.996),
+                calc(100dvw * 0.348) calc(100dvh * 0.192) 0 0 rgba(255, 255, 255, 0.996),
+                calc(100dvw * 0.785) calc(100dvh * 0.928) 0 0 rgba(255, 255, 255, 0.868),
+                calc(100dvw * 0.271) calc(100dvh * 0.414) 0 0 rgba(255, 255, 255, 0.659),
+                calc(100dvw * 0.298) calc(100dvh * 0.448) 0 0 rgba(255, 255, 255, 0.753),
+                calc(100dvw * 0.346) calc(100dvh * 0.158) 0 0 rgba(255, 255, 255, 0.989),
+                calc(100dvw * 0.909) calc(100dvh * 0.088) 0 0 rgba(255, 255, 255, 0.998),
+                calc(100dvw * 0.886) calc(100dvh * 0.729) 0 0 rgba(255, 255, 255, 0.709),
+                calc(100dvw * 0.581) calc(100dvh * 0.245) 0 0 rgba(255, 255, 255, 0.788),
+                calc(100dvw * 0.624) calc(100dvh * 0.352) 0 0 rgba(255, 255, 255, 0.844),
+                calc(100dvw * 0.298) calc(100dvh * -0.282) 0 0 rgba(255, 255, 255, 0.799),
+                calc(100dvw * 0.027) calc(100dvh * -0.207) 0 0 rgba(255, 255, 255, 0.793),
+                calc(100dvw * 0.841) calc(100dvh * -0.679) 0 0 rgba(255, 255, 255, 0.798),
+                calc(100dvw * 0.970) calc(100dvh * -0.554) 0 0 rgba(255, 255, 255, 0.934),
+                calc(100dvw * 0.027) calc(100dvh * -0.209) 0 0 rgba(255, 255, 255, 0.631),
+                calc(100dvw * 0.795) calc(100dvh * -0.818) 0 0 rgba(255, 255, 255, 0.697),
+                calc(100dvw * 0.539) calc(100dvh * -0.361) 0 0 rgba(255, 255, 255, 0.781),
+                calc(100dvw * 0.277) calc(100dvh * -0.801) 0 0 rgba(255, 255, 255, 0.690),
+                calc(100dvw * 0.689) calc(100dvh * -0.462) 0 0 rgba(255, 255, 255, 0.656),
+                calc(100dvw * 0.618) calc(100dvh * -0.505) 0 0 rgba(255, 255, 255, 0.716),
+                calc(100dvw * 0.227) calc(100dvh * -0.576) 0 0 rgba(255, 255, 255, 0.809),
+                calc(100dvw * 0.749) calc(100dvh * -0.039) 0 0 rgba(255, 255, 255, 0.776),
+                calc(100dvw * 0.691) calc(100dvh * -0.615) 0 0 rgba(255, 255, 255, 0.847),
+                calc(100dvw * 0.695) calc(100dvh * -0.844) 0 0 rgba(255, 255, 255, 0.841),
+                calc(100dvw * 0.892) calc(100dvh * -0.441) 0 0 rgba(255, 255, 255, 0.774),
+                calc(100dvw * 0.446) calc(100dvh * -0.046) 0 0 rgba(255, 255, 255, 0.956),
+                calc(100dvw * 0.533) calc(100dvh * -0.299) 0 0 rgba(255, 255, 255, 0.649),
+                calc(100dvw * 0.722) calc(100dvh * -0.733) 0 0 rgba(255, 255, 255, 0.913),
+                calc(100dvw * 0.721) calc(100dvh * -0.860) 0 0 rgba(255, 255, 255, 0.809),
+                calc(100dvw * 0.319) calc(100dvh * -0.554) 0 0 rgba(255, 255, 255, 0.772),
+                calc(100dvw * 0.956) calc(100dvh * -0.022) 0 0 rgba(255, 255, 255, 0.895),
+                calc(100dvw * 0.469) calc(100dvh * -0.627) 0 0 rgba(255, 255, 255, 0.996),
+                calc(100dvw * 0.486) calc(100dvh * -0.736) 0 0 rgba(255, 255, 255, 0.607),
+                calc(100dvw * 0.747) calc(100dvh * -0.244) 0 0 rgba(255, 255, 255, 0.668),
+                calc(100dvw * 0.989) calc(100dvh * -0.215) 0 0 rgba(255, 255, 255, 0.831),
+                calc(100dvw * 0.567) calc(100dvh * -0.318) 0 0 rgba(255, 255, 255, 0.702),
+                calc(100dvw * 0.988) calc(100dvh * -0.835) 0 0 rgba(255, 255, 255, 0.640),
+                calc(100dvw * 0.468) calc(100dvh * -0.312) 0 0 rgba(255, 255, 255, 0.605),
+                calc(100dvw * 0.843) calc(100dvh * -0.031) 0 0 rgba(255, 255, 255, 0.669),
+                calc(100dvw * 0.824) calc(100dvh * -0.860) 0 0 rgba(255, 255, 255, 0.711),
+                calc(100dvw * 0.540) calc(100dvh * -0.361) 0 0 rgba(255, 255, 255, 0.808),
+                calc(100dvw * 0.682) calc(100dvh * -0.413) 0 0 rgba(255, 255, 255, 0.779),
+                calc(100dvw * 0.526) calc(100dvh * -0.673) 0 0 rgba(255, 255, 255, 0.617),
+                calc(100dvw * 0.279) calc(100dvh * -0.624) 0 0 rgba(255, 255, 255, 0.950),
+                calc(100dvw * 0.689) calc(100dvh * -0.330) 0 0 rgba(255, 255, 255, 0.837),
+                calc(100dvw * 0.045) calc(100dvh * -0.463) 0 0 rgba(255, 255, 255, 0.901),
+                calc(100dvw * 0.313) calc(100dvh * -0.322) 0 0 rgba(255, 255, 255, 0.630),
+                calc(100dvw * 0.941) calc(100dvh * -0.092) 0 0 rgba(255, 255, 255, 0.821),
+                calc(100dvw * 0.786) calc(100dvh * -0.559) 0 0 rgba(255, 255, 255, 0.729),
+                calc(100dvw * 0.432) calc(100dvh * -0.546) 0 0 rgba(255, 255, 255, 0.775),
+                calc(100dvw * 0.585) calc(100dvh * -0.919) 0 0 rgba(255, 255, 255, 0.682),
+                calc(100dvw * 0.943) calc(100dvh * -0.093) 0 0 rgba(255, 255, 255, 0.688),
+                calc(100dvw * 0.963) calc(100dvh * -0.088) 0 0 rgba(255, 255, 255, 0.775),
+                calc(100dvw * 0.119) calc(100dvh * -0.133) 0 0 rgba(255, 255, 255, 0.607),
+                calc(100dvw * 0.838) calc(100dvh * -0.177) 0 0 rgba(255, 255, 255, 0.837),
+                calc(100dvw * 0.593) calc(100dvh * -0.115) 0 0 rgba(255, 255, 255, 0.910),
+                calc(100dvw * 0.288) calc(100dvh * -0.324) 0 0 rgba(255, 255, 255, 0.847),
+                calc(100dvw * 0.656) calc(100dvh * -0.197) 0 0 rgba(255, 255, 255, 0.735),
+                calc(100dvw * 0.343) calc(100dvh * -0.609) 0 0 rgba(255, 255, 255, 0.761),
+                calc(100dvw * 0.036) calc(100dvh * -0.490) 0 0 rgba(255, 255, 255, 0.611),
+                calc(100dvw * 0.411) calc(100dvh * -0.083) 0 0 rgba(255, 255, 255, 0.713),
+                calc(100dvw * 0.445) calc(100dvh * -0.665) 0 0 rgba(255, 255, 255, 0.949),
+                calc(100dvw * 0.804) calc(100dvh * -0.607) 0 0 rgba(255, 255, 255, 0.623),
+                calc(100dvw * 0.256) calc(100dvh * -0.937) 0 0 rgba(255, 255, 255, 0.872),
+                calc(100dvw * 0.055) calc(100dvh * -0.745) 0 0 rgba(255, 255, 255, 0.685),
+                calc(100dvw * 0.714) calc(100dvh * -0.767) 0 0 rgba(255, 255, 255, 0.966),
+                calc(100dvw * 0.113) calc(100dvh * -0.056) 0 0 rgba(255, 255, 255, 0.842),
+                calc(100dvw * 0.899) calc(100dvh * -0.450) 0 0 rgba(255, 255, 255, 0.861),
+                calc(100dvw * 0.332) calc(100dvh * -0.890) 0 0 rgba(255, 255, 255, 0.901),
+                calc(100dvw * 0.705) calc(100dvh * -0.904) 0 0 rgba(255, 255, 255, 0.737),
+                calc(100dvw * 0.108) calc(100dvh * -0.103) 0 0 rgba(255, 255, 255, 0.663),
+                calc(100dvw * 0.742) calc(100dvh * -0.080) 0 0 rgba(255, 255, 255, 0.894),
+                calc(100dvw * 0.807) calc(100dvh * -0.815) 0 0 rgba(255, 255, 255, 0.868),
+                calc(100dvw * 0.356) calc(100dvh * -0.943) 0 0 rgba(255, 255, 255, 0.792),
+                calc(100dvw * 0.294) calc(100dvh * -0.798) 0 0 rgba(255, 255, 255, 0.807),
+                calc(100dvw * 0.402) calc(100dvh * -0.148) 0 0 rgba(255, 255, 255, 0.608),
+                calc(100dvw * 0.129) calc(100dvh * -0.951) 0 0 rgba(255, 255, 255, 0.647),
+                calc(100dvw * 0.139) calc(100dvh * -0.715) 0 0 rgba(255, 255, 255, 0.637),
+                calc(100dvw * 0.118) calc(100dvh * -0.256) 0 0 rgba(255, 255, 255, 0.823),
+                calc(100dvw * 0.939) calc(100dvh * -0.542) 0 0 rgba(255, 255, 255, 0.739),
+                calc(100dvw * 0.159) calc(100dvh * -0.493) 0 0 rgba(255, 255, 255, 0.718),
+                calc(100dvw * 0.182) calc(100dvh * -0.933) 0 0 rgba(255, 255, 255, 0.815),
+                calc(100dvw * 0.470) calc(100dvh * -0.593) 0 0 rgba(255, 255, 255, 0.811),
+                calc(100dvw * 0.428) calc(100dvh * -0.826) 0 0 rgba(255, 255, 255, 0.776),
+                calc(100dvw * 0.365) calc(100dvh * -0.763) 0 0 rgba(255, 255, 255, 0.611),
+                calc(100dvw * 0.687) calc(100dvh * -0.721) 0 0 rgba(255, 255, 255, 0.840),
+                calc(100dvw * 0.092) calc(100dvh * -0.697) 0 0 rgba(255, 255, 255, 0.755),
+                calc(100dvw * 0.470) calc(100dvh * -0.384) 0 0 rgba(255, 255, 255, 0.989),
+                calc(100dvw * 0.118) calc(100dvh * -0.665) 0 0 rgba(255, 255, 255, 0.794),
+                calc(100dvw * 0.250) calc(100dvh * -0.886) 0 0 rgba(255, 255, 255, 0.811),
+                calc(100dvw * 0.659) calc(100dvh * -0.367) 0 0 rgba(255, 255, 255, 0.897),
+                calc(100dvw * 0.263) calc(100dvh * -0.790) 0 0 rgba(255, 255, 255, 0.969),
+                calc(100dvw * 0.375) calc(100dvh * -0.578) 0 0 rgba(255, 255, 255, 0.610),
+                calc(100dvw * 0.929) calc(100dvh * -0.253) 0 0 rgba(255, 255, 255, 0.710),
+                calc(100dvw * 0.287) calc(100dvh * -0.637) 0 0 rgba(255, 255, 255, 0.789),
+                calc(100dvw * 0.954) calc(100dvh * -0.531) 0 0 rgba(255, 255, 255, 0.815),
+                calc(100dvw * 0.809) calc(100dvh * -0.073) 0 0 rgba(255, 255, 255, 0.630),
+                calc(100dvw * 0.989) calc(100dvh * -0.940) 0 0 rgba(255, 255, 255, 0.992),
+                calc(100dvw * 0.963) calc(100dvh * -0.678) 0 0 rgba(255, 255, 255, 0.742),
+                calc(100dvw * 0.039) calc(100dvh * -0.209) 0 0 rgba(255, 255, 255, 0.816),
+                calc(100dvw * 0.294) calc(100dvh * -0.092) 0 0 rgba(255, 255, 255, 0.996),
+                calc(100dvw * 0.348) calc(100dvh * -0.808) 0 0 rgba(255, 255, 255, 0.996),
+                calc(100dvw * 0.785) calc(100dvh * -0.072) 0 0 rgba(255, 255, 255, 0.868),
+                calc(100dvw * 0.271) calc(100dvh * -0.586) 0 0 rgba(255, 255, 255, 0.659),
+                calc(100dvw * 0.298) calc(100dvh * -0.552) 0 0 rgba(255, 255, 255, 0.753),
+                calc(100dvw * 0.346) calc(100dvh * -0.842) 0 0 rgba(255, 255, 255, 0.989),
+                calc(100dvw * 0.909) calc(100dvh * -0.912) 0 0 rgba(255, 255, 255, 0.998),
+                calc(100dvw * 0.886) calc(100dvh * -0.271) 0 0 rgba(255, 255, 255, 0.709),
+                calc(100dvw * 0.581) calc(100dvh * -0.755) 0 0 rgba(255, 255, 255, 0.788),
+                calc(100dvw * 0.624) calc(100dvh * -0.648) 0 0 rgba(255, 255, 255, 0.844);
+        }
+
+        .wave {
+            .a { fill: none; }
+
+            .b {
+                clip-path: url(#a);
+            }
+
+            .c, .d {
+                fill: $bg-color;
+            }
+
+            .d {
+                opacity: 0.5;
+                isolation: isolate;
+            }
+
+            @keyframes waveMotion {
+                0% { transform: scaleX(1) translateX(0); }
+                50% { transform: scaleX(1.5) translateX(-30%); }
+                0% { transform: scaleX(1) translateX(0); }
+            }
+
+            .b:nth-child(5) {
+                animation: waveMotion 14s infinite alternate;
+            }
+
+            .b:nth-child(2) {
+                animation: waveMotion 12s infinite alternate;
+            }
+
+            .b:nth-child(3) {
+                animation: waveMotion 13s infinite alternate;
+            }
+
+            .b:nth-child(4) {
+                animation: waveMotion 8s infinite alternate;
+            }
+        }
+    }
+
+    .second-pane {
+        .stat-card {
+            background: $fg-color;
+            border: solid 1px $fg-color-variant;
+            transition: transform 0.6s ease-in-out, box-shadow 0.6s ease-in-out;
+            transform: translateY(0) scale(1);
+
+            &:hover {
+                transform: translateY(-10px) scale(1.05);
+            }
+
+            .stat-value, .stat-icon-container {
+                transition: color 0.4s ease-in-out, background-color 0.4s ease-in-out;
+            }
+        }
+
+        .stats-container div:nth-child(1) .stat-card {
+            .stat-value { color: $color-yellow; }
+            .stat-icon-container {
+                color: $color-yellow;
+                background-color: rgba($color-yellow, 0.16);
+            }
+            &:hover {
+                box-shadow: 0 12px 32px rgba($color-yellow-darker, 0.22);
+                .stat-value { color: $color-yellow-darker; }
+                .stat-icon-container {
+                    color: $color-yellow-darker;
+                    background-color: rgba($color-yellow-darker, 0.16);
+                }
+            }
+        }
+
+        .stats-container div:nth-child(2) .stat-card {
+            .stat-value { color: $color-green; }
+            .stat-icon-container {
+                color: $color-green;
+                background-color: rgba($color-green, 0.16);
+            }
+            &:hover {
+                box-shadow: 0 12px 32px rgba($color-green-darker, 0.22);
+                .stat-value { color: $color-green-darker; }
+                .stat-icon-container {
+                    color: $color-green-darker;
+                    background-color: rgba($color-green-darker, 0.16);
+                }
+            }
+        }
+
+        .stats-container div:nth-child(3) .stat-card {
+            .stat-value { color: $color-blue; }
+            .stat-icon-container {
+                color: $color-blue;
+                background-color: rgba($color-blue, 0.16);
+            }
+            &:hover {
+                box-shadow: 0 12px 32px rgba($color-blue-darker, 0.22);
+                .stat-value { color: $color-blue-darker; }
+                .stat-icon-container {
+                    color: $color-blue-darker;
+                    background-color: rgba($color-blue-darker, 0.16);
+                }
+            }
+        }
+
+        .stats-container div:nth-child(4) .stat-card {
+            .stat-value { color: $color-purple; }
+            .stat-icon-container {
+                color: $color-purple;
+                background-color: rgba($color-purple, 0.16);
+            }
+            &:hover {
+                box-shadow: 0 12px 32px rgba($color-purple-darker, 0.22);
+                .stat-value { color: $color-purple-darker; }
+                .stat-icon-container {
+                    color: $color-purple-darker;
+                    background-color: rgba($color-purple-darker, 0.16);
+                }
+            }
+        }
+
+        .stats-container div:nth-child(5) .stat-card {
+            .stat-value { color: $color-red; }
+            .stat-icon-container {
+                color: $color-red;
+                background-color: rgba($color-red, 0.16);
+            }
+            &:hover {
+                box-shadow: 0 12px 32px rgba($color-red-darker, 0.22);
+                .stat-value { color: $color-red-darker; }
+                .stat-icon-container {
+                    color: $color-red-darker;
+                    background-color: rgba($color-red-darker, 0.16);
+                }
+            }
+        }
+    }
+}

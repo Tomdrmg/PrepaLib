@@ -1,0 +1,64 @@
+{% extends 'user/profile/profile.base.html.twig' %}
+
+{% block title %}Mes Informations{% endblock %}
+
+{% block pr_container_class %}max-w-[900px]{% endblock %}
+
+{% block pr_content %}
+    <div class="content-card">
+        <div>
+            <p class="text-xl font-semibold text-center">Mes informations</p>
+        </div>
+        <div>
+            {{ form_start(profileForm, {'attr': {'class': 'space-y-6'}}) }}
+            <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                <div class="flex-1">
+                    {{ form_label(profileForm.firstname) }}
+                    {{ form_widget(profileForm.firstname) }}
+                    {{ form_errors(profileForm.firstname) }}
+                </div>
+                <div class="flex-1">
+                    {{ form_label(profileForm.lastname) }}
+                    {{ form_widget(profileForm.lastname) }}
+                    {{ form_errors(profileForm.lastname) }}
+                </div>
+            </div>
+            <div>
+                {{ form_label(profileForm.email) }}
+                {{ form_widget(profileForm.email) }}
+                {{ form_errors(profileForm.email) }}
+            </div>
+
+            {{ form_widget(profileForm.submit) }}
+            {{ form_end(profileForm) }}
+        </div>
+    </div>
+
+    <div class="content-card">
+        <div>
+            <p class="text-xl font-semibold text-center">Changer mon mot de passe</p>
+        </div>
+        <div>
+            {{ form_start(passwordForm, {'attr': {'class': 'space-y-6'}}) }}
+            <div>
+                {{ form_label(passwordForm.oldPassword) }}
+                {{ form_widget(passwordForm.oldPassword) }}
+                {{ form_errors(passwordForm.oldPassword) }}
+            </div>
+            <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                <div class="flex-1">
+                    {{ form_label(passwordForm.newPassword.first) }}
+                    {{ form_widget(passwordForm.newPassword.first) }}
+                    {{ form_errors(passwordForm.newPassword.first) }}
+                </div>
+                <div class="flex-1">
+                    {{ form_label(passwordForm.newPassword.second) }}
+                    {{ form_widget(passwordForm.newPassword.second) }}
+                    {{ form_errors(passwordForm.newPassword.second) }}
+                </div>
+            </div>
+            {{ form_widget(passwordForm.submit) }}
+            {{ form_end(passwordForm) }}
+        </div>
+    </div>
+{% endblock %}

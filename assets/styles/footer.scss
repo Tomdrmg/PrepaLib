@@ -1,0 +1,35 @@
+footer {
+
+    .footer-link {
+        cursor: pointer;
+        transition: ease-in-out .5s;
+        position: relative;
+        white-space: nowrap;
+
+        a {
+            display: block;
+        }
+
+        ::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 0;
+            height: 2px;
+            background-color: #FFF;
+            transition: width 0.5s ease-in-out;
+            transform-origin: left;
+            pointer-events: none;
+        }
+
+        :hover::after {
+            width: 100%;
+        }
+    }
+
+    background-color: rgba($bg-color, .6);
+    padding: 20px;
+    box-shadow: 0 -10px 15px rgba(0, 0, 0, .2);
+}

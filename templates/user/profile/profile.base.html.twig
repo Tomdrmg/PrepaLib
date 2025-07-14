@@ -1,0 +1,36 @@
+{% extends 'user/user.base.html.twig' %}
+
+{% block mainid %}profile{% endblock %}
+
+{% block main %}
+    <div class="min-h-[100dvh] p-4 pt-[116px] flex justify-center"> <!-- header + 4p -->
+        <div class="container flex flex-col grow justify-center items-center py-8 px-4">
+            <div class="flex flex-row gap-8 w-full justify-center">
+                <div class="content-card w-[220px] h-fit">
+                    <div>
+                        <p class="text-center font-bold text-lg overflow-hidden text-ellipsis">{{ app.user.firstname }} {{ app.user.lastname }}</p>
+                    </div>
+                    <a href="{{ path('app_profile') }}" class="btn me-5 {% if app.request.attributes.get('_route') == 'app_profile' %}selected{% endif %}">
+                        Mes informations
+                    </a>
+                    <a class="btn me-5">
+                        Mes exercices favoris
+                    </a>
+                    <a class="btn me-5">
+                        Mes exercices à faire
+                    </a>
+                    <a class="btn me-5">
+                        Mes exercices faits
+                    </a>
+                    <a href="{{ path('app_logout') }}" class="btn text-red-400 me-5">
+                        Me déconnecter
+                    </a>
+                </div>
+                <div class="flex flex-col grow gap-8 {% block pr_container_class %}{% endblock %}">
+                    {% block pr_content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

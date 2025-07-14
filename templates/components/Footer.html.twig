@@ -1,0 +1,34 @@
+<footer class="absolute z-[3] left-0 right-0">
+    <div class="container flex flex-col md:flex-row-reverse gap-6 md:gap-3 mx-auto px-1 md:px-4">
+        <div class="flex flex-col h-auto mx-auto md:mx-0 md:ms-auto md:me-3">
+            <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
+                <a href="{{ path('app_home') }}" class="text-lg font-bold">Accueil</a>
+            </div>
+            <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
+                <a href="{{ path('app_home') }}#stats" class="text-lg font-bold">Statistiques</a>
+            </div>
+
+            {% if user %}
+                <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
+                    <a href="" class="text-lg font-bold">Ressources</a>
+                </div>
+                <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
+                    <a href="" class="text-lg font-bold">Suggestions</a>
+                </div>
+                <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
+                    <a href="{{ path('app_logout') }}" class="text-lg font-bold">Déconnexion</a>
+                </div>
+            {% else %}
+                <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
+                    <a href="{{ path('app_login') }}" class="text-lg font-bold">Connexion</a>
+                </div>
+                <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
+                    <a href="{{ path('app_register') }}" class="text-lg font-bold">Inscription</a>
+                </div>
+            {% endif %}
+        </div>
+        <div class="flex flex-row items-center h-auto mx-auto md:mx-0">
+            <span class="md:text-lg copyright">Copyright © 2025 - PrépaLib</span>
+        </div>
+    </div>
+</footer>

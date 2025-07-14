@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+$bg-color-darker: rgba(12, 19, 34, 1);
+$bg-color: rgba(17, 24, 39, 1);
+$bg-color-variant: rgba(32, 45, 77, 1);
+
+$fg-color-darker: rgba(26, 36, 50, 1);
+$fg-color: rgba(31, 41, 55, 1);
+$fg-color-variant: rgba(55, 65, 81, 1);
+$fg-color-variant-2: rgba(75, 85, 101, 1);
+
+$color-blue: #60a5fa;
+$color-blue-darker: #2563eb;
+$color-green: #34d399;
+$color-green-darker: #059669;
+$color-purple: #a78bfa;
+$color-purple-darker: #7c3aed;
+$color-red: #f87171;
+$color-red-darker: #dc2626;
+$color-yellow: #facc15;
+$color-yellow-darker: #eab308;
+$color-cyan: #22d3ee;
+$color-cyan-darker: #0891b2;
+$color-pink: #f9a8d4;
+$color-pink-darker: #db2777;
+$albas-font: 'Albas', sans-serif;
+$albas-filled-font: 'Albas Filled', sans-serif;
+
+@import "header";
+@import "footer";
+@import "home";
+@import "loader";
+@import "double-text";
+@import "form";
+
+@font-face {
+    font-family: 'Albas';
+    src: url("../fonts/ALBAS.TTF");
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Albas Filled';
+    src: url("../fonts/ALBAS_FILLED.TTF");
+    font-display: swap;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+    background-color: rgba(255, 255, 255, 0.075);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.075);
+}
+
+body {
+    font-family: 'Noto Sans', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    background-color: $bg-color;
+    color: #FFFFFF;
+    min-height: 100dvh;
+    min-width: 100dvw;
+    padding: 0;
+    margin: 0;
+    user-select: none;
+}
+
+.text-btn {
+    transition: color 0.25s ease-in-out;
+    &:hover {
+        color: #e0e0e0;
+    }
+}
+
+.darker-hover {
+    transition: ease-in-out background-color .3s;
+}
+
+.darker-hover:hover {
+    background-color: rgba($bg-color-darker, .7);
+}
+
+hr {
+    border-color: #FFF;
+}
+
+.container {
+    transition: ease-in-out max-width .5s;
+}
+
+.content-card {
+    background-color: $fg-color;
+    border-radius: 0.5rem;
+    border: 1px solid $fg-color-variant-2;
+    max-width: 1280px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    & > div, & > a {
+        &.btn {
+            transition: background-color .2s ease-in-out;
+            cursor: pointer;
+
+            &:hover, &.selected {
+                background-color: $fg-color-variant;
+            }
+        }
+
+        padding: 14px;
+        width: 100%;
+
+        &:not(:last-child) {
+            border-bottom: solid 1px $fg-color-variant-2;
+        }
+    }
+}
+

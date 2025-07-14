@@ -1,0 +1,110 @@
+header {
+    background-color: rgba($bg-color, .6);
+    padding: 20px;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+    height: 112px;
+
+    .icon {
+        height: 64px;
+        transition: ease-in-out transform 1s;
+    }
+
+    .menu-switch i {
+        height: 64px;
+        width: 64px;
+        text-align: center;
+    }
+
+    #menu {
+        top: 0;
+        left: -100%;
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        z-index: 10;
+        transition: ease-in-out left .3s;
+        display: flex;
+        flex-direction: row;
+    }
+
+    #menu.enabled {
+        left: 0;
+    }
+
+    #menu #menu-content {
+        background-color: $bg-color;
+        height: 100%;
+        min-width: min(300px, 100%);
+        max-width: 400px;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 10px 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #menu-content .icon {
+        height: 64px;
+    }
+
+    #menu-modal {
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        position: fixed;
+        display: none;
+        z-index: 9;
+        transition: ease-in-out background-color .3s;
+    }
+
+    @keyframes progressive-blur {
+        0% {
+            backdrop-filter: blur(0);
+        }
+        100% {
+            backdrop-filter: blur(2px);
+        }
+    }
+
+    #menu.enabled #menu-modal {
+        display: block;
+        background-color: rgba($bg-color-darker, .5);
+        animation: progressive-blur ease-in-out forwards .3s;
+    }
+
+    #menu .nav-items-part .nav-item {
+        width: 100%;
+        transition: ease-in-out background-color .5s;
+        cursor: pointer;
+        filter: saturate(0.8);
+    }
+
+    #menu .nav-items-part .nav-item:hover {
+        --nav-item-alpha: .2
+    }
+
+    #menu .nav-items-part .nav-item:nth-child(1) {
+        background-color: rgba($color-yellow, var(--nav-item-alpha, .1));
+        color: $color-yellow;
+    }
+
+    #menu .nav-items-part .nav-item:nth-child(2) {
+        background-color: rgba($color-green, var(--nav-item-alpha, .1));
+        color: $color-green;
+    }
+
+    #menu .nav-items-part .nav-item:nth-child(3) {
+        background-color: rgba($color-blue, var(--nav-item-alpha, .1));
+        color: $color-blue;
+    }
+
+    #menu .nav-items-part .nav-item:nth-child(4) {
+        background-color: rgba($color-purple, var(--nav-item-alpha, .1));
+        color: $color-purple;
+    }
+
+    #menu .nav-items-part .nav-item:nth-child(5) {
+        background-color: rgba($color-red, var(--nav-item-alpha, .1));
+        color: $color-red;
+    }
+}

@@ -1,0 +1,16 @@
+<div id="loader-wrapper">
+    <div class="loader-content">
+        <span class="main-loader"></span>
+        <span class="loading-title">Chargement...</span>
+    </div>
+</div>
+
+<script>
+    window.addEventListener("load", () => {
+        let loader = document.getElementById("loader-wrapper")
+        loader.classList.add("hidden")
+        setTimeout(() => {
+            loader.remove()
+        }, 1500)
+    })
+</script>
