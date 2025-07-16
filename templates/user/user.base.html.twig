@@ -1,9 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <twig:Loader />
     <twig:Header user="{{ app.user }}" />
-    <main id="main-{% block mainid %}empty{% endblock %}" class="min-h-[100dvh] flex flex-col">
+    <main class="min-h-[100dvh] flex flex-col {% block main_class %}{% endblock %}">
         {% block main %}
         {% endblock %}
     </main>

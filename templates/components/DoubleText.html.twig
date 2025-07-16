@@ -1,5 +1,5 @@
 <span {{ attributes }}
-    class="double-text {% if neon %}neon{% endif %}"
+    class="leading-[var(--dt-smlineheight)] md:leading-[var(--dt-lglineheight)] text-[length:var(--dt-smfont)] md:text-[length:var(--dt-lgfont)] before:content-[attr(content)]  {% if neon %}drop-shadow-[0_0_15px_var(--color-accent-blue-500),_0_0_20px_var(--color-accent-blue-500)]{% endif %} font-albas before:font-albas-filled before:absolute z-[1] before:z-[-1] transition uppercase before:text-accent-blue-500 before:text-opacity-60"
     style="--dt-smfont: {{ smFont }}px; --dt-smlineheight: {{ smFont + 10 }}px; --dt-lgfont: {{ lgFont }}px; --dt-lglineheight: {{ lgFont + 10 }}px"
     content="{{ text }}">
     {{ text }}

@@ -1,14 +1,15 @@
-<div id="loader-wrapper">
-    <div class="loader-content">
-        <span class="main-loader"></span>
-        <span class="loading-title">Chargement...</span>
+<div id="loader-wrapper" class="flex items-center opacity-100 justify-center transition duration-1000 z-[100] fixed top-0 left-0 h-full w-full bg-background-700" style="pointer-events: all">
+    <div class="flex flex-col">
+        <span class="w-16 h-16 block my-6 mx-auto relative box-border animate-spin before:content-['']
+         before:box-border before:absolute before:w-8 before:h-8 before:top-1/2 before:left-1/2 before:transform-[scale(0.5)_translate(0,_0)] before:bg-text-100 before:rounded-full before:animate-loader
+         after:box-border after:absolute after:w-8 after:h-8 after:top-1/2 after:left-1/2 after:transform-[scale(0.5)_translate(-64px,_-64px)] after:bg-accent-purple-500 after:rounded-full after:animate-loader"></span>
     </div>
 </div>
 
 <script>
     window.addEventListener("load", () => {
         let loader = document.getElementById("loader-wrapper")
-        loader.classList.add("hidden")
+        loader.classList.add("!opacity-0", "!pointer-events-none")
         setTimeout(() => {
             loader.remove()
         }, 1500)

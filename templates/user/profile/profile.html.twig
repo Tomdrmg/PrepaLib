@@ -1,64 +1,48 @@
-{% extends 'user/profile/profile.base.html.twig' %}
+{% extends 'user/user.base.html.twig' %}
 
 {% block title %}Mes Informations{% endblock %}
 
-{% block pr_container_class %}max-w-[900px]{% endblock %}
+{% block main_class %}items-center justify-center p-4 pt-[88px]{% endblock %}
 
-{% block pr_content %}
-    <div class="content-card">
-        <div>
-            <p class="text-xl font-semibold text-center">Mes informations</p>
+{% block main %}
+    <div class="w-full max-w-md my-8">
+        <div class="mb-8 text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-accent-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+            </svg>
+            <h1 class="text-3xl font-bold text-text-100 mt-4">PrépaLib</h1>
+            <p class="text-text-300 mt-2">Mettre à jour mes informations</p>
         </div>
-        <div>
-            {{ form_start(profileForm, {'attr': {'class': 'space-y-6'}}) }}
-            <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-                <div class="flex-1">
-                    {{ form_label(profileForm.firstname) }}
-                    {{ form_widget(profileForm.firstname) }}
-                    {{ form_errors(profileForm.firstname) }}
-                </div>
-                <div class="flex-1">
-                    {{ form_label(profileForm.lastname) }}
-                    {{ form_widget(profileForm.lastname) }}
-                    {{ form_errors(profileForm.lastname) }}
-                </div>
-            </div>
-            <div>
-                {{ form_label(profileForm.email) }}
-                {{ form_widget(profileForm.email) }}
-                {{ form_errors(profileForm.email) }}
-            </div>
 
-            {{ form_widget(profileForm.submit) }}
-            {{ form_end(profileForm) }}
-        </div>
-    </div>
+        <div class="rounded-xl bg-foreground-500 overflow-hidden">
+            <div class="p-8">
+                {{ form_start(profileForm, {'attr': {'class': 'space-y-6'}}) }}
+                <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                    <div class="flex-1">
+                        {{ form_label(profileForm.firstname) }}
+                        {{ form_widget(profileForm.firstname) }}
+                        {{ form_errors(profileForm.firstname) }}
+                    </div>
+                    <div class="flex-1">
+                        {{ form_label(profileForm.lastname) }}
+                        {{ form_widget(profileForm.lastname) }}
+                        {{ form_errors(profileForm.lastname) }}
+                    </div>
+                </div>
+                <div>
+                    {{ form_label(profileForm.email) }}
+                    {{ form_widget(profileForm.email) }}
+                    {{ form_errors(profileForm.email) }}
+                </div>
 
-    <div class="content-card">
-        <div>
-            <p class="text-xl font-semibold text-center">Changer mon mot de passe</p>
-        </div>
-        <div>
-            {{ form_start(passwordForm, {'attr': {'class': 'space-y-6'}}) }}
-            <div>
-                {{ form_label(passwordForm.oldPassword) }}
-                {{ form_widget(passwordForm.oldPassword) }}
-                {{ form_errors(passwordForm.oldPassword) }}
+                {{ form_widget(profileForm.submit) }}
+                {{ form_end(profileForm) }}
             </div>
-            <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-                <div class="flex-1">
-                    {{ form_label(passwordForm.newPassword.first) }}
-                    {{ form_widget(passwordForm.newPassword.first) }}
-                    {{ form_errors(passwordForm.newPassword.first) }}
-                </div>
-                <div class="flex-1">
-                    {{ form_label(passwordForm.newPassword.second) }}
-                    {{ form_widget(passwordForm.newPassword.second) }}
-                    {{ form_errors(passwordForm.newPassword.second) }}
+            <div class="px-8 py-2 bg-foreground-300/50 border-t border-foreground-300 text-center flex flex-col">
+                <div>
+                    <a href="#" class="text-text-300 hover:text-text-200 text-sm transition">Supprimer mon compte</a>
                 </div>
             </div>
-            {{ form_widget(passwordForm.submit) }}
-            {{ form_end(passwordForm) }}
         </div>
     </div>
 {% endblock %}

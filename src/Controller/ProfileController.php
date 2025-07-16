@@ -8,6 +8,7 @@ use App\Form\EditProfileType;
 use App\Form\Model\EditPassword;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -16,8 +17,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ProfileController extends AbstractController
 {
-    #[Route('/user/profile', name: 'app_profile')]
-    public function index(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    #[Route('/profile', name: 'app_profile')]
+    public function profile(Request $request, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
         $profileForm = $this->createForm(EditProfileType::class, $user);
@@ -25,28 +26,66 @@ final class ProfileController extends AbstractController
 
         if ($profileForm->isSubmitted() && $profileForm->isValid()) {
             $entityManager->flush();
+            return $this->redirectToRoute("app_profile");
         }
 
+        return $this->render('user/profile/profile.html.twig', [
+            'profileForm' => $profileForm->createView(),
+        ]);
+    }
+
+    #[Route('/profile/security', name: 'app_security')]
+    public function security(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        $user = $this->getUser();
         $editPasswordModel = new EditPassword();
         $passwordForm = $this->createForm(EditPasswordType::class, $editPasswordModel);
         $passwordForm->handleRequest($request);
 
         if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
-            // Vérifie le mot de passe actuel (déjà fait par la contrainte UserPassword)
-            // Hash le nouveau mot de passe et mets à jour l'utilisateur
-            $user->setPassword(
-                $passwordHasher->hash(
-                    $user,
-                    $editPasswordModel->newPassword
-                )
-            );
+            if (!$passwordHasher->isPasswordValid($user, $editPasswordModel->oldPassword)) {
+                $passwordForm->get('oldPassword')->addError(new FormError('Mot de passe actuel incorrect.'));
+            } else if (strlen(trim($editPasswordModel->newPassword, " ")) == 0) {
+                $passwordForm->get('newPassword')->addError(new FormError('Votre mot de passe ne peux être vide.'));
+            } else {
+                $user->setPassword(
+                    $passwordHasher->hashPassword(
+                        $user,
+                        $editPasswordModel->newPassword
+                    )
+                );
 
-            $entityManager->flush();
+                $entityManager->flush();
+                return $this->redirectToRoute("app_password");
+            }
         }
 
-        return $this->render('user/profile/profile.html.twig', [
-            'profileForm' => $profileForm->createView(),
+        return $this->render('user/profile/password.html.twig', [
             'passwordForm' => $passwordForm->createView(),
+        ]);
+    }
+
+    #[Route('/profile/favorite', name: 'app_favorite')]
+    public function favorite(): Response
+    {
+        return $this->render('user/soon/soon.html.twig', [
+
+        ]);
+    }
+
+    #[Route('/profile/todo', name: 'app_todo')]
+    public function todo(): Response
+    {
+        return $this->render('user/soon/soon.html.twig', [
+
+        ]);
+    }
+
+    #[Route('/profile/done', name: 'app_done')]
+    public function done(): Response
+    {
+        return $this->render('user/soon/soon.html.twig', [
+
         ]);
     }
 }

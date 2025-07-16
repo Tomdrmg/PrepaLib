@@ -18,7 +18,7 @@ class TagList
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\OneToMany(targetEntity: Tag::class, mappedBy: 'tagList')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'tagLists')]
     private Collection $tags;
 
     public function __construct()
@@ -43,7 +43,6 @@ class TagList
     {
         if (!$this->tags->contains($tag)) {
             $this->tags->add($tag);
-            $tag->setTagList($this);
         }
 
         return $this;
@@ -51,12 +50,7 @@ class TagList
 
     public function removeTag(Tag $tag): static
     {
-        if ($this->tags->removeElement($tag)) {
-            // set the owning side to null (unless already changed)
-            if ($tag->getTagList() === $this) {
-                $tag->setTagList(null);
-            }
-        }
+        $this->tags->removeElement($tag);
 
         return $this;
     }

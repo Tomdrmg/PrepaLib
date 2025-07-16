@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TagRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
@@ -19,8 +21,16 @@ class Tag
     #[ORM\Column]
     private ?int $color = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tags')]
-    private ?TagList $tagList = null;
+    /**
+     * @var Collection<int, TagList>
+     */
+    #[ORM\ManyToMany(targetEntity: TagList::class, mappedBy: 'tags')]
+    private Collection $tagLists;
+
+    public function __construct()
+    {
+        $this->tagLists = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -51,14 +61,29 @@ class Tag
         return $this;
     }
 
-    public function getTagList(): ?TagList
+    /**
+     * @return Collection<int, TagList>
+     */
+    public function getTagLists(): Collection
     {
-        return $this->tagList;
+        return $this->tagLists;
     }
 
-    public function setTagList(?TagList $tagList): static
+    public function addTagList(TagList $tagList): static
     {
-        $this->tagList = $tagList;
+        if (!$this->tagLists->contains($tagList)) {
+            $this->tagLists->add($tagList);
+            $tagList->addTag($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTagList(TagList $tagList): static
+    {
+        if ($this->tagLists->removeElement($tagList)) {
+            $tagList->removeTag($this);
+        }
 
         return $this;
     }

@@ -18,7 +18,6 @@ class EditPasswordType extends AbstractType
         $builder
             ->add('oldPassword', PasswordType::class, [
                 'label' => 'Mot de passe actuel',
-                'mapped' => false,
                 'required' => true,
             ])
             ->add('newPassword', RepeatedType::class, [
@@ -26,7 +25,7 @@ class EditPasswordType extends AbstractType
                 'invalid_message' => 'Les deux mots de passe doivent correspondre.',
                 'required' => true,
                 'first_options'  => ['label' => 'Nouveau mot de passe'],
-                'second_options' => ['label' => 'Répéter le nouveau mot de passe'],
+                'second_options' => ['label' => 'Répéter le mot de passe'],
             ])
             ->add('submit', SubmitType::class, ['label' => 'Changer le mot de passe']);
     }

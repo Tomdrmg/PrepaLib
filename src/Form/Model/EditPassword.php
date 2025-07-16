@@ -3,18 +3,11 @@ namespace App\Form\Model;
 
 use Symfony\Component\Security\Core\Validator\Constraints as SecurityAssert;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class EditPassword
 {
-    /**
-     * @SecurityAssert\UserPassword(
-     *     message = "Mauvais mot de passe actuel"
-     * )
-     */
     public $oldPassword;
 
-    /**
-     * @Assert\NotBlank()
-     */
     public $newPassword;
 }

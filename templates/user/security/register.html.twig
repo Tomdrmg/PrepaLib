@@ -1,57 +1,56 @@
 {% extends 'user/user.base.html.twig' %}
 
 {% block title %}Inscription{% endblock %}
-{% block mainid %}register{% endblock %}
+
+{% block main_class %}items-center justify-center p-4 pt-[88px]{% endblock %}
 
 {% block main %}
-    <div class="min-h-screen flex items-center justify-center bg-gray-900 p-4 pt-[116px]"> <!-- 116 = header + 4 -->
-        <div class="w-full max-w-md">
-            <div class="mb-8 text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 14v6m3-3h-6m-5-9a4 4 0 118 0 4 4 0 01-8 0zM4 20v-1a4 4 0 014-4h4" />
-                </svg>
-                <h1 class="text-3xl font-bold text-white mt-4">PrépaLib</h1>
-                <p class="text-gray-400 mt-2">Créez votre compte pour accéder aux ressources</p>
-            </div>
+    <div class="w-full max-w-md my-8">
+        <div class="mb-8 text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-accent-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 14v6m3-3h-6m-5-9a4 4 0 118 0 4 4 0 01-8 0zM4 20v-1a4 4 0 014-4h4" />
+            </svg>
+            <h1 class="text-3xl font-bold text-text-100 mt-4">PrépaLib</h1>
+            <p class="text-text-300 mt-2">Créez votre compte pour accéder aux ressources</p>
+        </div>
 
-            <div class="form-card">
-                <div class="p-8">
-                    {{ form_start(registrationForm, {'attr': {'class': 'space-y-6'}}) }}
-                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-                        <div class="flex-1">
-                            {{ form_label(registrationForm.firstname, null) }}
-                            {{ form_widget(registrationForm.firstname) }}
-                            {{ form_errors(registrationForm.firstname) }}
-                        </div>
-                        <div class="flex-1">
-                            {{ form_label(registrationForm.lastname, null) }}
-                            {{ form_widget(registrationForm.lastname) }}
-                            {{ form_errors(registrationForm.lastname) }}
-                        </div>
+        <div class="rounded-xl bg-foreground-500 overflow-hidden">
+            <div class="p-8">
+                {{ form_start(registrationForm, {'attr': {'class': 'space-y-6'}}) }}
+                <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                    <div class="flex-1">
+                        {{ form_label(registrationForm.firstname, null) }}
+                        {{ form_widget(registrationForm.firstname) }}
+                        {{ form_errors(registrationForm.firstname) }}
                     </div>
-                    <div>
-                        {{ form_label(registrationForm.email, null) }}
-                        {{ form_widget(registrationForm.email) }}
-                        {{ form_errors(registrationForm.email) }}
+                    <div class="flex-1">
+                        {{ form_label(registrationForm.lastname, null) }}
+                        {{ form_widget(registrationForm.lastname) }}
+                        {{ form_errors(registrationForm.lastname) }}
                     </div>
-                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-                        <div class="flex-1">
-                            {{ form_label(registrationForm.password.first) }}
-                            {{ form_widget(registrationForm.password.first) }}
-                            {{ form_errors(registrationForm.password.first) }}
-                        </div>
-                        <div class="flex-1">
-                            {{ form_label(registrationForm.password.second) }}
-                            {{ form_widget(registrationForm.password.second) }}
-                            {{ form_errors(registrationForm.password.second) }}
-                        </div>
-                    </div>
-                    {{ form_widget(registrationForm.submit) }}
-                    {{ form_end(registrationForm) }}
                 </div>
-                <div class="px-8 py-2 bg-gray-700/50 border-t border-gray-700 text-center flex flex-col">
-                    <a href="{{ path('app_login') }}" class="text-gray-400 hover:text-gray-300 text-sm transition duration-500 mb-2">Vous avez déja un compte ? Se connecter</a>
+                <div>
+                    {{ form_label(registrationForm.email, null) }}
+                    {{ form_widget(registrationForm.email) }}
+                    {{ form_errors(registrationForm.email) }}
                 </div>
+                <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                    <div class="flex-1">
+                        {{ form_label(registrationForm.password.first) }}
+                        {{ form_widget(registrationForm.password.first) }}
+                        {{ form_errors(registrationForm.password.first) }}
+                    </div>
+                    <div class="flex-1">
+                        {{ form_label(registrationForm.password.second) }}
+                        {{ form_widget(registrationForm.password.second) }}
+                        {{ form_errors(registrationForm.password.second) }}
+                    </div>
+                </div>
+                {{ form_widget(registrationForm.submit) }}
+                {{ form_end(registrationForm) }}
+            </div>
+            <div class="px-8 py-2 bg-foreground-300/50 border-t border-foreground-300 text-center flex flex-col">
+                <a href="{{ path('app_login') }}" class="text-text-300 hover:text-text-200 text-sm transition duration-500 mb-2">Vous avez déja un compte ? Se connecter</a>
             </div>
         </div>
     </div>

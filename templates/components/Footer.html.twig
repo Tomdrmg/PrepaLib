@@ -1,34 +1,52 @@
-<footer class="absolute z-[3] left-0 right-0">
-    <div class="container flex flex-col md:flex-row-reverse gap-6 md:gap-3 mx-auto px-1 md:px-4">
-        <div class="flex flex-col h-auto mx-auto md:mx-0 md:ms-auto md:me-3">
-            <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
-                <a href="{{ path('app_home') }}" class="text-lg font-bold">Accueil</a>
+<footer class="relative shadow-footer bg-background-700/60 py-8 z-10">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-lg font-semibold mb-4">PrépaHub</h3>
+                <p class="text-text-300">Préparez-vous aux concours pour les grandes écoles en utilisant les ressources communautaires.</p>
             </div>
-            <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
-                <a href="{{ path('app_home') }}#stats" class="text-lg font-bold">Statistiques</a>
+            <div>
+                <h4 class="text-md font-semibold mb-4">Ressources</h4>
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <ul class="space-y-2">
+                        <li><a href="{{ path('app_mathematics') }}" class="text-text-300 hover:text-text-100 transition">Mathématiques</a></li>
+                        <li><a href="{{ path('app_physics') }}" class="text-text-300 hover:text-text-100 transition">Physique Chimie</a></li>
+                        <li><a href="{{ path('app_informatics') }}" class="text-text-300 hover:text-text-100 transition">Informatique</a></li>
+                    </ul>
+                {% else %}
+                    <p class="text-text-300 md:me-20">Vous devez être connecté pour accéder aux ressources.</p>
+                {% endif %}
             </div>
-
-            {% if user %}
-                <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
-                    <a href="" class="text-lg font-bold">Ressources</a>
-                </div>
-                <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
-                    <a href="" class="text-lg font-bold">Suggestions</a>
-                </div>
-                <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
-                    <a href="{{ path('app_logout') }}" class="text-lg font-bold">Déconnexion</a>
-                </div>
-            {% else %}
-                <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
-                    <a href="{{ path('app_login') }}" class="text-lg font-bold">Connexion</a>
-                </div>
-                <div class="footer-link w-min mb-3 mx-auto md:mx-0 after:mx-auto md:after:mx-0">
-                    <a href="{{ path('app_register') }}" class="text-lg font-bold">Inscription</a>
-                </div>
-            {% endif %}
+            <div>
+                <h4 class="text-md font-semibold mb-4">{% if is_granted('IS_AUTHENTICATED_FULLY') %}Mon Apprentissage{% else %}Rejoindre{% endif %}</h4>
+                <ul class="space-y-2">
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <li><a href="{{ path('app_profile') }}" class="text-text-300 hover:text-text-100 transition">Mes Informations</a></li>
+                        <li><a href="{{ path('app_security') }}" class="text-text-300 hover:text-text-100 transition">Sécurité</a></li>
+                        <li><a href="{{ path('app_favorite') }}" class="text-text-300 hover:text-text-100 transition">Favoris</a></li>
+                        <li><a href="{{ path('app_todo') }}" class="text-text-300 hover:text-text-100 transition">À Faire</a></li>
+                        <li><a href="{{ path('app_done') }}" class="text-text-300 hover:text-text-100 transition">Terminés</a></li>
+                    {% else %}
+                        <li><a href="{{ path('app_login') }}" class="text-text-300 hover:text-text-100 transition">Connexion</a></li>
+                        <li><a href="{{ path('app_register') }}" class="text-text-300 hover:text-text-100 transition">Inscription</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-md font-semibold mb-4">Contribuer</h4>
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <ul class="space-y-2">
+                        <li><a href="{{ path('app_contribute_suggestion') }}" class="text-text-300 hover:text-text-100 transition">Suggestion</a></li>
+                        <li><a href="{{ path('app_contribute_chapter') }}" class="text-text-300 hover:text-text-100 transition">Créer un Chapitre</a></li>
+                        <li><a href="{{ path('app_contribute_exercise') }}" class="text-text-300 hover:text-text-100 transition">Créer un Exercice</a></li>
+                    </ul>
+                {% else %}
+                    <p class="text-text-300 md:me-20">Vous devez être connecté pour accéder aux ressources.</p>
+                {% endif %}
+            </div>
         </div>
-        <div class="flex flex-row items-center h-auto mx-auto md:mx-0">
-            <span class="md:text-lg copyright">Copyright © 2025 - PrépaLib</span>
+        <div class="border-t border-foreground-300 mt-8 pt-6 text-center text-text-300">
+            <p>&copy; {{ "now"|date("Y") }} PrépaHub. Tous droits réservés.</p>
         </div>
     </div>
 </footer>

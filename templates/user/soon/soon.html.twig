@@ -1,0 +1,12 @@
+{% extends 'user/user.base.html.twig' %}
+
+{% block title %}Prochainement{% endblock %}
+
+{% block main_class %}items-center justify-center{% endblock %}
+
+{% block main %}
+    <div class="mx-4 my-4 flex flex-col items-center justify-center">
+        <twig:DoubleText :neon="true" text="Prochainement" :lgFont="100" :smFont="45"/>
+        <twig:DoubleText :neon="true" text="Cette page n'est pas encore disponible" :lgFont="35" :smFont="14"/>
+    </div>
+{% endblock %}
