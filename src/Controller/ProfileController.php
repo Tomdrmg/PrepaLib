@@ -26,6 +26,7 @@ final class ProfileController extends AbstractController
 
         if ($profileForm->isSubmitted() && $profileForm->isValid()) {
             $entityManager->flush();
+            $this->addFlash("success", "Vos informations ont bien été mises à jour.");
             return $this->redirectToRoute("app_profile");
         }
 
@@ -56,6 +57,7 @@ final class ProfileController extends AbstractController
                 );
 
                 $entityManager->flush();
+                $this->addFlash("success", "Votre mot de passe a bien été mis à jour.");
                 return $this->redirectToRoute("app_password");
             }
         }
@@ -83,6 +85,14 @@ final class ProfileController extends AbstractController
 
     #[Route('/profile/done', name: 'app_done')]
     public function done(): Response
+    {
+        return $this->render('user/soon/soon.html.twig', [
+
+        ]);
+    }
+
+    #[Route('/profile/delete', name: 'app_delete_account')]
+    public function delete(): Response
     {
         return $this->render('user/soon/soon.html.twig', [
 

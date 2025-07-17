@@ -1,0 +1,42 @@
+{% extends 'user/user.base.html.twig' %}
+
+{% block title %}Réinitialisation du Mot de Passe{% endblock %}
+
+{% block main_class %}items-center justify-center p-4 pt-[88px]{% endblock %}
+
+{% block main %}
+    <div class="w-full max-w-md my-8">
+        <div class="mb-8 text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-accent-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+            </svg>
+            <h1 class="text-3xl font-bold text-text-100 mt-4">PrépaLib</h1>
+            <p class="text-text-300 mt-2">Réinitialisez votre mot de passe</p>
+        </div>
+
+        <div class="rounded-xl bg-foreground-500 overflow-hidden">
+            <div class="p-8">
+                {{ form_start(resetPasswordForm, {'attr': {'class': 'space-y-6'}}) }}
+
+                <div>
+                    {{ form_label(resetPasswordForm.password.first) }}
+                    {{ form_widget(resetPasswordForm.password.first) }}
+                    {{ form_errors(resetPasswordForm.password.first) }}
+                </div>
+
+                <div>
+                    {{ form_label(resetPasswordForm.password.second) }}
+                    {{ form_widget(resetPasswordForm.password.second) }}
+                    {{ form_errors(resetPasswordForm.password.second) }}
+                </div>
+
+                {{ form_widget(resetPasswordForm.submit) }}
+                {{ form_end(resetPasswordForm) }}
+            </div>
+            <div class="px-8 py-2 bg-foreground-300/50 border-t border-foreground-300 text-center flex flex-col">
+                <a href="{{ path('app_login') }}" class="text-text-300 hover:text-text-200 text-sm transition duration-500 mb-2">Se connecter</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -3,47 +3,73 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
                 <h3 class="text-lg font-semibold mb-4">PrépaHub</h3>
-                <p class="text-text-300">Préparez-vous aux concours pour les grandes écoles en utilisant les ressources communautaires.</p>
+                <p class="text-text-300">
+                    {% if admin %}
+                        Gérer et visualiser toutes les données de la plateforme dans cette espace administrateur.
+                    {% else %}
+                        Préparez-vous aux concours pour les grandes écoles en utilisant les ressources communautaires.
+                    {% endif %}
+                </p>
             </div>
-            <div>
-                <h4 class="text-md font-semibold mb-4">Ressources</h4>
-                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            {% if admin %}
+                <div>
+                    <h4 class="text-md font-semibold mb-4">Données</h4>
                     <ul class="space-y-2">
-                        <li><a href="{{ path('app_mathematics') }}" class="text-text-300 hover:text-text-100 transition">Mathématiques</a></li>
-                        <li><a href="{{ path('app_physics') }}" class="text-text-300 hover:text-text-100 transition">Physique Chimie</a></li>
-                        <li><a href="{{ path('app_informatics') }}" class="text-text-300 hover:text-text-100 transition">Informatique</a></li>
+                        <li><a href="{{ path('app_admin_users') }}" class="text-text-300 hover:text-text-100 transition">Utilisateurs</a></li>
+                        <li><a href="{{ path('app_admin_subjects') }}" class="text-text-300 hover:text-text-100 transition">Matières</a></li>
+                        <li><a href="{{ path('app_admin_tags') }}" class="text-text-300 hover:text-text-100 transition">Tags</a></li>
                     </ul>
-                {% else %}
-                    <p class="text-text-300 md:me-20">Vous devez être connecté pour accéder aux ressources.</p>
-                {% endif %}
-            </div>
-            <div>
-                <h4 class="text-md font-semibold mb-4">{% if is_granted('IS_AUTHENTICATED_FULLY') %}Mon Apprentissage{% else %}Rejoindre{% endif %}</h4>
-                <ul class="space-y-2">
-                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                </div>
+                <div>
+                    <h4 class="text-md font-semibold mb-4">Administrateur</h4>
+                    <ul class="space-y-2">
                         <li><a href="{{ path('app_profile') }}" class="text-text-300 hover:text-text-100 transition">Mes Informations</a></li>
                         <li><a href="{{ path('app_security') }}" class="text-text-300 hover:text-text-100 transition">Sécurité</a></li>
-                        <li><a href="{{ path('app_favorite') }}" class="text-text-300 hover:text-text-100 transition">Favoris</a></li>
-                        <li><a href="{{ path('app_todo') }}" class="text-text-300 hover:text-text-100 transition">À Faire</a></li>
-                        <li><a href="{{ path('app_done') }}" class="text-text-300 hover:text-text-100 transition">Terminés</a></li>
-                    {% else %}
-                        <li><a href="{{ path('app_login') }}" class="text-text-300 hover:text-text-100 transition">Connexion</a></li>
-                        <li><a href="{{ path('app_register') }}" class="text-text-300 hover:text-text-100 transition">Inscription</a></li>
-                    {% endif %}
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-md font-semibold mb-4">Contribuer</h4>
-                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                    <ul class="space-y-2">
-                        <li><a href="{{ path('app_contribute_suggestion') }}" class="text-text-300 hover:text-text-100 transition">Suggestion</a></li>
-                        <li><a href="{{ path('app_contribute_chapter') }}" class="text-text-300 hover:text-text-100 transition">Créer un Chapitre</a></li>
-                        <li><a href="{{ path('app_contribute_exercise') }}" class="text-text-300 hover:text-text-100 transition">Créer un Exercice</a></li>
+                        <li><a href="{{ path('app_home') }}" class="text-text-300 hover:text-text-100 transition">Retour au site</a></li>
+                        <li><a href="{{ path('app_logout') }}" class="text-text-300 hover:text-text-100 transition">Déconnexion</a></li>
                     </ul>
-                {% else %}
-                    <p class="text-text-300 md:me-20">Vous devez être connecté pour accéder aux ressources.</p>
-                {% endif %}
-            </div>
+                </div>
+            {% else %}
+                <div>
+                    <h4 class="text-md font-semibold mb-4">Ressources</h4>
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <ul class="space-y-2">
+                            <li><a href="{{ path('app_mathematics') }}" class="text-text-300 hover:text-text-100 transition">Mathématiques</a></li>
+                            <li><a href="{{ path('app_physics') }}" class="text-text-300 hover:text-text-100 transition">Physique Chimie</a></li>
+                            <li><a href="{{ path('app_informatics') }}" class="text-text-300 hover:text-text-100 transition">Informatique</a></li>
+                        </ul>
+                    {% else %}
+                        <p class="text-text-300 md:me-20">Vous devez être connecté pour accéder aux ressources.</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <h4 class="text-md font-semibold mb-4">{% if is_granted('IS_AUTHENTICATED_FULLY') %}Mon Apprentissage{% else %}Rejoindre{% endif %}</h4>
+                    <ul class="space-y-2">
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                            <li><a href="{{ path('app_profile') }}" class="text-text-300 hover:text-text-100 transition">Mes Informations</a></li>
+                            <li><a href="{{ path('app_security') }}" class="text-text-300 hover:text-text-100 transition">Sécurité</a></li>
+                            <li><a href="{{ path('app_favorite') }}" class="text-text-300 hover:text-text-100 transition">Favoris</a></li>
+                            <li><a href="{{ path('app_todo') }}" class="text-text-300 hover:text-text-100 transition">À Faire</a></li>
+                            <li><a href="{{ path('app_done') }}" class="text-text-300 hover:text-text-100 transition">Terminés</a></li>
+                        {% else %}
+                            <li><a href="{{ path('app_login') }}" class="text-text-300 hover:text-text-100 transition">Connexion</a></li>
+                            <li><a href="{{ path('app_register') }}" class="text-text-300 hover:text-text-100 transition">Inscription</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-md font-semibold mb-4">Contribuer</h4>
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <ul class="space-y-2">
+                            <li><a href="{{ path('app_contribute_suggestion') }}" class="text-text-300 hover:text-text-100 transition">Suggestion</a></li>
+                            <li><a href="{{ path('app_contribute_chapter') }}" class="text-text-300 hover:text-text-100 transition">Créer un Chapitre</a></li>
+                            <li><a href="{{ path('app_contribute_exercise') }}" class="text-text-300 hover:text-text-100 transition">Créer un Exercice</a></li>
+                        </ul>
+                    {% else %}
+                        <p class="text-text-300 md:me-20">Vous devez être connecté pour accéder aux ressources.</p>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
         <div class="border-t border-foreground-300 mt-8 pt-6 text-center text-text-300">
             <p>&copy; {{ "now"|date("Y") }} PrépaHub. Tous droits réservés.</p>

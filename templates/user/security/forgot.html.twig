@@ -1,0 +1,36 @@
+{% extends 'user/user.base.html.twig' %}
+
+{% block title %}Mot de Passe Oublié{% endblock %}
+
+{% block main_class %}items-center justify-center p-4 pt-[88px]{% endblock %}
+
+{% block main %}
+    <div class="w-full max-w-md my-8">
+        <div class="mb-8 text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-accent-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 10h.01M14 10h.01" />
+            </svg>
+            <h1 class="text-3xl font-bold text-text-100 mt-4">PrépaLib</h1>
+            <p class="text-text-300 mt-2">Demandez une réinitialisation de votre mot de passe</p>
+        </div>
+
+        <div class="rounded-xl bg-foreground-500 overflow-hidden">
+            <div class="p-8">
+                {{ form_start(forgotPasswordForm, {'attr': {'class': 'space-y-6'}}) }}
+
+                <div>
+                    {{ form_label(forgotPasswordForm.email, null) }}
+                    {{ form_widget(forgotPasswordForm.email) }}
+                    {{ form_errors(forgotPasswordForm.email) }}
+                </div>
+
+                {{ form_widget(forgotPasswordForm.submit) }}
+                {{ form_end(forgotPasswordForm) }}
+            </div>
+            <div class="px-8 py-2 bg-foreground-300/50 border-t border-foreground-300 text-center flex flex-col">
+                <a href="{{ path('app_login') }}" class="text-text-300 hover:text-text-200 text-sm transition duration-500 mb-2">Se connecter</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

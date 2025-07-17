@@ -9,4 +9,6 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class Header
 {
     public ?User $user = null;
+
+    public bool $admin = false;
 }

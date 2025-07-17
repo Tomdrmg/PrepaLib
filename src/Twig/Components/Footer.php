@@ -9,4 +9,6 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class Footer
 {
     public ?User $user = null;
+
+    public bool $admin = false;
 }

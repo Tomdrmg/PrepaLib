@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <twig:Header user="{{ app.user }}" :admin="true"/>
+    <main class="min-h-[100dvh] flex flex-col {% block main_class %}{% endblock %}">
+        {% block main %}
+        {% endblock %}
+    </main>
+    <twig:Footer user="{{ app.user }}" :admin="true"/>
+{% endblock %}

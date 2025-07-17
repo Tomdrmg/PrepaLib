@@ -3,15 +3,23 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\ForgotPasswordType;
+use App\Form\Model\ForgotPassword;
+use App\Form\Model\ResetPassword;
 use App\Form\RegistrationFormType;
+use App\Form\ResetPasswordType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Uid\Uuid;
 
 class SecurityController extends AbstractController
 {
@@ -33,7 +41,8 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager, Security $security): Response {
+    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager, Security $security): Response
+    {
         if ($this->getUser()) {
             return $this->redirectToRoute('app_home');
         }
@@ -52,6 +61,7 @@ class SecurityController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+            $this->addFlash("success", "Votre compte a bien été crée, vous avez automatiquement été connecté.");
             return $security->login($user);
         }
 
@@ -64,5 +74,71 @@ class SecurityController extends AbstractController
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    #[Route(path: '/password/forgot', name: 'app_forgot_password')]
+    public function forgotPassword(Request $request, EntityManagerInterface $entityManager, AuthenticationUtils $authenticationUtils, MailerInterface $mailer): Response
+    {
+        $user = $this->getUser();
+
+        $model = new ForgotPassword();
+        $model->email = $authenticationUtils->getLastUsername();
+        if ($user) $model->email = $user->getEmail();
+
+        $form = $this->createForm(ForgotPasswordType::class, $model);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $form->get('email')->getData()]);
+            if ($user) {
+                $resetToken = Uuid::v4()->toRfc4122();
+                $user->setResetToken($resetToken);
+                $user->setResetTokenRequestedAt(new \DateTimeImmutable());
+                $entityManager->flush();
+
+                $resetUrl = $this->generateUrl('app_reset_password', ['token' => $resetToken], UrlGeneratorInterface::ABSOLUTE_URL);
+                $email = (new Email())
+                    ->from('noreply@prepalib.arkean.fr')
+                    ->to($model->email)
+                    ->subject('Réinitialisation du mot de passe')
+                    ->text('Bonjour,\nVous avez demandé la réinitialisation de votre mot de passe.\nPour continuer la procédure, veuillez suivre les indications sur la page suivant: '.$resetUrl);
+
+                $mailer->send($email);
+            }
+
+            $this->addFlash("info", "Si cette adresse email est bien associée à un compte, vous recevrez un mail pour réinitialiser votre mot de passe.");
+        }
+
+        return $this->render('user/security/forgot.html.twig', [
+            "forgotPasswordForm" => $form->createView(),
+        ]);
+    }
+
+    #[Route(path: '/password/reset/{token}', name: 'app_reset_password')]
+    public function resetPassword(string $token, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        $user = $entityManager->getRepository(User::class)->findOneBy(['resetToken' => $token]);
+        if (!$user || !$user->getResetTokenRequestedAt() || time() - $user->getResetTokenRequestedAt()->getTimestamp() > 600) {
+            $this->addFlash("error", "Cette réinitialisation n'existe pas ou a déjà expirée");
+            return $this->redirectToRoute('app_forgot_password');
+        }
+
+        $model = new ResetPassword();
+        $form = $this->createForm(ResetPasswordType::class, $model);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+           $user->setResetToken(null);
+           $user->setResetTokenRequestedAt(null);
+           $user->setPassword($passwordHasher->hashPassword($user, $model->password));
+           $entityManager->flush();
+
+            $this->addFlash("success", "Votre mot de passe a bien été modifié.");
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render('user/security/reset.html.twig', [
+            "resetPasswordForm" => $form->createView(),
+        ]);
     }
 }

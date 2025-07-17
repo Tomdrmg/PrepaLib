@@ -2,7 +2,7 @@
     <div class="container mx-auto px-4 py-3">
         <div class="flex justify-between items-center">
             <div class="flex items-center space-x-2">
-                <a href="{{ path('app_home') }}" class="flex items-center space-x-2">
+                <a href="{% if admin %}{{ path('app_admin_dashboard') }}{% else %}{{ path('app_home') }}{% endif %}" class="flex items-center space-x-2">
                     <img src="{{ asset("images/icon.png") }}" alt="icon" class="w-12 h-12 md:w-16 md:h-16"/>
                     <h1 class="text-lg md:text-xl font-bold">PrépaLib</h1>
                 </a>
@@ -10,71 +10,100 @@
 
             <nav class="flex space-x-1">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                    <div class="relative nav-item">
-                        <div class="rounded hover:bg-accent-purple-800 transition flex items-center h-10 w-16 justify-center duration-300">
-                            <i class="fa-solid fa-graduation-cap text-2xl"></i>
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
-                        <div class="nav-menu absolute right-0 pt-2 w-48 z-10 transition duration-500">
-                            <div class="bg-foreground-500 rounded-md shadow-lg py-1">
-                                <span class="block px-4 py-2 text-center font-semibold">Ressources</span>
-                                <hr/>
-                                <a href="{{ path('app_mathematics') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
-                                    <i class="fa-solid fa-calculator aspect-square text-lg"></i>
-                                    Mathématiques
-                                </a>
-                                <a href="{{ path('app_physics') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
-                                    <i class="fa-solid fa-atom aspect-square text-lg"></i>
-                                    Physique Chimie
-                                </a>
-                                <a href="{{ path('app_informatics') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
-                                    <i class="fa-solid fa-computer aspect-square text-lg"></i>
-                                    Informatique
-                                </a>
+                    {% if admin %}
+                        <div class="relative nav-item">
+                            <div class="rounded hover:bg-accent-purple-800 transition flex items-center h-10 w-16 justify-center duration-300">
+                                <i class="fa-solid fa-database text-2xl"></i>
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                            <div class="nav-menu absolute right-0 pt-2 w-48 z-10 transition duration-500">
+                                <div class="bg-foreground-500 rounded-md shadow-lg py-1">
+                                    <span class="block px-4 py-2 text-center font-semibold">Données</span>
+                                    <hr/>
+                                    <a href="{{ path('app_admin_users') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-users aspect-square text-lg"></i>
+                                        Utilisateurs
+                                    </a>
+                                    <a href="{{ path('app_admin_subjects') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-book aspect-square text-lg"></i>
+                                        Matières
+                                    </a>
+                                    <a href="{{ path('app_admin_tags') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-tags aspect-square text-lg"></i>
+                                        Tags
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="relative nav-item">
-                        <div class="rounded hover:bg-accent-purple-800 transition flex items-center h-10 w-16 justify-center duration-300">
-                            <svg class="text-2xl h-[1em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <rect x="0.5" y="14.5" width="4" height="8" rx="0.5" ry="0.5" fill="currentColor"/>
-                                <path d="M4.5,21.063c10.5,3.5,7,3.5,19-2.5a2.758,2.758,0,0,0-3-1L16.183,18.93Z" fill="currentColor"/>
-                                <path d="M4.5,15.5h3c2.353,0,4,2,4.5,2h3.5c1,0,1,2,0,2H10Z" fill="currentColor"/>
-                                <path d="M17.571,11.4A2,2,0,1,1,20.4,8.571a1.97,1.97,0,0,1,.448.683.5.5,0,0,0,.82.171l1.561-1.561a1,1,0,0,0,0-1.414l-1.6-1.6A2,2,0,1,0,19.175,2.4l-1.6-1.6a1,1,0,0,0-1.414,0l-1.45,1.449a.5.5,0,0,0,.078.771,2,2,0,1,1-2.772,2.772.5.5,0,0,0-.771-.078L9.793,7.157a1,1,0,0,0,0,1.414l5.657,5.657a1,1,0,0,0,1.414,0l1.561-1.562a.5.5,0,0,0-.171-.819A1.979,1.979,0,0,1,17.571,11.4Z" fill="currentColor"/>
-                                <rect x="4" y="15.5" width="3.5" height="5.6" fill="currentColor"/>
-                                <rect x="7.5" y="17.6" width="6" height="3" fill="currentColor"/>
-                            </svg>
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
+                    {% else %}
+                        <div class="relative nav-item">
+                            <div class="rounded hover:bg-accent-purple-800 transition flex items-center h-10 w-16 justify-center duration-300">
+                                <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                            <div class="nav-menu absolute right-0 pt-2 w-48 z-10 transition duration-500">
+                                <div class="bg-foreground-500 rounded-md shadow-lg py-1">
+                                    <span class="block px-4 py-2 text-center font-semibold">Ressources</span>
+                                    <hr/>
+                                    <a href="{{ path('app_mathematics') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-calculator aspect-square text-lg"></i>
+                                        Mathématiques
+                                    </a>
+                                    <a href="{{ path('app_physics') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-atom aspect-square text-lg"></i>
+                                        Physique Chimie
+                                    </a>
+                                    <a href="{{ path('app_informatics') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-computer aspect-square text-lg"></i>
+                                        Informatique
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="nav-menu absolute right-0 pt-2 w-48 z-10 transition duration-500">
-                            <div class="bg-foreground-500 rounded-md shadow-lg py-1">
+                        <div class="relative nav-item">
+                            <div class="rounded hover:bg-accent-purple-800 transition flex items-center h-10 w-16 justify-center duration-300">
+                                <svg class="text-2xl h-[1em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <rect x="0.5" y="14.5" width="4" height="8" rx="0.5" ry="0.5" fill="currentColor"/>
+                                    <path d="M4.5,21.063c10.5,3.5,7,3.5,19-2.5a2.758,2.758,0,0,0-3-1L16.183,18.93Z" fill="currentColor"/>
+                                    <path d="M4.5,15.5h3c2.353,0,4,2,4.5,2h3.5c1,0,1,2,0,2H10Z" fill="currentColor"/>
+                                    <path d="M17.571,11.4A2,2,0,1,1,20.4,8.571a1.97,1.97,0,0,1,.448.683.5.5,0,0,0,.82.171l1.561-1.561a1,1,0,0,0,0-1.414l-1.6-1.6A2,2,0,1,0,19.175,2.4l-1.6-1.6a1,1,0,0,0-1.414,0l-1.45,1.449a.5.5,0,0,0,.078.771,2,2,0,1,1-2.772,2.772.5.5,0,0,0-.771-.078L9.793,7.157a1,1,0,0,0,0,1.414l5.657,5.657a1,1,0,0,0,1.414,0l1.561-1.562a.5.5,0,0,0-.171-.819A1.979,1.979,0,0,1,17.571,11.4Z" fill="currentColor"/>
+                                    <rect x="4" y="15.5" width="3.5" height="5.6" fill="currentColor"/>
+                                    <rect x="7.5" y="17.6" width="6" height="3" fill="currentColor"/>
+                                </svg>
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                            <div class="nav-menu absolute right-0 pt-2 w-48 z-10 transition duration-500">
+                                <div class="bg-foreground-500 rounded-md shadow-lg py-1">
                                 <span class="block px-4 py-2 text-center font-semibold">
                                     Contribuer
                                 </span>
-                                <hr/>
-                                <a href="{{ path('app_contribute_suggestion') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
-                                    <i class="fa-solid fa-lightbulb aspect-square text-lg"></i>
-                                    Suggestion
-                                </a>
-                                <a href="{{ path('app_contribute_chapter') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
-                                    <i class="fa-solid fa-folder-plus aspect-square text-lg"></i>
-                                    Créer un Chapitre
-                                </a>
-                                <a href="{{ path('app_contribute_exercise') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
-                                    <i class="fa-solid fa-file-circle-plus aspect-square text-lg"></i>
-                                    Créer un Exercice
-                                </a>
+                                    <hr/>
+                                    <a href="{{ path('app_contribute_suggestion') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-lightbulb aspect-square text-lg"></i>
+                                        Suggestion
+                                    </a>
+                                    <a href="{{ path('app_contribute_chapter') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-folder-plus aspect-square text-lg"></i>
+                                        Créer un Chapitre
+                                    </a>
+                                    <a href="{{ path('app_contribute_exercise') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-file-circle-plus aspect-square text-lg"></i>
+                                        Créer un Exercice
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    {% endif %}
                 {% endif %}
                 <div class="relative nav-item">
                     <div class="rounded hover:bg-accent-purple-800 transition flex items-center h-10 w-16 justify-center duration-300">
-                        <i class="fa-solid fa-user text-2xl"></i>
+                        <i class="fa-solid {% if admin %}fa-user-tie{% else %}fa-user{% endif %} text-2xl"></i>
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
@@ -82,7 +111,7 @@
                     <div class="nav-menu absolute right-0 pt-2 w-48 z-10 transition duration-500">
                         <div class="bg-foreground-500 rounded-md shadow-lg py-1">
                             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                                <span class="block px-4 py-2 text-center font-semibold">Mon apprentissage</span>
+                                <span class="block px-4 py-2 text-center font-semibold">{% if admin %}Administrateur{% else %}Mon apprentissage{% endif %}</span>
                                 <hr/>
                                 <a href="{{ path('app_profile') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
                                     <i class="fa-solid fa-address-card aspect-square text-lg"></i>
@@ -92,23 +121,30 @@
                                     <i class="fa-solid fa-lock aspect-square text-lg"></i>
                                     Sécurité
                                 </a>
-                                <a href="{{ path('app_favorite') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
-                                    <i class="fa-solid fa-star aspect-square text-lg"></i>
-                                    Favoris
-                                </a>
-                                <a href="{{ path('app_todo') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
-                                    <i class="fa-solid fa-clipboard-list aspect-square text-lg"></i>
-                                    À Faire
-                                </a>
-                                <a href="{{ path('app_done') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
-                                    <i class="fa-solid fa-clipboard-check aspect-square text-lg"></i>
-                                    Terminés
-                                </a>
-                                {% if is_granted('ROLE_ADMIN') %}
-                                    <a href="{{ path('app_logout') }}" class="px-4 py-2 hover:bg-accent-blue-400 flex items-center gap-2 text-accent-blue-700">
-                                        <i class="fa-solid fa-user-tie aspect-square text-lg"></i>
-                                        Administrateur
+                                {% if admin %}
+                                    <a href="{{ path('app_home') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-home aspect-square text-lg"></i>
+                                        Retour au Site
                                     </a>
+                                {% else %}
+                                    <a href="{{ path('app_favorite') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-star aspect-square text-lg"></i>
+                                        Favoris
+                                    </a>
+                                    <a href="{{ path('app_todo') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-clipboard-list aspect-square text-lg"></i>
+                                        À Faire
+                                    </a>
+                                    <a href="{{ path('app_done') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-clipboard-check aspect-square text-lg"></i>
+                                        Terminés
+                                    </a>
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <a href="{{ path('app_admin_dashboard') }}" class="px-4 py-2 hover:bg-accent-blue-400 flex items-center gap-2 text-accent-blue-700">
+                                            <i class="fa-solid fa-user-tie aspect-square text-lg"></i>
+                                            Administrateur
+                                        </a>
+                                    {% endif %}
                                 {% endif %}
                                 <a href="{{ path('app_logout') }}" class="px-4 py-2 hover:bg-accent-red-500 flex items-center gap-2 text-accent-red-800">
                                     <i class="fa-solid fa-right-from-bracket aspect-square text-lg"></i>

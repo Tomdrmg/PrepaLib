@@ -46,6 +46,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: ExercisePref::class, mappedBy: 'user')]
     private Collection $exercisePrefs;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $resetToken = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $resetTokenRequestedAt = null;
+
     public function __construct()
     {
         $this->exercisePrefs = new ArrayCollection();
@@ -182,6 +188,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $exercisePref->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): static
+    {
+        $this->resetToken = $resetToken;
+
+        return $this;
+    }
+
+    public function getResetTokenRequestedAt(): ?\DateTimeImmutable
+    {
+        return $this->resetTokenRequestedAt;
+    }
+
+    public function setResetTokenRequestedAt(?\DateTimeImmutable $resetTokenRequestedAt): static
+    {
+        $this->resetTokenRequestedAt = $resetTokenRequestedAt;
 
         return $this;
     }

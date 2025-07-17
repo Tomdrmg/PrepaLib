@@ -305,32 +305,3 @@ nav {
     }
 }
 
-/*
-.content-card {
-    background-color: $fg-color;
-    border-radius: 0.5rem;
-    border: 1px solid $fg-color-variant-2;
-    max-width: 1280px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-
-    & > div, & > a {
-        &.btn {
-            transition: background-color .2s ease-in-out;
-            cursor: pointer;
-
-            &:hover, &.selected {
-                background-color: $fg-color-variant;
-            }
-        }
-
-        padding: 14px;
-        width: 100%;
-
-        &:not(:last-child) {
-            border-bottom: solid 1px $fg-color-variant-2;
-        }
-    }
-}
- */
