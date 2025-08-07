@@ -125,16 +125,16 @@
 
     <script>
         const ExerciseList{{ subject.id }} = (function () {
-            const exerciseListComponent = document.getElementById('exercise-list-{{ subject.id }}');
+            let exerciseListComponent;
 
-            const listLoader = exerciseListComponent.querySelector('.list-loader');
+            let listLoader;
 
-            const pageButtons = exerciseListComponent.querySelector('.page-buttons');
-            const currentResultsStart = exerciseListComponent.querySelector('.current-results-start');
-            const currentResultsStop = exerciseListComponent.querySelector('.current-results-stop');
-            const totalResultsElem = exerciseListComponent.querySelector('.total-results');
+            let pageButtons;
+            let currentResultsStart;
+            let currentResultsStop;
+            let totalResultsElem;
 
-            const searchInput = exerciseListComponent.querySelector('#exerciseList{{ subject.id }}Search');
+            let searchInput;
 
             let filters = {
                 "page": 1,
@@ -186,7 +186,7 @@
                 ExercisePref().setPref(exerciseId, edit, stopLoading, stopLoading);
             }
 
-            const exerciseContainer = exerciseListComponent.querySelector('.exercises-container');
+            let exerciseContainer;
 
             function setExercises(exercises) {
                 exerciseContainer.innerHTML = exercises.length === 0 ? 'Aucun Exercice' : '';
@@ -387,6 +387,19 @@
             }
 
             function init() {
+                rciseListComponent = document.getElementById('exercise-list-{{ subject.id }}');
+
+                listLoader = exerciseListComponent.querySelector('.list-loader');
+
+                pageButtons = exerciseListComponent.querySelector('.page-buttons');
+                currentResultsStart = exerciseListComponent.querySelector('.current-results-start');
+                currentResultsStop = exerciseListComponent.querySelector('.current-results-stop');
+                totalResultsElem = exerciseListComponent.querySelector('.total-results');
+
+                exerciseContainer = exerciseListComponent.querySelector('.exercises-container');
+
+                const searchInput = exerciseListComponent.querySelector('#exerciseList{{ subject.id }}Search');
+
                 updateExercises();
                 searchInput.addEventListener('input', function (event) {
                     const search = event.target.value;

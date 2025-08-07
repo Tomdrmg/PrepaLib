@@ -53,12 +53,12 @@
 
     <script>
         const TagSelector{{ field.vars.name|capitalize }} = (function () {
-            const tagSelectorComponent = document.getElementById('tag-selector-{{ field.vars.name }}');
+            let tagSelectorComponent;
 
             // Gestion du custom select pour les tags
-            const inheritedTagsContainer = tagSelectorComponent.querySelector('.inherited-tags');
-            const selectedTagsContainer = tagSelectorComponent.querySelector('.selected-tags');
-            const hiddenTagsInput = tagSelectorComponent.querySelector('.hidden-tags-input');
+            let inheritedTagsContainer;
+            let selectedTagsContainer;
+            let hiddenTagsInput;
             const allTags = [
                 {% for choice in field.vars.choices %}
                 {
@@ -69,9 +69,9 @@
                 {% endfor %}
             ];
 
-            const customSelector = tagSelectorComponent.querySelector('.custom-tags-selector');
-            const selectedOption = customSelector.querySelector('.selected-option');
-            const optionsContainer = customSelector.querySelector('.options-container');
+            let customSelecto;
+            let selectedOption;
+            let optionsContainer;
 
             // Mettre à jour le champ caché du formulaire
             function updateHiddenInput() {
@@ -82,8 +82,6 @@
                     option.selected = selectedTagIds.includes(option.value);
                 }
             }
-
-            updateHiddenInput();
 
             // Management externe
             function clearTags() {
@@ -187,6 +185,18 @@
             }
 
             function init() {
+                tagSelectorComponent = document.getElementById('tag-selector-{{ field.vars.name }}');
+
+                inheritedTagsContainer = tagSelectorComponent.querySelector('.inherited-tags');
+                selectedTagsContainer = tagSelectorComponent.querySelector('.selected-tags');
+                hiddenTagsInput = tagSelectorComponent.querySelector('.hidden-tags-input');
+
+                customSelector = tagSelectorComponent.querySelector('.custom-tags-selector');
+                selectedOption = customSelector.querySelector('.selected-option');
+                optionsContainer = customSelector.querySelector('.options-container');
+
+                updateHiddenInput()
+
                 selectedOption.addEventListener('click', function () {
                     optionsContainer.classList.toggle('hidden');
                 });

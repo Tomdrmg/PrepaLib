@@ -215,11 +215,11 @@
 
         <script>
             const ExerciseTree{{ subject.id }} = (function () {
-                const exerciseTreeComponent = document.getElementById('exercise-tree-{{ subject.id }}');
-                const toggles = exerciseTreeComponent.querySelectorAll('.category-toggle');
+                let exerciseTreeComponent;
+                let toggles;
 
                 {% if user %}
-                const treeLoader = exerciseTreeComponent.querySelector('.tree-loader');
+                let treeLoader;
 
                 function setLoading() {
                     treeLoader.classList.remove('hidden!');
@@ -252,12 +252,12 @@
                 {% endif %}
 
                 {% if admin %}
-                const formPopup = exerciseTreeComponent.querySelector('.form-popup');
-                const formName = document.getElementById("{{ form.name.vars.id }}");
-                const formColor = document.getElementById("{{ form.name.vars.id }}");
-                const formId = document.getElementById("{{ form.name.vars.id }}");
-                const formParent = document.getElementById("{{ form.name.vars.id }}");
-                const resetButton = exerciseTreeComponent.querySelector(".resetCategoryButton");
+                let formPopup;
+                let formName;
+                let formColor;
+                let formId;
+                let formParent;
+                let resetButton;
 
                 // Form
                 function cancelForm() {
@@ -406,7 +406,21 @@
                 }
 
                 function init() {
+                    exerciseTreeComponent = document.getElementById('exercise-tree-{{ subject.id }}');
+                    toggles = exerciseTreeComponent.querySelectorAll('.category-toggle');
+
+                    {% if user %}
+                    treeLoader = exerciseTreeComponent.querySelector('.tree-loader');
+                    {% endif %}
+
                     {% if admin %}
+                    formPopup = exerciseTreeComponent.querySelector('.form-popup');
+                    rmName = document.getElementById("{{ form.name.vars.id }}");
+                    formColor = document.getElementById("{{ form.name.vars.id }}");
+                    formId = document.getElementById("{{ form.name.vars.id }}");
+                    formParent = document.getElementById("{{ form.name.vars.id }}");
+                    resetButton = exerciseTreeComponent.querySelector(".resetCategoryButton");
+
                     //init
                     formPopup.addEventListener('click', function (event) {
                         if (event.target === event.currentTarget) {

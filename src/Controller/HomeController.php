@@ -22,7 +22,7 @@ final class HomeController extends AbstractController
                 "chapters" => $entityManager->getRepository(Chapter::class)->count(),
                 "users" => $entityManager->getRepository(User::class)->count(),
                 "exercises" => $exerciseRepo->count(),
-                "completed" => 1023,
+                "completed" => -1,
                 "corrected" => $exerciseRepo->countCorrected() / max(1, $exerciseRepo->count())
             ]
         ]);
