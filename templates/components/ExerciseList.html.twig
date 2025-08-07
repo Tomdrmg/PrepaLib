@@ -59,16 +59,23 @@
             </div>
             <div class="px-2 pb-2">
                 <span class="text-xs text-text-200">Mode de recherche:</span>
-                <div data-field="tagsMode" data-field-type="string" class="filter-field text-xs text-text-200 grid grid-cols-2 md:grid-cols-1 md:grid-rows-2 rounded-md bg-foreground-100 ring ring-text-500 divide-y divide-text-500">
-                    <span data-selected-classes="bg-text-100/20" data-value="any" class="flex items-center justify-center py-1 cursor-pointer bg-text-100/20 hover:bg-text-100/20 transition rounded-t">Au moins un tag</span>
-                    <span data-selected-classes="bg-text-100/20" data-value="all" class="flex items-center justify-center py-1 cursor-pointer hover:bg-text-100/20 transition rounded-b">Tous les tags</span>
+                <div data-field="tagsMode" data-field-type="string" class="filter-field text-xs text-text-200 grid grid-cols-2 md:grid-cols-1 md:grid-rows-2 lg:grid-cols-2 lg:grid-rows-1 rounded-md bg-foreground-100 ring ring-text-500 divide-y divide-text-500">
+                    <span data-selected-classes="bg-text-100/20" data-value="any" class="flex items-center justify-center py-1 cursor-pointer bg-text-100/20 hover:bg-text-100/20 transition rounded-l md:rounded-l-none md:rounded-t lg:rounded-l lg:rounded-t-none">Au moins un tag</span>
+                    <span data-selected-classes="bg-text-100/20" data-value="all" class="flex items-center justify-center py-1 cursor-pointer hover:bg-text-100/20 transition rounded-r md:rounded-r-none md:rounded-b lg:rounded-r lg:rounded-b-none">Tous les tags</span>
                 </div>
             </div>
             <div class="px-2 pb-2">
                 <span class="text-xs text-text-200">Tags:</span>
                 {{ form_start(form) }}
-                <twig:TagSelector field="{{ form.tags }}" :disableInheritedTags="true" :hideLabel="true" selectorStyle="text-xs"/>
+                <twig:TagSelector field="{{ form.tags }}" :disableInheritedTags="true" :hideLabel="true" selectorStyle="text-xs lg:hidden" onUpdate="ExerciseList{{ subject.id }}.onTagUpdate();"/>
                 {{ form_end(form) }}
+                <div class="filter-tag-buttons-container hidden lg:flex flex-row flex-wrap gap-2 border-t border-foreground-100 py-1">
+                    {% for choice in form.tags.vars.choices %}
+                        <div onclick="ExerciseList{{ subject.id }}.addTag({{ choice.value }})" data-id="{{ choice.value }}" class="tag-wrapper cursor-pointer">
+                            <twig:Tag name="{{ choice.data.name }}" color="{{ choice.data.color }}"/>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
 
@@ -136,6 +143,8 @@
 
             let searchInput;
 
+            let filterTagButtonsContainer;
+
             let filters = {
                 "page": 1,
                 "limit": 10,
@@ -145,6 +154,26 @@
                 "favorite": null,
                 "tagsMode": "any",
                 "tags": []
+            }
+
+            function onTagUpdate() {
+                if (filterTagButtonsContainer) {
+                    filters.tags = TagSelector{{ form.tags.vars.name|capitalize }}.getSelectedTagIds();
+
+                    filterTagButtonsContainer.querySelectorAll('.tag-wrapper').forEach(wrapper => {
+                        if (filters.tags.includes(parseInt(wrapper.dataset.id))) {
+                            wrapper.classList.add('hidden');
+                        } else {
+                            wrapper.classList.remove('hidden');
+                        }
+                    })
+
+                    updateExercises();
+                }
+            }
+
+            function addTag(tagId) {
+                TagSelector{{ form.tags.vars.name|capitalize }}.optionClickValue(tagId);
             }
 
             function setPage(page) {
@@ -207,7 +236,7 @@
 
                     d.innerHTML = `<li style="--category-color: ${exercise.category.color};" class="mt-2 relative">
                                         <div class="absolute -top-3 left-4 bg-foreground-500 px-2 text-sm text-[var(--category-color)] font-semibold z-10">
-                                            ${exercise.firstCategory.name}
+                                            ${exercise.path}
                                         </div>
 
                                         <div class="grid grid-cols-1 prefs-${exercise.id} md:grid-cols-[1fr_auto] md:grid-rows-[auto_auto] mt-5 rounded transition text-text-200 ring ring-inset ring-[var(--category-color)]">
@@ -262,7 +291,7 @@
                                             </div>
                                             <div class="p-4 flex flex-col gap-3 md:col-span-2 border-t border-b border-[var(--category-color)]">
                                                 ${tagsPart}
-                                                <div class="text-xs md:text-sm prose prose-invert max-w-none whitespace-pre latex">${exercise.statement}</div>
+                                                <div class="text-xs md:text-sm overflow-auto text-wrap whitespace-pre latex">${exercise.statement}</div>
                                                 <div class="flex items-center justify-center gap-3">
                                                     <a href="${'{{ path('app_exercise', {'exercise': 'EXERCISE_ID'}) }}'.replaceAll('EXERCISE_ID', exercise.id)}" class="text-xs p-2 md:text-sm bg-accent-purple-700 hover:bg-accent-accent-purple-600 transition duration-300 rounded">Accéder à l'exercice</a>
                                                 </div>
@@ -407,7 +436,9 @@
 
                 exerciseContainer = exerciseListComponent.querySelector('.exercises-container');
 
-                const searchInput = exerciseListComponent.querySelector('#exerciseList{{ subject.id }}Search');
+                searchInput = exerciseListComponent.querySelector('#exerciseList{{ subject.id }}Search');
+
+                filterTagButtonsContainer = exerciseListComponent.querySelector('.filter-tag-buttons-container');
 
                 updateExercises();
                 searchInput.addEventListener('input', function (event) {
@@ -481,6 +512,8 @@
                 init: init,
                 setPage: setPage,
                 limitChange: limitChange,
+                addTag: addTag,
+                onTagUpdate: onTagUpdate,
             }
         })();
 

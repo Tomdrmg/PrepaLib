@@ -19,16 +19,20 @@
 
     {# Affichage des tags sélectionnés #}
     <div class="selected-tags flex flex-wrap gap-2 mb-3">
-        {% for tag in field.vars.data %}
-            <twig:Tag name="{{ tag.name }}" color="{{ tag.color }}" withRemoveButton="true" data-tag-id="{{ tag.id }}"/>
-        {% endfor %}
+        {% if field.vars.data is not empty %}
+            {% for tag in field.vars.data %}
+                <twig:Tag name="{{ tag.name }}" color="{{ tag.color }}" withRemoveButton="true" data-tag-id="{{ tag.id }}"/>
+            {% endfor %}
+        {% else %}
+            <span class="text-xs">Aucun tag sélectionné</span>
+        {% endif %}
     </div>
 
     {# Sélecteur des tags disponibles #}
     <div class="relative">
         <div class="custom-tags-selector">
-            <div class="selected-option p-2 border border-foreground-300 rounded cursor-pointer flex items-center justify-between">
-                <span class="{{ selectorStyle }}">Sélectionnez un tag pour l'ajouter...</span>
+            <div class="{{ selectorStyle }} selected-option p-2 border border-foreground-300 rounded cursor-pointer flex items-center justify-between">
+                <span>Sélectionnez un tag pour l'ajouter...</span>
                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
                 </svg>
@@ -76,12 +80,15 @@
 
             // Mettre à jour le champ caché du formulaire
             function updateHiddenInput() {
-                const selectedTagIds = Array.from(selectedTagsContainer.querySelectorAll('.tag'))
-                    .map(el => el.dataset.tagId);
+                const selectedTagIds = getSelectedTagIds();
 
                 for (const option of hiddenTagsInput.options) {
-                    option.selected = selectedTagIds.includes(option.value);
+                    option.selected = selectedTagIds.includes(parseInt(option.value, 10));
                 }
+
+                {% if onUpdate %}
+                    {{ onUpdate }}
+                {% endif %}
             }
 
             // Management externe
@@ -156,7 +163,19 @@
                 }
 
                 tagItem.remove();
+                if (selectedTagsContainer.children.length === 0) {
+                    selectedTagsContainer.innerHTML = '<span class="text-xs">Aucun tag sélectionné</span>';
+                }
                 updateHiddenInput();
+            }
+
+            function optionClickValue(optionValue) {
+                customSelector.querySelectorAll('.option-item').forEach(option => {
+                    if (parseInt(option.dataset.value, 10) === optionValue) {
+                        console.log(option);
+                        optionClick(option);
+                    }
+                });
             }
 
             // Quand une option est cliquée, càd, doit être supprimée et le tag ajouté
@@ -173,6 +192,7 @@
                 tagTemplate.innerHTML = `<twig:Tag name="${tagName}" color="${tagColor}" withRemoveButton="true" data-tag-id="${value}"/>`;
 
                 const tagElement = tagTemplate.firstElementChild;
+                if (selectedTagsContainer.children.length === 1 && selectedTagsContainer.children[0].localName === 'span') selectedTagsContainer.innerHTML = '';
                 selectedTagsContainer.appendChild(tagElement);
                 option.remove();
 
@@ -224,12 +244,19 @@
                 });
             }
 
+            function getSelectedTagIds() {
+                return Array.from(selectedTagsContainer.querySelectorAll('.tag'))
+                    .map(el => parseInt(el.dataset.tagId, 10));
+            }
+
             return {
                 init: init,
                 clearTags: clearTags,
                 setTags: setTags,
                 clearInheritedTags: clearInheritedTags,
                 setInheritedTags: setInheritedTags,
+                getSelectedTagIds: getSelectedTagIds,
+                optionClickValue: optionClickValue
             }
         })();
 

@@ -20,4 +20,6 @@ final class TagSelector
     public bool $hideLabel = false;
 
     public string $selectorStyle = "";
+
+    public ?string $onUpdate = null;
 }

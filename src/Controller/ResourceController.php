@@ -115,7 +115,8 @@ final class ResourceController extends AbstractController
                     'name' => $tag->getName(),
                     'color' => $tag->getColor()
                 ], $exercise->getFullTags()),
-                'pref' => $pref->toArray()
+                'pref' => $pref->toArray(),
+                'path' => $exercise->getCategoryPath()
             ];
         }
 
