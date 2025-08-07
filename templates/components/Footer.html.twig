@@ -2,7 +2,7 @@
     <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-                <h3 class="text-lg font-semibold mb-4">PrépaHub</h3>
+                <h3 class="text-lg font-semibold mb-4">PrépaLib</h3>
                 <p class="text-text-300">
                     {% if admin %}
                         Gérer et visualiser toutes les données de la plateforme dans cette espace administrateur.
@@ -32,20 +32,20 @@
             {% else %}
                 <div>
                     <h4 class="text-md font-semibold mb-4">Ressources</h4>
-                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    {% if app.user %}
                         <ul class="space-y-2">
-                            <li><a href="{{ path('app_mathematics') }}" class="text-text-300 hover:text-text-100 transition">Mathématiques</a></li>
-                            <li><a href="{{ path('app_physics') }}" class="text-text-300 hover:text-text-100 transition">Physique Chimie</a></li>
-                            <li><a href="{{ path('app_informatics') }}" class="text-text-300 hover:text-text-100 transition">Informatique</a></li>
+                            {% for subject in subjects %}
+                                <li><a href="{{ path('app_subject', {'subject': subject.id}) }}" class="text-text-300 hover:text-text-100 transition">{{ subject.name }}</a></li>
+                            {% endfor %}
                         </ul>
                     {% else %}
                         <p class="text-text-300 md:me-20">Vous devez être connecté pour accéder aux ressources.</p>
                     {% endif %}
                 </div>
                 <div>
-                    <h4 class="text-md font-semibold mb-4">{% if is_granted('IS_AUTHENTICATED_FULLY') %}Mon Apprentissage{% else %}Rejoindre{% endif %}</h4>
+                    <h4 class="text-md font-semibold mb-4">{% if app.user %}Mon Apprentissage{% else %}Rejoindre{% endif %}</h4>
                     <ul class="space-y-2">
-                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        {% if app.user %}
                             <li><a href="{{ path('app_profile') }}" class="text-text-300 hover:text-text-100 transition">Mes Informations</a></li>
                             <li><a href="{{ path('app_security') }}" class="text-text-300 hover:text-text-100 transition">Sécurité</a></li>
                             <li><a href="{{ path('app_favorite') }}" class="text-text-300 hover:text-text-100 transition">Favoris</a></li>
@@ -59,7 +59,7 @@
                 </div>
                 <div>
                     <h4 class="text-md font-semibold mb-4">Contribuer</h4>
-                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    {% if app.user %}
                         <ul class="space-y-2">
                             <li><a href="{{ path('app_contribute_suggestion') }}" class="text-text-300 hover:text-text-100 transition">Suggestion</a></li>
                             <li><a href="{{ path('app_contribute_chapter') }}" class="text-text-300 hover:text-text-100 transition">Créer un Chapitre</a></li>
@@ -72,7 +72,7 @@
             {% endif %}
         </div>
         <div class="border-t border-foreground-300 mt-8 pt-6 text-center text-text-300">
-            <p>&copy; {{ "now"|date("Y") }} PrépaHub. Tous droits réservés.</p>
+            <p>&copy; {{ "now"|date("Y") }} PrépaLib. Tous droits réservés.</p>
         </div>
     </div>
 </footer>

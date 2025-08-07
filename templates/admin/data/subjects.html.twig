@@ -1,0 +1,78 @@
+{% extends "admin/admin.base.html.twig" %}
+
+{% block title %}Matières{% endblock %}
+
+{% block main_class %}items-center p-4 pt-[88px]{% endblock %}
+
+{% block main %}
+        <div class="container px-4 py-8">
+            <h1 class="text-2xl font-bold mb-6 text-center">Ajouter une nouvelle matière</h1>
+            <div class="rounded-xl bg-foreground-500 overflow-hidden max-w-3xl mx-auto">
+                <div class="p-8">
+                    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                        <div class="flex-1">
+                            {{ form_label(form.name) }}
+                            {{ form_widget(form.name) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+                        <div class="flex-1">
+                            {{ form_label(form.faicon) }}
+                            {{ form_widget(form.faicon) }}
+                            {{ form_errors(form.faicon) }}
+                        </div>
+                    </div>
+
+                    {{ form_widget(form.submit) }}
+                    {{ form_end(form) }}
+                </div>
+                <div class="px-8 py-2 bg-foreground-300/50 border-t border-foreground-300 text-center flex flex-col">
+                    <span class="text-text-300 hover:text-text-200 text-sm transition duration-500 mb-2">Pour modifier une matière, cliquez sur la ligne du tableau correspondante.</span>
+                </div>
+            </div>
+
+            <h1 class="text-2xl font-bold mt-6 mb-6">Liste des matières</h1>
+
+            <div class="overflow-x-auto bg-foreground-500 shadow rounded-lg">
+                <table class="min-w-full divide-y divide-foreground-300">
+                    <thead class="bg-foreground-400">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-24">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-32">Icône</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase">Nom</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-24">Exercices</th>
+                    </tr>
+                    </thead>
+                    <tbody class="bg-foreground-500 divide-y divide-foreground-300">
+                    {% for subject in subjects %}
+                        <tr class="group hover:bg-foreground-400 transition cursor-pointer" data-href="{{ path('app_admin_subject', {'subject': subject.id}) }}">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100">{{ subject.id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100 text-center">
+                                <div class="flex flex-col w-full">
+                                    <i class="{{ subject.faicon }} aspect-square text-lg"></i>
+                                    <span class="text-shadow-text-300 text-xs">{{ subject.faicon|replace({" ": "<br/>"})|raw }}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100 group-hover:text-text-200 group-hover:underline transition">{{ subject.name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100">{{ subject.countExercises() }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-sm text-text-300">Aucune matière trouvé.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        document.querySelectorAll('tr[data-href]').forEach(row => {
+                            row.addEventListener('click', () => {
+                                window.location.href = row.dataset.href;
+                            });
+                        });
+                    })
+                </script>
+            </div>
+        </div>
+{% endblock %}

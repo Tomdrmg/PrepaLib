@@ -11,29 +11,92 @@
     {% endblock %}
 
     {% block scripts %}
-        {{ encore_entry_script_tags('app') }}
         <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
         <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        {{ encore_entry_script_tags('app') }}
         <script>
-            MathJax = {
-                tex: {
-                    inlineMath: [['$', '$']],
-                    processEscapes: true,
-                    macros: {
-                        llbracket: '\\unicode{10214}',
-                        rrbracket: '\\unicode{10215}',
-                        rg: '\\text{rg}',
-                        dim: '\\text{dim}',
-                        sup: '\\text{sup}',
-                        inf: '\\text{inf}',
-                        et: '\\text{ et }'
-                    }
-                },
-                options: {
-                    skipHtmlTags: ['script', 'noscript', 'textarea', 'pre']
+            const ExercisePref = (function() {
+                function setPref(exerciseId, data, after = function () {}, afterError = function () {}) { // data example: {"favorite": true}
+                    const url = "{{ path('api_set_preference', {'exercise': 'EXERCISE_ID'}) }}".replaceAll('EXERCISE_ID', exerciseId);
+                    fetch(url, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(data)
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erreur HTTP : ' + response.status);
+                            }
+
+                            return response.json();
+                        })
+                        .then(data => {
+                            updatePrefContainers([data.pref]);
+                            after()
+                        })
+                        .catch(error => {
+                            console.error('Erreur fetch :', error); // TODO : NOTIFICATION
+                            afterError();
+                        });
                 }
-            };
+
+                function updatePrefContainers(prefs) {
+                    for (const pref of prefs) {
+                        document.querySelectorAll(`.prefs-${pref.exercise}`).forEach(container => {
+                            const doneT = container.querySelector(".done .true");
+                            if (pref.done) doneT.classList.remove("hidden!");
+                            else doneT.classList.add("hidden!");
+
+                            const doneF = container.querySelector(".done .false");
+                            if (pref.done) doneF.classList.add("hidden!");
+                            else doneF.classList.remove("hidden!");
+
+                            const favoriteT = container.querySelector(".favorite .true");
+                            if (pref.favorite) favoriteT.classList.remove("hidden!");
+                            else favoriteT.classList.add("hidden!");
+
+                            const favoriteF = container.querySelector(".favorite .false");
+                            if (pref.favorite) favoriteF.classList.add("hidden!");
+                            else favoriteF.classList.remove("hidden!");
+
+                            const difficultyContainer = container.querySelector(".difficulty");
+                            const unselectedColor = difficultyContainer.dataset.unselectedColor;
+
+                            difficultyContainer.querySelectorAll(".difficulty-element").forEach(element => {
+                                const selectedColor = element.dataset.selectedColor;
+                                if (parseInt(element.dataset.difficulty) === pref.difficulty) {
+                                    element.classList.remove(unselectedColor);
+                                    element.classList.add(selectedColor);
+                                } else {
+                                    element.classList.remove(selectedColor);
+                                    element.classList.add(unselectedColor);
+                                }
+                            })
+
+                            const nonCommentedText = container.querySelector(".non-commented-text");
+                            const commentContainer = container.querySelector(".comment-container");
+
+                            if (pref.comment.trim() === "") {
+                                nonCommentedText.classList.remove("hidden");
+                                commentContainer.classList.add("hidden");
+                                commentContainer.innerText = "";
+                            } else {
+                                nonCommentedText.classList.add("hidden");
+                                commentContainer.classList.remove("hidden");
+                                commentContainer.innerText = pref.comment;
+                            }
+                        });
+                    }
+                }
+
+                return {
+                    setPref: setPref
+                }
+            })
         </script>
     {% endblock %}
 </head>

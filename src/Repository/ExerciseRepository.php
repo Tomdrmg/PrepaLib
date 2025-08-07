@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Exercise;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -25,6 +27,74 @@ class ExerciseRepository extends ServiceEntityRepository
             ->andWhere("TRIM(s.content) != ''")
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    public function findFilteredExercisesWithCount(
+        User $user,
+        array $difficulties = [],
+        ?bool $done = null,
+        ?bool $favorite = null,
+        array $tagIds = [],
+        ?string $search = null,
+        string $tagsMode = 'any',
+        int $page = 1,
+        int $limit = 10
+    ): array {
+        $qb = $this->createQueryBuilder('e')
+            ->leftJoin('e.category', 'c')
+            ->leftJoin('e.statement', 's')
+            ->leftJoin('e.exercisePrefs', 'p', 'WITH', 'p.user = :user')
+            ->addSelect('c', 'p')
+            ->setParameter('user', $user);
+
+        if (!empty($difficulties)) {
+            $qb->andWhere($qb->expr()->in('p.difficulty', ':difficulties'))
+                ->setParameter('difficulties', $difficulties);
+        }
+
+        if ($done !== null) {
+            $qb->andWhere('p.done = :done')
+                ->setParameter('done', $done);
+        }
+
+        if ($favorite !== null) {
+            $qb->andWhere('p.favorite = :favorite')
+                ->setParameter('favorite', $favorite);
+        }
+
+        if ($search) {
+            $words = preg_split('/\s+/', strtolower($search));
+            foreach ($words as $index => $word) {
+                $qb->andWhere(
+                    $qb->expr()->orX(
+                        $qb->expr()->like('LOWER(e.title)', ':word'.$index),
+                        $qb->expr()->like('LOWER(s.content)', ':word'.$index),
+                        $qb->expr()->like('LOWER(p.comment)', ':word'.$index)
+                    )
+                )->setParameter('word'.$index, '%'.$word.'%');
+            }
+        }
+
+        $exercises = $qb->getQuery()->getResult();
+
+        if (!empty($tagIds)) {
+            $exercises = array_filter($exercises, function ($e) use ($tagIds, $tagsMode) {
+                $tagIdList = array_map(fn($tag) => $tag->getId(), $e->getFullTags());
+
+                $matchedTags = array_intersect($tagIds, $tagIdList);
+
+                return $tagsMode === 'any' ? !empty($matchedTags) : count($matchedTags) === count($tagIds);
+            });
+        }
+
+        $totalResults = count($exercises);
+        $offset = ($page - 1) * $limit;
+        $paginated = array_slice($exercises, $offset, $limit);
+
+        return [
+            'totalResults' => $totalResults,
+            'exercises' => $paginated,
+        ];
     }
 
 //    /**

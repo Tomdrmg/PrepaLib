@@ -18,25 +18,13 @@ class Exercise
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne()]
     #[ORM\JoinColumn(nullable: false)]
     private ?Element $statement = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne()]
     #[ORM\JoinColumn(nullable: false)]
     private ?Element $solution = null;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?ElementList $hints = null;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?TagList $tags = null;
-
-    #[ORM\ManyToOne(inversedBy: 'exercises')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?ExerciseGroup $exerciseGroup = null;
 
     /**
      * @var Collection<int, ExercisePref>
@@ -44,9 +32,27 @@ class Exercise
     #[ORM\OneToMany(targetEntity: ExercisePref::class, mappedBy: 'exercise')]
     private Collection $exercisePrefs;
 
+    #[ORM\ManyToOne(inversedBy: 'exercises')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?ExerciseCategory $category = null;
+
+    /**
+     * @var Collection<int, Element>
+     */
+    #[ORM\OneToMany(targetEntity: Element::class, mappedBy: 'exercise')]
+    private Collection $hints;
+
+    /**
+     * @var Collection<int, Tag>
+     */
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'exercises')]
+    private Collection $tags;
+
     public function __construct()
     {
         $this->exercisePrefs = new ArrayCollection();
+        $this->hints = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -90,42 +96,6 @@ class Exercise
         return $this;
     }
 
-    public function getHints(): ?ElementList
-    {
-        return $this->hints;
-    }
-
-    public function setHints(ElementList $hints): static
-    {
-        $this->hints = $hints;
-
-        return $this;
-    }
-
-    public function getTags(): ?TagList
-    {
-        return $this->tags;
-    }
-
-    public function setTags(TagList $tags): static
-    {
-        $this->tags = $tags;
-
-        return $this;
-    }
-
-    public function getExerciseGroup(): ?ExerciseGroup
-    {
-        return $this->exerciseGroup;
-    }
-
-    public function setExerciseGroup(?ExerciseGroup $exerciseGroup): static
-    {
-        $this->exerciseGroup = $exerciseGroup;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, ExercisePref>
      */
@@ -154,5 +124,118 @@ class Exercise
         }
 
         return $this;
+    }
+
+    public function getCategory(): ?ExerciseCategory
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?ExerciseCategory $category): static
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Element>
+     */
+    public function getHints(): Collection
+    {
+        return $this->hints;
+    }
+
+    public function addHint(Element $hint): static
+    {
+        if (!$this->hints->contains($hint)) {
+            $this->hints->add($hint);
+            $hint->setExercise($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHint(Element $hint): static
+    {
+        if ($this->hints->removeElement($hint)) {
+            // set the owning side to null (unless already changed)
+            if ($hint->getExercise() === $this) {
+                $hint->setExercise(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): static
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): static
+    {
+        $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    public function getFullTags(): array
+    {
+        $allTags = [];
+        $tagIds = [];
+
+        if ($this->getCategory()) {
+            foreach ($this->getCategory()->getFullTags() as $tag) {
+                $tagId = $tag->getId();
+                if (!in_array($tagId, $tagIds, true)) {
+                    $allTags[] = $tag;
+                    $tagIds[] = $tagId;
+                }
+            }
+        }
+
+        foreach ($this->getTags() as $tag) {
+            $tagId = $tag->getId();
+            if (!in_array($tagId, $tagIds, true)) {
+                $allTags[] = $tag;
+                $tagIds[] = $tagId;
+            }
+        }
+
+        return $allTags;
+    }
+
+    public function getFirstCategory(): ExerciseCategory
+    {
+        $category = $this->getCategory();
+        while ($category->getParent()) {
+            $category = $category->getParent();
+        }
+
+        return $category;
+    }
+
+    public function getPrefFor(?User $user): ?ExercisePref
+    {
+        if (!$user) return null;
+
+        $pref = $this->getExercisePrefs()->filter(function (ExercisePref $pref) use ($user) {
+            return $pref->getUser() === $user;
+        })->first();
+
+        return $pref ? $pref : null;
     }
 }

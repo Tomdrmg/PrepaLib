@@ -18,18 +18,32 @@ class Tag
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column]
-    private ?int $color = null;
+    #[ORM\Column(length: 7)]
+    private ?string $color = null;
 
     /**
-     * @var Collection<int, TagList>
+     * @var Collection<int, CourseElement>
      */
-    #[ORM\ManyToMany(targetEntity: TagList::class, mappedBy: 'tags')]
-    private Collection $tagLists;
+    #[ORM\ManyToMany(targetEntity: CourseElement::class, mappedBy: 'tags')]
+    private Collection $courseElements;
+
+    /**
+     * @var Collection<int, Exercise>
+     */
+    #[ORM\ManyToMany(targetEntity: Exercise::class, mappedBy: 'tags')]
+    private Collection $exercises;
+
+    /**
+     * @var Collection<int, ExerciseCategory>
+     */
+    #[ORM\ManyToMany(targetEntity: ExerciseCategory::class, mappedBy: 'tags')]
+    private Collection $exerciseCategories;
 
     public function __construct()
     {
-        $this->tagLists = new ArrayCollection();
+        $this->courseElements = new ArrayCollection();
+        $this->exercises = new ArrayCollection();
+        $this->exerciseCategories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -49,12 +63,12 @@ class Tag
         return $this;
     }
 
-    public function getColor(): ?int
+    public function getColor(): ?string
     {
         return $this->color;
     }
 
-    public function setColor(int $color): static
+    public function setColor(string $color): static
     {
         $this->color = $color;
 
@@ -62,27 +76,81 @@ class Tag
     }
 
     /**
-     * @return Collection<int, TagList>
+     * @return Collection<int, CourseElement>
      */
-    public function getTagLists(): Collection
+    public function getCourseElements(): Collection
     {
-        return $this->tagLists;
+        return $this->courseElements;
     }
 
-    public function addTagList(TagList $tagList): static
+    public function addCourseElement(CourseElement $courseElement): static
     {
-        if (!$this->tagLists->contains($tagList)) {
-            $this->tagLists->add($tagList);
-            $tagList->addTag($this);
+        if (!$this->courseElements->contains($courseElement)) {
+            $this->courseElements->add($courseElement);
+            $courseElement->addTag($this);
         }
 
         return $this;
     }
 
-    public function removeTagList(TagList $tagList): static
+    public function removeCourseElement(CourseElement $courseElement): static
     {
-        if ($this->tagLists->removeElement($tagList)) {
-            $tagList->removeTag($this);
+        if ($this->courseElements->removeElement($courseElement)) {
+            $courseElement->removeTag($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Exercise>
+     */
+    public function getExercises(): Collection
+    {
+        return $this->exercises;
+    }
+
+    public function addExercise(Exercise $exercise): static
+    {
+        if (!$this->exercises->contains($exercise)) {
+            $this->exercises->add($exercise);
+            $exercise->addTag($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExercise(Exercise $exercise): static
+    {
+        if ($this->exercises->removeElement($exercise)) {
+            $exercise->removeTag($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ExerciseCategory>
+     */
+    public function getExerciseCategories(): Collection
+    {
+        return $this->exerciseCategories;
+    }
+
+    public function addExerciseCategory(ExerciseCategory $exerciseCategory): static
+    {
+        if (!$this->exerciseCategories->contains($exerciseCategory)) {
+            $this->exerciseCategories->add($exerciseCategory);
+            $exerciseCategory->addTag($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExerciseCategory(ExerciseCategory $exerciseCategory): static
+    {
+        if ($this->exerciseCategories->removeElement($exerciseCategory)) {
+            $exerciseCategory->removeTag($this);
         }
 
         return $this;

@@ -13,7 +13,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -76,6 +78,9 @@ class SecurityController extends AbstractController
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     #[Route(path: '/password/forgot', name: 'app_forgot_password')]
     public function forgotPassword(Request $request, EntityManagerInterface $entityManager, AuthenticationUtils $authenticationUtils, MailerInterface $mailer): Response
     {
@@ -98,10 +103,15 @@ class SecurityController extends AbstractController
 
                 $resetUrl = $this->generateUrl('app_reset_password', ['token' => $resetToken], UrlGeneratorInterface::ABSOLUTE_URL);
                 $email = (new Email())
-                    ->from('noreply@prepalib.arkean.fr')
-                    ->to($model->email)
+                    ->from(new Address('noreply@prepalib.arkean.fr', 'Noreply - PrepaLib'))
+                    ->to(new Address($model->email))
                     ->subject('Réinitialisation du mot de passe')
-                    ->text('Bonjour,\nVous avez demandé la réinitialisation de votre mot de passe.\nPour continuer la procédure, veuillez suivre les indications sur la page suivant: '.$resetUrl);
+                    ->text("Bonjour,\n\nVous avez demandé la réinitialisation de votre mot de passe.\n\nCliquez ici : $resetUrl")
+                    ->html("
+                        <p>Bonjour,</p>
+                        <p>Vous avez demandé la réinitialisation de votre mot de passe.</p>
+                        <p><a href=\"$resetUrl\">Cliquez ici pour continuer</a></p>
+                    ");
 
                 $mailer->send($email);
             }

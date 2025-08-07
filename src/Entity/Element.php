@@ -17,8 +17,8 @@ class Element
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
-    #[ORM\ManyToOne(inversedBy: 'elements')]
-    private ?ElementList $elementList = null;
+    #[ORM\ManyToOne(inversedBy: 'hints')]
+    private ?Exercise $exercise = null;
 
     public function getId(): ?int
     {
@@ -37,14 +37,14 @@ class Element
         return $this;
     }
 
-    public function getElementList(): ?ElementList
+    public function getExercise(): ?Exercise
     {
-        return $this->elementList;
+        return $this->exercise;
     }
 
-    public function setElementList(?ElementList $elementList): static
+    public function setExercise(?Exercise $exercise): static
     {
-        $this->elementList = $elementList;
+        $this->exercise = $exercise;
 
         return $this;
     }

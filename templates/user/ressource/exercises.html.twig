@@ -1,0 +1,89 @@
+{% extends "user/user.base.html.twig" %}
+
+{% block title %}{{ subject.name }} | Exercices{% endblock %}
+
+{% block main_class %}items-center p-2 md:p-4 pt-[88px]!{% endblock %}
+
+{% block main %}
+    <div class="mx-4 mt-24 mb-16 flex flex-col items-center justify-center">
+        <twig:DoubleText :neon="true" text="{{ subject.name }}" :lgFont="90" :smFont="38"/>
+    </div>
+
+    <div class="container px-2 py-4 md:px-4 md:py-8">
+        <div class="w-full flex flex-row px-3 gap-3">
+            <div id="exercise-list-btn" class="selected grow flex items-center justify-center transition duration-200 cursor-pointer p-3 rounded-t-lg bg-foreground-500">
+                <span class="text-sm md:text-base font-bold text-center">Liste d'exercices</span>
+            </div>
+            <div id="exercise-tree-btn" class="grow flex items-center justify-center transition duration-200 cursor-pointer p-3 rounded-t-lg bg-foreground-500/50 hover:bg-foreground-400">
+                <span class="text-sm md:text-base font-bold text-center">Arbre d'exercices</span>
+            </div>
+        </div>
+        <div class="bg-foreground-500 shadow rounded-lg relative">
+            <div id="exercise-list-view">
+                <div class="p-3 md:p-6">
+                    <twig:ExerciseList subject="{{ subject }}" user="{{ app.user }}" form="{{ form }}"/>
+                </div>
+            </div>
+            <div id="exercise-tree-view" class="hidden">
+                <div class="p-3 md:p-6">
+                    <twig:ExerciseTree subject="{{ subject }}" user="{{ app.user }}"/>
+                </div>
+                <div class="px-8 py-2 bg-foreground-300/50 border-t border-foreground-300 text-center flex flex-col rounded-b-xl">
+                    <span onclick="ExerciseTree{{ subject.id }}().expandAll()" class="text-text-300 hover:text-text-200 text-sm transition duration-500 mb-2 cursor-pointer">Développer toutes les catégories</span>
+                    <span onclick="ExerciseTree{{ subject.id }}().collapseAll()" class="text-text-300 hover:text-text-200 text-sm transition duration-500 mb-2 cursor-pointer">Réduire toutes les catégories</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectedClasses = ["selected", "bg-foreground-500"];
+            const nonSelectedClasses = ["bg-foreground-500/50", "hover:bg-foreground-400"];
+            const activeClasses = [];
+            const nonActiveClasses = ["hidden"];
+
+            const exerciseListBtn = document.getElementById('exercise-list-btn');
+            const exerciseTreeBtn = document.getElementById('exercise-tree-btn');
+
+            const exerciseListView = document.getElementById('exercise-list-view');
+            const exerciseTreeView = document.getElementById('exercise-tree-view');
+
+            function setView(currentElem, newElem, currentView, newView) {
+                for (const cl of selectedClasses) {
+                    newElem.classList.add(cl);
+                    currentElem.classList.remove(cl);
+                }
+
+                for (const cl of activeClasses) {
+                    newView.classList.add(cl);
+                    currentView.classList.remove(cl);
+                }
+
+                for (const cl of nonSelectedClasses) {
+                    newElem.classList.remove(cl);
+                    currentElem.classList.add(cl);
+                }
+
+                for (const cl of nonActiveClasses) {
+                    newView.classList.remove(cl);
+                    currentView.classList.add(cl);
+                }
+
+                ExerciseTree{{ subject.id }}().updateAll();
+            }
+
+            exerciseListBtn.addEventListener('click', () => {
+                if (!exerciseListBtn.classList.contains('selected')) {
+                   setView(exerciseTreeBtn, exerciseListBtn, exerciseTreeView, exerciseListView);
+                }
+            })
+
+            exerciseTreeBtn.addEventListener('click', () => {
+                if (!exerciseTreeBtn.classList.contains('selected')) {
+                    setView(exerciseListBtn, exerciseTreeBtn, exerciseListView, exerciseTreeView);
+                }
+            })
+        })
+    </script>
+{% endblock %}

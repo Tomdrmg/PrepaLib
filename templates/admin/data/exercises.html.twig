@@ -1,0 +1,20 @@
+{% extends "admin/admin.base.html.twig" %}
+
+{% block title %}{{ subject.name }} | Exercices{% endblock %}
+
+{% block main_class %}items-center p-2 md:p-4 pt-[88px]!{% endblock %}
+
+{% block main %}
+    <div class="container px-2 py-4 md:px-4 md:py-8">
+        <div class="overflow-x-auto bg-foreground-500 shadow rounded-lg">
+            <div class="p-6">
+                <h1 class="text-xl font-bold mb-4">{{ subject.name }} | Exercices</h1>
+                <twig:ExerciseTree subject="{{ subject }}" admin="true" form="{{ form }}"/>
+            </div>
+            <div class="px-8 py-2 bg-foreground-300/50 border-t border-foreground-300 text-center flex flex-col rounded-b-xl">
+                <span onclick="ExerciseTree{{ subject.id }}().expandAll()" class="text-text-300 hover:text-text-200 text-sm transition duration-500 mb-2 cursor-pointer">Développer toutes les catégories</span>
+                <span onclick="ExerciseTree{{ subject.id }}().collapseAll()" class="text-text-300 hover:text-text-200 text-sm transition duration-500 mb-2 cursor-pointer">Réduire toutes les catégories</span>
+            </div>
+        </div>
+    </div>
+{% endblock %}

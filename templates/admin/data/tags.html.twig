@@ -1,0 +1,143 @@
+{% extends "admin/admin.base.html.twig" %}
+
+{% block title %}Tags{% endblock %}
+
+{% block main_class %}items-center p-4 pt-[88px]{% endblock %}
+
+{% block main %}
+        <div class="container px-4 py-8">
+            <h1 class="text-2xl font-bold mb-6 text-center">Ajouter ou modifier un tag</h1>
+            <div class="rounded-xl bg-foreground-500 overflow-hidden max-w-3xl mx-auto">
+                <div class="p-8">
+                    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                        {{ form_widget(form.id) }}
+
+                        <div class="flex-1">
+                            {{ form_label(form.name) }}
+                            {{ form_widget(form.name) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+                        <div>
+                            {{ form_label(form.color) }}
+                            {{ form_widget(form.color, {
+                                'attr': {
+                                    'class': 'w-full h-12 rounded border border-gray-300 shadow cursor-pointer'
+                                }
+                            }) }}
+                            {{ form_errors(form.color) }}
+                        </div>
+                        <div class="flex-1 flex flex-col">
+                            <label>Préview</label>
+                            <div>
+                                <twig:Tag id="tag-preview" name="{{ form.name.vars.value }}" color="{{ form.color.vars.value }}"/>
+                            </div>
+                        </div>
+
+                        <script>
+                            let submitButton;
+                            let idInput;
+                            let colorInput;
+                            let nameInput;
+                            let preview;
+                            let previewText;
+                            let resetTagButton;
+
+                            // NEW/EDIT MODE
+                            function setNew() {
+                                submitButton.innerHTML = "{{ form.submit.vars.label }}";
+                                resetTagButton.classList.add('hidden');
+                                idInput.value = null;
+                                updatePreview();
+                            }
+
+                            function setEdit(id, name, color) {
+                                submitButton.innerHTML = "{{ form.submit.vars.attr.editLabel }}";
+                                idInput.value = id;
+                                nameInput.value = name;
+                                colorInput.value = color;
+                                resetTagButton.classList.remove('hidden');
+                                updatePreview();
+                            }
+
+                            // UPDATE PREVIEW CODE
+                            function updatePreview() {
+                                const hex = colorInput.value;
+                                const name = nameInput.value;
+
+                                preview.style.setProperty('--base-color', hex);
+                                previewText.innerHTML = name;
+                            }
+
+                            document.addEventListener('DOMContentLoaded', function () {
+                                submitButton = document.getElementById('tag_submit');
+                                idInput = document.getElementById('tag_id');
+                                colorInput = document.getElementById('tag_color');
+                                nameInput = document.getElementById('tag_name');
+                                preview = document.getElementById('tag-preview');
+                                previewText = preview.getElementsByTagName('span')[0];
+                                resetTagButton = document.getElementById('resetTagButton');
+
+                                if (idInput.value !== "" && idInput.value !== null) {
+                                    setEdit(idInput.value, nameInput.value, colorInput.value);
+                                }
+
+                                document.querySelectorAll('.edit-button').forEach(button => {
+                                    button.addEventListener('click', function () {
+                                        const id = this.dataset.id;
+                                        const name = this.dataset.name;
+                                        const color = this.dataset.color;
+                                        setEdit(id, name, color);
+                                    });
+                                });
+
+                                colorInput.addEventListener('input', updatePreview);
+                                nameInput.addEventListener('input', updatePreview);
+                                updatePreview();
+                            });
+                        </script>
+                    </div>
+
+                    {{ form_widget(form.submit) }}
+                    {{ form_end(form) }}
+                </div>
+                <div class="px-8 py-2 bg-foreground-300/50 border-t border-foreground-300 text-center flex flex-col">
+                    <span id="resetTagButton" onclick="setNew()" class="hidden text-text-300 hover:text-text-200 text-sm transition duration-500 mb-2">Vous êtes en train de modifier un tag existant. Cliquez ici pour passer en mode création.</span>
+                </div>
+            </div>
+
+            <h1 class="text-2xl font-bold mt-6 mb-6">Liste des tags</h1>
+
+            <div class="overflow-x-auto bg-foreground-500 shadow rounded-lg">
+                <table class="min-w-full divide-y divide-foreground-300">
+                    <thead class="bg-foreground-400">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-24">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase">Nom</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-32">Couleur</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase">Preview</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-48">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="bg-foreground-500 divide-y divide-foreground-300">
+                    {% for tag in tags %}
+                        <tr class="hover:bg-foreground-400 transition">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100 ">{{ tag.id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100">{{ tag.name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100">{{ tag.color }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100"><twig:Tag name="{{ tag.name }}" color="{{ tag.color }}"/></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-xs flex gap-2">
+                                <span class="text-accent-blue-400 hover:text-accent-blue-300 transition edit-button" data-id="{{ tag.id }}" data-name="{{ tag.name }}" data-color="{{ tag.color }}">Modifier</span>
+                                <a class="text-accent-red-400 hover:text-accent-red-300 transition" href="{{ path('app_admin_delete_tag', {"tag": tag.id}) }}">Supprimer</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-sm text-text-300">Aucun tag trouvé.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+{% endblock %}

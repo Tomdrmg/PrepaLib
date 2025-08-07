@@ -33,6 +33,9 @@ class ExercisePref
     #[ORM\Column]
     private ?bool $done = null;
 
+    #[ORM\Column]
+    private ?int $difficulty = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -108,5 +111,28 @@ class ExercisePref
         $this->done = $done;
 
         return $this;
+    }
+
+    public function getDifficulty(): ?int
+    {
+        return $this->difficulty;
+    }
+
+    public function setDifficulty(int $difficulty): static
+    {
+        $this->difficulty = $difficulty;
+
+        return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'done' => $this->isDone(),
+            'favorite' => $this->isFavorite(),
+            'difficulty' => $this->getDifficulty(),
+            'comment' => $this->getComment(),
+            'exercise' => $this->getExercise()->getId()
+        ];
     }
 }

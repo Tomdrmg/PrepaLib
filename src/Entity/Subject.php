@@ -24,16 +24,19 @@ class Subject
     #[ORM\OneToMany(targetEntity: Course::class, mappedBy: 'subject')]
     private Collection $courses;
 
+    #[ORM\Column(length: 255)]
+    private ?string $faicon = null;
+
     /**
-     * @var Collection<int, ExerciseGroup>
+     * @var Collection<int, ExerciseCategory>
      */
-    #[ORM\OneToMany(targetEntity: ExerciseGroup::class, mappedBy: 'subject')]
-    private Collection $exerciseGroups;
+    #[ORM\OneToMany(targetEntity: ExerciseCategory::class, mappedBy: 'subject')]
+    private Collection $exerciseCategories;
 
     public function __construct()
     {
         $this->courses = new ArrayCollection();
-        $this->exerciseGroups = new ArrayCollection();
+        $this->exerciseCategories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -83,33 +86,77 @@ class Subject
         return $this;
     }
 
-    /**
-     * @return Collection<int, ExerciseGroup>
-     */
-    public function getExerciseGroups(): Collection
+    public function getFaicon(): ?string
     {
-        return $this->exerciseGroups;
+        return $this->faicon;
     }
 
-    public function addExerciseGroup(ExerciseGroup $exerciseGroup): static
+    public function setFaicon(string $faicon): static
     {
-        if (!$this->exerciseGroups->contains($exerciseGroup)) {
-            $this->exerciseGroups->add($exerciseGroup);
-            $exerciseGroup->setSubject($this);
+        $this->faicon = $faicon;
+
+        return $this;
+    }
+
+    public function getHighestExerciseCategories(): Collection
+    {
+        return $this->exerciseCategories->filter(function ($category) {
+            return $category->getParent() === null;
+        });
+    }
+
+    /**
+     * @return Collection<int, ExerciseCategory>
+     */
+    public function getExerciseCategories(): Collection
+    {
+        return $this->exerciseCategories;
+    }
+
+    public function addExerciseCategory(ExerciseCategory $title): static
+    {
+        if (!$this->exerciseCategories->contains($title)) {
+            $this->exerciseCategories->add($title);
+            $title->setSubject($this);
         }
 
         return $this;
     }
 
-    public function removeExerciseGroup(ExerciseGroup $exerciseGroup): static
+    public function removeExerciseCategory(ExerciseCategory $title): static
     {
-        if ($this->exerciseGroups->removeElement($exerciseGroup)) {
+        if ($this->exerciseCategories->removeElement($title)) {
             // set the owning side to null (unless already changed)
-            if ($exerciseGroup->getSubject() === $this) {
-                $exerciseGroup->setSubject(null);
+            if ($title->getSubject() === $this) {
+                $title->setSubject(null);
             }
         }
 
         return $this;
+    }
+
+    public function countExercises(): int
+    {
+        $total = 0;
+        foreach ($this->exerciseCategories as $exerciseCategory) {
+            $total += $exerciseCategory->countExercises();
+        }
+
+        return $total;
+    }
+
+    public function getExercises(): Collection
+    {
+        $allExercises = new ArrayCollection();
+
+        foreach ($this->exerciseCategories as $category) {
+            while ($category->getChildren()->first()) {
+                $category = $category->getChildren()->first();
+            }
+
+            $allExercises->add($category->getExercises()->first());
+        }
+
+        return $allExercises;
     }
 }

@@ -1,0 +1,56 @@
+{% extends "admin/admin.base.html.twig" %}
+
+{% block title %}Utilisateurs{% endblock %}
+
+{% block main_class %}items-center p-4 pt-[88px]{% endblock %}
+
+{% block main %}
+        <div class="container px-4 py-8">
+            <h1 class="text-2xl font-bold mb-6">Liste des utilisateurs</h1>
+
+            <div class="overflow-x-auto bg-foreground-500 shadow rounded-lg">
+                <table class="min-w-full divide-y divide-foreground-300">
+                    <thead class="bg-foreground-400">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-24">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase">Prénom</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase">Nom</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-52">Roles</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-36">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="bg-foreground-500 divide-y divide-foreground-300">
+                    {% for user in users %}
+                        <tr class="hover:bg-foreground-400">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100 ">{{ user.id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100">{{ user.firstname }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100">{{ user.lastname }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100">{{ user.email }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100">
+                                {% for role in user.roles|sort %}
+                                    <span class="inline-block bg-foreground-300 text-accent-blue-500 text-xs px-2 py-1 rounded mr-1">{{ role|replace({'ROLE_': ''}) }}</span>
+                                {% endfor %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-xs">
+                                {% if 'ROLE_ADMIN' in user.roles %}
+                                    {% if app.user.id != user.id %}
+                                        <a class="text-accent-red-400 hover:text-accent-red-300" href="{{ path('app_admin_demote', {'user': user.id}) }}">Rétrograder</a>
+                                    {% else %}
+                                        <span class="text-text-300">Vous-même</span>
+                                    {% endif %}
+                                {% else %}
+                                    <a class="text-accent-green-400 hover:text-accent-green-300" href="{{ path('app_admin_promote', {'user': user.id}) }}">Promouvoir</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-sm text-text-300">Aucun utilisateur trouvé.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+{% endblock %}

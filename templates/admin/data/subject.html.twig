@@ -1,0 +1,39 @@
+{% extends "admin/admin.base.html.twig" %}
+
+{% block title %}{{ subject.name }}{% endblock %}
+
+{% block main_class %}items-center p-4 pt-[88px] justify-center{% endblock %}
+
+{% block main %}
+        <div class="container px-4 py-8">
+            <div class="mb-8 text-center">
+                <i class="h-16! w-16 {{ subject.faicon }}"></i>
+                <h1 class="text-3xl font-bold text-text-100 mt-4">PrépaLib</h1>
+                <p class="text-text-300 mt-2">Modifier la matière: {{ subject.name }}</p>
+            </div>
+
+            <div class="rounded-xl bg-foreground-500 overflow-hidden max-w-3xl mx-auto">
+                <div class="p-8">
+                    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                        <div class="flex-1">
+                            {{ form_label(form.name) }}
+                            {{ form_widget(form.name) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+                        <div class="flex-1">
+                            {{ form_label(form.faicon) }}
+                            {{ form_widget(form.faicon) }}
+                            {{ form_errors(form.faicon) }}
+                        </div>
+                    </div>
+
+                    {{ form_widget(form.submit) }}
+                    {{ form_end(form) }}
+                </div>
+                <div class="px-8 py-2 bg-foreground-300/50 border-t border-foreground-300 text-center flex flex-col">
+                    <a href="{{ path('app_admin_exercises', {'subject': subject.id}) }}" class="text-text-300 hover:text-text-200 text-sm transition duration-500 mb-2">Gérer les exercices ({{ subject.countExercises() }})</a>
+                </div>
+            </div>
+        </div>
+{% endblock %}

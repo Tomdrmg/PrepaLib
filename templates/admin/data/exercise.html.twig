@@ -1,0 +1,48 @@
+{% extends "admin/admin.base.html.twig" %}
+
+{% block title %}Éditeur d'Exercice{% endblock %}
+
+{% block main_class %}items-center p-4 pt-[88px] justify-center{% endblock %}
+
+{% block main %}
+    <div class="container px-4 py-8">
+        <div class="rounded-xl bg-foreground-500 mx-auto">
+            <div class="p-8">
+                {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+                {# Titre #}
+                <div>
+                    {{ form_label(form.title) }}
+                    {{ form_widget(form.title, {'attr': {'class': 'w-full'}}) }}
+                    {{ form_errors(form.title) }}
+                </div>
+
+                {# Énoncé #}
+                <div>
+                    {{ form_label(form.statement) }}
+                    {{ form_widget(form.statement, {'attr': {'class': 'latex-input w-full'}}) }}
+                    {{ form_errors(form.statement) }}
+                </div>
+
+                {# Solution #}
+                <div>
+                    {{ form_label(form.solution) }}
+                    {{ form_widget(form.solution, {'attr': {'class': 'latex-input w-full'}}) }}
+                    {{ form_errors(form.solution) }}
+                </div>
+
+                {# Indices #}
+                <twig:ListInput class="mb-6" subClass="latex-input w-full" title="Indice" field="{{ form.hints }}"/>
+
+                {# Tags #}
+                <twig:TagSelector class="mb-6" inheritedTags="{{ category.fullTags }}" field="{{ form.tags }}"/>
+
+                {{ form_widget(form.submit) }}
+                {{ form_end(form) }}
+            </div>
+            <div class="px-8 py-2 bg-foreground-300/50 border-t rounded-b-xl border-foreground-300 text-center flex flex-col">
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
