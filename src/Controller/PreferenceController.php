@@ -27,7 +27,6 @@ final class PreferenceController extends AbstractController
             $pref->setExercise($exercise);
             $pref->setComment('');
             $pref->setDone(false);
-            $pref->setTodo(false);
             $pref->setFavorite(false);
             $pref->setDifficulty(-1);
             $entityManager->persist($pref);
@@ -43,15 +42,6 @@ final class PreferenceController extends AbstractController
                 $updated = true;
             } else {
                 return new JsonResponse(['success' => false, 'error' => 'favorite doit être un booléen'], 400);
-            }
-        }
-
-        if (array_key_exists('todo', $data)) {
-            if (is_bool($data['todo'])) {
-                $pref->setTodo($data['todo']);
-                $updated = true;
-            } else {
-                return new JsonResponse(['success' => false, 'error' => 'todo doit être un booléen'], 400);
             }
         }
 

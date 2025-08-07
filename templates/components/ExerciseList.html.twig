@@ -204,22 +204,22 @@
                                             </div>
                                             <div class="flex flex-row divide-x divide-[var(--category-color)] border-t md:border-l md:border-t-0 border-[var(--category-color)]">
                                                 <div data-unselected-color="text-text-300" class="w-3/4 md:w-auto difficulty p-2 flex flex-row gap-2 justify-center">
-                                                    <div onclick="ExerciseList{{ subject.id }}().setListPref(${exercise.id}, {'difficulty': 0})"
+                                                    <div onclick="ExerciseList{{ subject.id }}.setListPref(${exercise.id}, {'difficulty': 0})"
                                                          data-selected-color="text-accent-blue-500" data-difficulty="0"
                                                          class="difficulty-element ${exercise.pref.difficulty === 0 ? 'text-accent-blue-500' : 'text-text-300'} text-lg cursor-pointer flex justify-center items-center">
                                                         <i class="fa-regular fa-grin-stars text-lg"></i>
                                                     </div>
-                                                    <div onclick="ExerciseList{{ subject.id }}().setListPref(${exercise.id}, {'difficulty': 1})"
+                                                    <div onclick="ExerciseList{{ subject.id }}.setListPref(${exercise.id}, {'difficulty': 1})"
                                                          data-selected-color="text-accent-green-500" data-difficulty="1"
                                                          class="difficulty-element ${exercise.pref.difficulty === 1 ? 'text-accent-green-500' : 'text-text-300'} text-lg cursor-pointer flex justify-center items-center">
                                                         <i class="fa-regular fa-smile text-lg"></i>
                                                     </div>
-                                                    <div onclick="ExerciseList{{ subject.id }}().setListPref(${exercise.id}, {'difficulty': 2})"
+                                                    <div onclick="ExerciseList{{ subject.id }}.setListPref(${exercise.id}, {'difficulty': 2})"
                                                          data-selected-color="text-accent-yellow-500" data-difficulty="2"
                                                          class="difficulty-element ${exercise.pref.difficulty === 2 ? 'text-accent-yellow-500' : 'text-text-300'} text-lg cursor-pointer flex justify-center items-center">
                                                         <i class="fa-regular fa-meh text-lg"></i>
                                                     </div>
-                                                    <div onclick="ExerciseList{{ subject.id }}().setListPref(${exercise.id}, {'difficulty': 3})"
+                                                    <div onclick="ExerciseList{{ subject.id }}.setListPref(${exercise.id}, {'difficulty': 3})"
                                                          data-selected-color="text-accent-red-500" data-difficulty="3"
                                                          class="difficulty-element ${exercise.pref.difficulty === 3 ? 'text-accent-red-500' : 'text-text-300'} text-lg cursor-pointer flex justify-center items-center">
                                                         <i class="fa-regular fa-frown text-lg"></i>
@@ -227,21 +227,21 @@
                                                 </div>
                                                 <div class="px-1 flex flex-row w-1/4 md:w-auto justify-center">
                                                     <div class="done p-1">
-                                                        <div onclick="ExerciseList{{ subject.id }}().setListPref(${exercise.id}, {'done': true})"
+                                                        <div onclick="ExerciseList{{ subject.id }}.setListPref(${exercise.id}, {'done': true})"
                                                              class="${exercise.pref.done ? 'hidden!' : ''} false flex items-center justify-center h-full cursor-pointer">
                                                             <i class="w-4 h-4 fa-solid fa-circle-check text-text-300"></i>
                                                         </div>
-                                                        <div onclick="ExerciseList{{ subject.id }}().setListPref(${ exercise.id }, {'done': false})"
+                                                        <div onclick="ExerciseList{{ subject.id }}.setListPref(${ exercise.id }, {'done': false})"
                                                              class="${exercise.pref.done ? '': 'hidden!'} true flex items-center justify-center h-full cursor-pointer">
                                                             <i class="w-4 h-4 fa-solid fa-circle-check text-accent-green-500"></i>
                                                         </div>
                                                     </div>
                                                     <div class="favorite p-1">
-                                                        <div onclick="ExerciseList{{ subject.id }}().setListPref(${ exercise.id }, {'favorite': true})"
+                                                        <div onclick="ExerciseList{{ subject.id }}.setListPref(${ exercise.id }, {'favorite': true})"
                                                              class="${exercise.pref.favorite ? 'hidden!' : ''} false flex items-center justify-center h-full cursor-pointer">
                                                             <i class="w-4 h-4 fa-regular fa-star text-text-300"></i>
                                                         </div>
-                                                        <div onclick="ExerciseList{{ subject.id }}().setListPref(${ exercise.id }, {'favorite': false})"
+                                                        <div onclick="ExerciseList{{ subject.id }}.setListPref(${ exercise.id }, {'favorite': false})"
                                                              class="${exercise.pref.favorite ? '': 'hidden!'} true flex items-center justify-center h-full cursor-pointer">
                                                             <i class="w-4 h-4 fa-solid fa-star text-accent-yellow-500"></i>
                                                         </div>
