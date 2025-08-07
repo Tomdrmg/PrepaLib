@@ -1,0 +1,467 @@
+<div{{ attributes }} id="exercise-list-{{ subject.id }}">
+    <div>
+
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4">
+        <div class="w-full mt-4 md:col-span-2">
+            <label for="exerciseList{{ subject.id }}Search"
+                   class="text-sm text-text-300">
+                Rechercher:
+                <input
+                    id="exerciseList{{ subject.id }}Search"
+                    type="text"
+                    placeholder="Votre recherche..."
+                    class="mt-1"
+                />
+            </label>
+        </div>
+
+        <div class="w-full h-min md:w-40 lg:w-60 rounded-md border border-foreground-200 bg-foreground-300 flex flex-col divide-y-2 divide-foreground-200">
+            <div class="flex items-center justify-center p-3">
+                <span class="text-sm font-semibold">Filtres</span>
+            </div>
+            <div class="px-2 pb-2">
+                <span class="text-xs text-text-200">Exercice déjà fait:</span>
+                <div data-field="done" data-field-type="bool" class="filter-field text-xs text-text-200 grid grid-cols-3 rounded-md bg-foreground-100 ring ring-text-500 divide-x divide-text-500">
+                    <span data-selected-classes="bg-text-100/20" data-value="null" class="flex items-center justify-center py-1 cursor-pointer bg-text-100/20 hover:bg-text-100/20 transition rounded-l">/</span>
+                    <span data-selected-classes="bg-text-100/20" data-value="true" class="flex items-center justify-center py-1 cursor-pointer hover:bg-text-100/20 transition">Oui</span>
+                    <span data-selected-classes="bg-text-100/20" data-value="false" class="flex items-center justify-center py-1 cursor-pointer hover:bg-text-100/20 transition rounded-r">Non</span>
+                </div>
+            </div>
+            <div class="px-2 pb-2">
+                <span class="text-xs text-text-200">Exercice favori:</span>
+                <div data-field="favorite" data-field-type="bool" class="filter-field text-xs text-text-200 grid grid-cols-3 rounded-md bg-foreground-100 ring ring-text-500 divide-x divide-text-500">
+                    <span data-selected-classes="bg-text-100/20" data-value="null" class="flex items-center justify-center py-1 cursor-pointer bg-text-100/20 hover:bg-text-100/20 transition rounded-l">/</span>
+                    <span data-selected-classes="bg-text-100/20" data-value="true" class="flex items-center justify-center py-1 cursor-pointer hover:bg-text-100/20 transition">Oui</span>
+                    <span data-selected-classes="bg-text-100/20" data-value="false" class="flex items-center justify-center py-1 cursor-pointer hover:bg-text-100/20 transition rounded-r">Non</span>
+                </div>
+            </div>
+            <div class="px-2">
+                <div data-field="difficulties" data-field-type="list[int]" class="filter-field text-text-300 p-2 flex flex-row gap-2 justify-center">
+                    <div data-selected-classes="text-accent-blue-500" data-value="0"
+                         class="flex text-lg cursor-pointer justify-center items-center">
+                        <i class="fa-regular fa-grin-stars text-lg"></i>
+                    </div>
+                    <div data-selected-classes="text-accent-green-500" data-value="1"
+                         class="flex text-lg cursor-pointer justify-center items-center">
+                        <i class="fa-regular fa-smile text-lg"></i>
+                    </div>
+                    <div data-selected-classes="text-accent-yellow-500" data-value="2"
+                         class="flex text-lg cursor-pointer justify-center items-center">
+                        <i class="fa-regular fa-meh text-lg"></i>
+                    </div>
+                    <div data-selected-classes="text-accent-red-500" data-value="3"
+                         class="flex text-lg cursor-pointer justify-center items-center">
+                        <i class="fa-regular fa-frown text-lg"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="px-2 pb-2">
+                <span class="text-xs text-text-200">Mode de recherche:</span>
+                <div data-field="tagsMode" data-field-type="string" class="filter-field text-xs text-text-200 grid grid-cols-2 md:grid-cols-1 md:grid-rows-2 rounded-md bg-foreground-100 ring ring-text-500 divide-y divide-text-500">
+                    <span data-selected-classes="bg-text-100/20" data-value="any" class="flex items-center justify-center py-1 cursor-pointer bg-text-100/20 hover:bg-text-100/20 transition rounded-t">Au moins un tag</span>
+                    <span data-selected-classes="bg-text-100/20" data-value="all" class="flex items-center justify-center py-1 cursor-pointer hover:bg-text-100/20 transition rounded-b">Tous les tags</span>
+                </div>
+            </div>
+            <div class="px-2 pb-2">
+                <span class="text-xs text-text-200">Tags:</span>
+                {{ form_start(form) }}
+                <twig:TagSelector field="{{ form.tags }}" :disableInheritedTags="true" :hideLabel="true" selectorStyle="text-xs"/>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <div class="relative flex flex-col gap-5">
+            <div class="list-loader absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center hidden! z-10 bg-foreground-500/60">
+                <svg aria-hidden="true" class="w-8 h-8 text-foreground-300 animate-spin fill-accent-purple-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                </svg>
+                <span class="sr-only">Chargement...</span>
+            </div>
+
+            <div class="flex flex-col">
+                <div class="px-4 flex flex-row items-center">
+                    <p class="text-sm text-text-300 grow">
+                        Résultats
+                        <span class="current-results-start font-medium"></span>
+                        à
+                        <span class="current-results-stop font-medium"></span>
+                        sur
+                        <span class="total-results font-medium"></span>
+                        résultats.
+                    </p>
+
+                    <div class="max-w-32">
+                        <label for="exerciseList{{ subject.id }}Limit" class="block mb-2 text-sm font-medium text-text-300 text-end">
+                            Exercices par page
+                        </label>
+                        <select
+                            id="exerciseList{{ subject.id }}Limit"
+                            onchange="ExerciseList{{ subject.id }}().limitChange(this)"
+                            class="block w-full px-4 py-2 text-sm text-text-200 bg-foreground-300 border border-foreground-200 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-accent-purple-500 focus:border-accent-purple-500 transition"
+                        >
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
+
+                <ul class="exercises-container">
+
+                </ul>
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <div class="page-buttons isolate inline-flex -space-x-px rounded-md shadow-xs bg-foreground-400 w-min self-center">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ExerciseList{{ subject.id }} = (function () {
+            const exerciseListComponent = document.getElementById('exercise-list-{{ subject.id }}');
+
+            const listLoader = exerciseListComponent.querySelector('.list-loader');
+
+            const pageButtons = exerciseListComponent.querySelector('.page-buttons');
+            const currentResultsStart = exerciseListComponent.querySelector('.current-results-start');
+            const currentResultsStop = exerciseListComponent.querySelector('.current-results-stop');
+            const totalResultsElem = exerciseListComponent.querySelector('.total-results');
+
+            const searchInput = exerciseListComponent.querySelector('#exerciseList{{ subject.id }}Search');
+
+            let filters = {
+                "page": 1,
+                "limit": 10,
+                "search": null,
+                "difficulties": [],
+                "done": null,
+                "favorite": null,
+                "tagsMode": "any",
+                "tags": []
+            }
+
+            function setPage(page) {
+                filters.page = page;
+                updateExercises();
+            }
+
+            function limitChange(selector) {
+                filters.limit = selector.value;
+                updateExercises();
+            }
+
+            function setLoading() {
+                listLoader.classList.remove('hidden!');
+            }
+
+            function stopLoading() {
+                listLoader.classList.add('hidden!');
+            }
+
+            function setListPref(exerciseId, edit) {
+                setLoading();
+
+                if (edit.difficulty !== null) {
+                    exerciseListComponent.querySelectorAll(`.prefs-${exerciseId} .difficulty-element`).forEach(btn => {
+                        if (parseInt(btn.dataset.difficulty) === edit.difficulty) {
+                            const classes = btn.dataset.selectedColor.split(' ');
+                            let b = true;
+
+                            for (const cl of classes) {
+                                if (!btn.classList.contains(cl)) b = false;
+                            }
+
+                            if (b) edit.difficulty = -1;
+                        }
+                    });
+                }
+
+                ExercisePref().setPref(exerciseId, edit, stopLoading, stopLoading);
+            }
+
+            const exerciseContainer = exerciseListComponent.querySelector('.exercises-container');
+
+            function setExercises(exercises) {
+                exerciseContainer.innerHTML = exercises.length === 0 ? 'Aucun Exercice' : '';
+
+                for (const exercise of exercises) {
+                    const d = document.createElement("div");
+                    d.innerHTML = `<li style="--category-color: ${exercise.category.color};" class="mt-2 relative">
+                                        <div class="absolute -top-3 left-4 bg-foreground-500 px-2 text-sm text-[var(--category-color)] font-semibold z-10">
+                                            ${exercise.firstCategory.name}
+                                        </div>
+
+                                        <div class="grid grid-cols-1 prefs-${exercise.id} md:grid-cols-[1fr_auto] md:grid-rows-[auto_auto] mt-5 rounded transition text-text-200 ring ring-inset ring-[var(--category-color)]">
+                                            <div class="p-4">
+                                                <span class="text-sm md:text-base font-semibold md:font-bold">${exercise.title}</span>
+                                            </div>
+                                            <div class="flex flex-row divide-x divide-[var(--category-color)] border-t md:border-l md:border-t-0 border-[var(--category-color)]">
+                                                <div data-unselected-color="text-text-300" class="w-3/4 md:w-auto difficulty p-2 flex flex-row gap-2 justify-center">
+                                                    <div onclick="ExerciseList{{ subject.id }}().setListPref(${exercise.id}, {'difficulty': 0})"
+                                                         data-selected-color="text-accent-blue-500" data-difficulty="0"
+                                                         class="difficulty-element ${exercise.pref.difficulty === 0 ? 'text-accent-blue-500' : 'text-text-300'} text-lg cursor-pointer flex justify-center items-center">
+                                                        <i class="fa-regular fa-grin-stars text-lg"></i>
+                                                    </div>
+                                                    <div onclick="ExerciseList{{ subject.id }}().setListPref(${exercise.id}, {'difficulty': 1})"
+                                                         data-selected-color="text-accent-green-500" data-difficulty="1"
+                                                         class="difficulty-element ${exercise.pref.difficulty === 1 ? 'text-accent-green-500' : 'text-text-300'} text-lg cursor-pointer flex justify-center items-center">
+                                                        <i class="fa-regular fa-smile text-lg"></i>
+                                                    </div>
+                                                    <div onclick="ExerciseList{{ subject.id }}().setListPref(${exercise.id}, {'difficulty': 2})"
+                                                         data-selected-color="text-accent-yellow-500" data-difficulty="2"
+                                                         class="difficulty-element ${exercise.pref.difficulty === 2 ? 'text-accent-yellow-500' : 'text-text-300'} text-lg cursor-pointer flex justify-center items-center">
+                                                        <i class="fa-regular fa-meh text-lg"></i>
+                                                    </div>
+                                                    <div onclick="ExerciseList{{ subject.id }}().setListPref(${exercise.id}, {'difficulty': 3})"
+                                                         data-selected-color="text-accent-red-500" data-difficulty="3"
+                                                         class="difficulty-element ${exercise.pref.difficulty === 3 ? 'text-accent-red-500' : 'text-text-300'} text-lg cursor-pointer flex justify-center items-center">
+                                                        <i class="fa-regular fa-frown text-lg"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="px-1 flex flex-row w-1/4 md:w-auto justify-center">
+                                                    <div class="done p-1">
+                                                        <div onclick="ExerciseList{{ subject.id }}().setListPref(${exercise.id}, {'done': true})"
+                                                             class="${exercise.pref.done ? 'hidden!' : ''} false flex items-center justify-center h-full cursor-pointer">
+                                                            <i class="w-4 h-4 fa-solid fa-circle-check text-text-300"></i>
+                                                        </div>
+                                                        <div onclick="ExerciseList{{ subject.id }}().setListPref(${ exercise.id }, {'done': false})"
+                                                             class="${exercise.pref.done ? '': 'hidden!'} true flex items-center justify-center h-full cursor-pointer">
+                                                            <i class="w-4 h-4 fa-solid fa-circle-check text-accent-green-500"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div class="favorite p-1">
+                                                        <div onclick="ExerciseList{{ subject.id }}().setListPref(${ exercise.id }, {'favorite': true})"
+                                                             class="${exercise.pref.favorite ? 'hidden!' : ''} false flex items-center justify-center h-full cursor-pointer">
+                                                            <i class="w-4 h-4 fa-regular fa-star text-text-300"></i>
+                                                        </div>
+                                                        <div onclick="ExerciseList{{ subject.id }}().setListPref(${ exercise.id }, {'favorite': false})"
+                                                             class="${exercise.pref.favorite ? '': 'hidden!'} true flex items-center justify-center h-full cursor-pointer">
+                                                            <i class="w-4 h-4 fa-solid fa-star text-accent-yellow-500"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="p-4 flex flex-col gap-3 md:col-span-2 border-t border-b border-[var(--category-color)]">
+                                                <div class="text-xs md:text-sm prose prose-invert max-w-none latex">
+                                                    ${exercise.statement}
+                                                </div>
+                                                <div class="flex items-center justify-center gap-3">
+                                                    <a href="${'{{ path('app_exercise', {'exercise': 'EXERCISE_ID'}) }}'.replaceAll('EXERCISE_ID', exercise.id)}" class="text-xs p-2 md:text-sm bg-accent-purple-700 hover:bg-accent-accent-purple-600 transition duration-300 rounded">Accéder à l'exercice</a>
+                                                </div>
+                                            </div>
+                                            <div class="w-min p-2 min-w-full md:col-span-2 lg:col-span-1">
+                                                <span class="text-xs font-semibold">Commentaire personnel :</span>
+                                                <br/>
+                                                <p class="non-commented-text text-xs text-text-300 ${exercise.pref.comment.replace(/\s+/g, ' ').trim() !== '' ? 'hidden' : ''}">
+                                                    Vous n'avez pas encore commenté cet exercice
+                                                </p>
+                                                <p class="comment-container text-xs text-text-300 ${exercise.pref.comment.replace(/\s+/g, ' ').trim() !== '' ? '' : 'hidden'}">
+                                                    ${exercise.pref.comment}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </li>`;
+
+                    exerciseContainer.appendChild(d.querySelector('li'));
+                }
+            }
+
+            function updatePages(page, totalPages, totalResults, limit) {
+                currentResultsStart.innerHTML = (page - 1) * limit + 1;
+                currentResultsStop.innerHTML = Math.min((page) * limit, totalResults);
+                totalResultsElem.innerHTML = totalResults;
+
+                function getLeftArrow(enabled) {
+                    return `<span${enabled ? ` onclick="ExerciseList{{ subject.id }}().setPage(${page - 1})"` : ''} class="${enabled ? 'cursor-pointer hover:bg-foreground-300 focus:outline-offset-0' : 'text-text-500'} relative inline-flex items-center rounded-l-md px-2 py-2 inset-ring inset-ring-foreground-300 focus:z-20">
+                                <span class="sr-only">Previous</span>
+                                <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5">
+                                    <path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                </svg>
+                            </span>`
+                }
+
+                function getRightArrow(enabled) {
+                    return `<span${enabled ? ` onclick="ExerciseList{{ subject.id }}().setPage(${page + 1})"` : ''} class="${enabled ? 'cursor-pointer hover:bg-foreground-300 focus:outline-offset-0' : 'text-text-500'} relative inline-flex items-center rounded-r-md px-2 py-2 inset-ring inset-ring-foreground-300 focus:z-20">
+                                <span class="sr-only">Next</span>
+                                <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5">
+                                    <path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                </svg>
+                            </span>`
+                }
+
+                function getEllipsisButton() {
+                    return `<span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold inset-ring inset-ring-foreground-200">...</span>`
+                }
+
+                function getButton(current, number) {
+                    return `<span${current ? '' : ` onclick="ExerciseList{{ subject.id }}().setPage(${number})"`} class="relative inline-flex items-center px-4 py-2 text-sm font-semibold ${current ? 'z-10 focus:z-20 z-10 bg-accent-purple-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple-600' : 'inset-ring inset-ring-foreground-200 hover:bg-foreground-200 focus:z-20 focus:outline-offset-0'}">${number}</span>`
+                }
+
+                pageButtons.innerHTML = getLeftArrow(page > 1);
+
+                if (totalPages <= 7) {
+                    for (let i = 1; i <= totalPages; i++) {
+                        pageButtons.innerHTML += getButton(page === i, i);
+                    }
+                } else if (page <= 5) {
+                    for (let i = 1; i <= 5; i++) {
+                        pageButtons.innerHTML += getButton(page === i, i);
+                    }
+
+                    pageButtons.innerHTML += getEllipsisButton();
+                    pageButtons.innerHTML += getButton(false, totalPages);
+                } else if (page >= totalPages - 4) {
+                    pageButtons.innerHTML += getButton(false, 1);
+                    pageButtons.innerHTML += getEllipsisButton();
+
+                    for (let i = totalPages - 4; i <= totalPages; i++) {
+                        pageButtons.innerHTML += getButton(page === i, i);
+                    }
+                } else {
+                    pageButtons.innerHTML += getButton(false, 1);
+                    pageButtons.innerHTML += getEllipsisButton();
+                    pageButtons.innerHTML += getButton(false, page - 1);
+                    pageButtons.innerHTML += getButton(true, page);
+                    pageButtons.innerHTML += getButton(false, page + 1);
+                    pageButtons.innerHTML += getEllipsisButton();
+                    pageButtons.innerHTML += getButton(false, totalPages);
+                }
+
+                pageButtons.innerHTML += getRightArrow(page < totalPages);
+            }
+
+            function updateExercises() {
+                setLoading();
+
+                const url = new URL('{{ path('api_list_exercises') }}', window.location.origin);
+
+                if (filters.page !== 1) url.searchParams.set('page', filters.page);
+                if (filters.limit !== 10) url.searchParams.set('limit', filters.limit);
+                if (filters.search !== null) url.searchParams.set('search', filters.search);
+                if (filters.difficulties.length > 0) url.searchParams.set('difficulties', filters.difficulties.join(','));
+                if (filters.done !== null) url.searchParams.set('done', filters.done);
+                if (filters.favorite !== null) url.searchParams.set('favorite', filters.favorite);
+                if (filters.tagsMode === "any" || filters.tagsMode === "all") url.searchParams.set('tagsMode', filters.tagsMode);
+                if (filters.tags.length > 0) url.searchParams.set('tags', filters.tags.join(','));
+
+                fetch(url.toString(), {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur HTTP : ' + response.status);
+                        }
+
+                        return response.json();
+                    })
+                    .then(data => {
+                        setExercises(data.results);
+                        updatePages(data.page, data.totalPages, data.totalResults, data.limit);
+                        stopLoading()
+                    })
+                    .catch(error => {
+                        console.error('Erreur fetch :', error); // TODO : NOTIFICATION
+                        stopLoading()
+                    });
+            }
+
+            function asBool(string) {
+                const lower = string.toLowerCase();
+                if (lower === 'true') return true;
+                if (lower === 'false') return false;
+
+                return null;
+            }
+
+            function asInt(string) {
+                const n = parseInt(string, 10);
+                return Number.isNaN(n) ? -1 : n;
+            }
+
+            function init() {
+                updateExercises();
+                searchInput.addEventListener('input', function (event) {
+                    const search = event.target.value;
+
+                    if (search.replace(/\s+/g, ' ').trim() === "") {
+                        filters.search = null;
+                    } else {
+                        filters.search = search.replace(/\s+/g, ' ');
+                    }
+
+                    updateExercises()
+                });
+
+                exerciseListComponent.querySelectorAll('.filter-field').forEach((field) => {
+                    const fieldType = field.dataset.fieldType
+                    const fieldName = field.dataset.field;
+
+                    for (const element of field.children) {
+                        element.addEventListener('click', function () {
+                            const value = element.dataset.value;
+                            if (fieldType === 'list[int]' && asInt(value) !== -1) {
+                                if (filters[fieldName].includes(asInt(value))) {
+                                    for (let i = 0; i < filters[fieldName].length; i++) {
+                                        if (filters[fieldName][i] === asInt(value)) {
+                                            filters[fieldName].splice(i, 1);
+                                        }
+                                    }
+
+                                    element.classList.remove(element.dataset.selectedClasses.split(' '));
+                                } else {
+                                    filters[fieldName].push(asInt(value));
+                                    element.classList.add(element.dataset.selectedClasses.split(' '));
+                                }
+
+                                updateExercises();
+                            } else if (fieldType === 'bool' && asBool(value) !== filters[fieldName]) {
+                                filters[fieldName] = asBool(value);
+                                element.classList.add(element.dataset.selectedClasses.split(' '));
+
+                                for (const el of field.children) {
+                                    if (el !== element) {
+                                        el.classList.remove(el.dataset.selectedClasses);
+                                    }
+                                }
+
+                                updateExercises();
+                            } else if (fieldType === 'string' && value !== filters[fieldName]) {
+                                filters[fieldName] = value;
+                                element.classList.add(element.dataset.selectedClasses.split(' '));
+
+                                for (const el of field.children) {
+                                    if (el !== element) {
+                                        el.classList.remove(el.dataset.selectedClasses);
+                                    }
+                                }
+
+                                updateExercises();
+                            }
+                        })
+                    }
+                })
+            }
+
+            return {
+                setLoading: setLoading,
+                stopLoading: stopLoading,
+                setListPref: setListPref,
+                setExercises: setExercises,
+                updateExercises: updateExercises,
+                init: init,
+                setPage: setPage,
+                limitChange: limitChange,
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', ExerciseList{{ subject.id }}().init);
+    </script>
+</div>

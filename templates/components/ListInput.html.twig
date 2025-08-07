@@ -1,0 +1,79 @@
+<div{{ attributes }}>
+    {{ form_label(field) }}
+
+    <div data-prototype="{{ form_widget(field.vars.prototype)|e('html_attr') }}"
+         data-index="{{ field|length > 0 ? field|last.vars.name + 1 : 0 }}"
+         class="{{ field.vars.name }}-collection collection"
+         id="{{ field.vars.id }}">
+        {% for subField in field %}
+            <div class="{{ field.vars.name }}-item collection-item">
+                <div class="flex">
+                    <span class="grow block font-bold uppercase text-sm ml-2 mb-3">{{ title }} #<span class="index-display"></span></span>
+                    <span class="remove-{{ field.vars.name }}-btn collection-remove-btn">
+                        Supprimer
+                    </span>
+                </div>
+
+                {{ form_widget(subField, subClass ? {'attr': {'class': subClass}} : {}) }}
+                {{ form_errors(subField) }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <button type="button" id="add-{{ field.vars.name }}-btn" class="mt-2!">
+        Ajouter un {{ title|lower }}
+    </button>
+
+    {{ form_widget(field, {'attr': {'class': 'hidden hidden-tags-input'}}) }}
+    {{ form_errors(field) }}
+
+    <script>
+        // Gestion des élements
+        const collection = document.querySelector('.{{ field.vars.name }}-collection');
+        const addBtn = document.querySelector('#add-{{ field.vars.name }}-btn');
+
+        function updateIndices() {
+            const items = collection.querySelectorAll('.collection-item');
+            items.forEach((item, index) => {
+                const display = item.querySelector('.index-display');
+                if (display) {
+                    display.textContent = `${index + 1}`;
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', updateIndices);
+
+        addBtn.addEventListener('click', () => {
+            const prototype = collection.dataset.prototype;
+            const index = collection.dataset.index;
+
+            const newForm = prototype.replace(/__name__/g, index);
+            const newFormElement = document.createElement('div');
+            newFormElement.className = '{{ field.vars.name }}-item collection-item';
+            newFormElement.innerHTML = `<div class="flex">
+                                            <span class="grow block font-bold uppercase text-sm ml-2 mb-3">{{ title }} #<span class="index-display"></span></span>
+                                            <span class="remove-{{ field.vars.name }}-btn  collection-remove-btn">
+                                                Supprimer
+                                            </span>
+                                        </div>`
+                                        + newForm;
+
+            newFormElement.querySelector(".remove-{{ field.vars.name }}-btn").addEventListener('click', () => {
+                newFormElement.remove();
+                updateIndices();
+            });
+
+            collection.appendChild(newFormElement);
+            collection.dataset.index = parseInt(index) + 1;
+            updateIndices();
+        });
+
+        document.querySelectorAll('.remove-{{ field.vars.name }}-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.{{ field.vars.name }}-item').remove();
+                updateIndices();
+            });
+        });
+    </script>
+</div>

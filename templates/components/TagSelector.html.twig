@@ -1,0 +1,227 @@
+<div{{ attributes }} id="tag-selector-{{ field.vars.name }}">
+    {% if not disableInheritedTags %}
+        <label>Tags Hérités</label>
+        {# Affichage des tags hérités #}
+        <div class="inherited-tags flex flex-wrap gap-2 mb-2">
+            {% if inheritedTags is not empty %}
+                {% for tag in inheritedTags %}
+                    <twig:Tag name="{{ tag.name }}" color="{{ tag.color }}" data-tag-id="{{ tag.id }}"/>
+                {% endfor %}
+            {% else %}
+                <span class="text-xs">Aucun tag hérité</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if not hideLabel %}
+        {{ form_label(field) }}
+    {% endif %}
+
+    {# Affichage des tags sélectionnés #}
+    <div class="selected-tags flex flex-wrap gap-2 mb-3">
+        {% for tag in field.vars.data %}
+            <twig:Tag name="{{ tag.name }}" color="{{ tag.color }}" withRemoveButton="true" data-tag-id="{{ tag.id }}"/>
+        {% endfor %}
+    </div>
+
+    {# Sélecteur des tags disponibles #}
+    <div class="relative">
+        <div class="custom-tags-selector">
+            <div class="selected-option p-2 border border-foreground-300 rounded cursor-pointer flex items-center justify-between">
+                <span class="{{ selectorStyle }}">Sélectionnez un tag pour l'ajouter...</span>
+                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                </svg>
+            </div>
+            <div class="options-container hidden absolute z-50 w-full mt-1 bg-foreground-400 border border-foreground-300 rounded shadow-lg max-h-60 overflow-auto">
+                {% set inheritedTagIds = inheritedTags|map(t => t.id)|filter(i => i is not null) %}
+                {% for tag in field.vars.choices %}
+                    {% if tag.data not in field.vars.data and tag.data.id not in inheritedTagIds %}
+                        <div class="option-item p-2 hover:bg-foreground-300 cursor-pointer flex items-center"
+                             data-value="{{ tag.value }}" data-tag-name="{{ tag.data.name }}" data-tag-color="{{ tag.data.color }}">
+                            <twig:Tag name="{{ tag.data.name }}" color="{{ tag.data.color }}"/>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {# Champ caché pour le formulaire #}
+    {{ form_widget(field, {'attr': {'class': 'hidden hidden-tags-input'}}) }}
+    {{ form_errors(field) }}
+
+    <script>
+        const TagSelector{{ field.vars.name|capitalize }} = (function () {
+            const tagSelectorComponent = document.getElementById('tag-selector-{{ field.vars.name }}');
+
+            // Gestion du custom select pour les tags
+            const inheritedTagsContainer = tagSelectorComponent.querySelector('.inherited-tags');
+            const selectedTagsContainer = tagSelectorComponent.querySelector('.selected-tags');
+            const hiddenTagsInput = tagSelectorComponent.querySelector('.hidden-tags-input');
+            const allTags = [
+                {% for choice in field.vars.choices %}
+                {
+                    id: '{{ choice.value }}',
+                    name: '{{ choice.data.name }}',
+                    color: '{{ choice.data.color }}'
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ];
+
+            const customSelector = tagSelectorComponent.querySelector('.custom-tags-selector');
+            const selectedOption = customSelector.querySelector('.selected-option');
+            const optionsContainer = customSelector.querySelector('.options-container');
+
+            // Mettre à jour le champ caché du formulaire
+            function updateHiddenInput() {
+                const selectedTagIds = Array.from(selectedTagsContainer.querySelectorAll('.tag'))
+                    .map(el => el.dataset.tagId);
+
+                for (const option of hiddenTagsInput.options) {
+                    option.selected = selectedTagIds.includes(option.value);
+                }
+            }
+
+            updateHiddenInput();
+
+            // Management externe
+            function clearTags() {
+                selectedTagsContainer.querySelectorAll('.tag').forEach(tag => {
+                    tagClick(tag);
+                });
+            }
+
+            function setTags(tags) {
+                const ids = tags.split(',');
+                clearTags();
+                customSelector.querySelectorAll('.option-item').forEach(option => {
+                    if (ids.includes(option.dataset.value)) {
+                        optionClick(option);
+                    }
+                })
+            }
+
+            function clearInheritedTags() {
+                inheritedTagsContainer.querySelectorAll('.tag').forEach(tag => {
+                    tagClick(tag);
+                });
+
+                inheritedTagsContainer.innerHTML = '<span class="text-xs">Aucun tag hérité</span>';
+            }
+
+            function setInheritedTags(tags) {
+                const ids = tags.split(',');
+                clearInheritedTags();
+                if (ids.length > 1 || (ids.length === 1 && ids[0] !== '')) inheritedTagsContainer.innerHTML = '';
+                customSelector.querySelectorAll('.option-item').forEach(option => {
+                    if (ids.includes(option.dataset.value)) {
+                        const value = option.dataset.value;
+                        const tagName = option.dataset.tagName;
+                        const tagColor = option.dataset.tagColor;
+
+                        // Créer le composant Tag
+                        const tagTemplate = document.createElement('div');
+                        tagTemplate.innerHTML = `<twig:Tag name="${tagName}" color="${tagColor}" data-tag-id="${value}"/>`;
+
+                        const tagElement = tagTemplate.firstElementChild;
+                        inheritedTagsContainer.appendChild(tagElement);
+                        option.remove();
+
+                        // Mettre à jour le champ caché
+                        updateHiddenInput();
+                    }
+                })
+            }
+
+            // Quand un tag est cliqué, càd, il doit être supprimé et rajouté au dropdown
+            function tagClick(tagItem) {
+                const tagId = tagItem.dataset.tagId;
+                const tag = allTags.find(t => t.id === tagId);
+
+                if (tag) {
+                    // Réajouter au select
+                    const optionTemplate = document.createElement('div');
+                    optionTemplate.innerHTML = `
+                                        <div class="option-item p-2 hover:bg-foreground-300 cursor-pointer flex items-center"
+                                             data-value="${tag.id}" data-tag-name="${tag.name}" data-tag-color="${tag.color}">
+                                            <twig:Tag name="${tag.name}" color="${tag.color}"/>
+                                        </div>`
+
+                    const option = optionTemplate.firstElementChild;
+                    optionsContainer.appendChild(option);
+
+                    option.addEventListener('click', function () {
+                        optionClick(this);
+                    });
+                }
+
+                tagItem.remove();
+                updateHiddenInput();
+            }
+
+            // Quand une option est cliquée, càd, doit être supprimée et le tag ajouté
+            function optionClick(option) {
+                const value = option.dataset.value;
+                const tagName = option.dataset.tagName;
+                const tagColor = option.dataset.tagColor;
+
+                // Fermer le dropdown
+                optionsContainer.classList.add('hidden');
+
+                // Créer le composant Tag
+                const tagTemplate = document.createElement('div');
+                tagTemplate.innerHTML = `<twig:Tag name="${tagName}" color="${tagColor}" withRemoveButton="true" data-tag-id="${value}"/>`;
+
+                const tagElement = tagTemplate.firstElementChild;
+                selectedTagsContainer.appendChild(tagElement);
+                option.remove();
+
+                // Mettre à jour le champ caché
+                updateHiddenInput();
+
+                // Gestion de la suppression
+                tagElement.addEventListener('click', function () {
+                    tagClick(this)
+                });
+            }
+
+            function init() {
+                selectedOption.addEventListener('click', function () {
+                    optionsContainer.classList.toggle('hidden');
+                });
+
+                // Sélection d'une option
+                customSelector.querySelectorAll('.option-item').forEach(option => {
+                    option.addEventListener('click', function () {
+                        optionClick(this);
+                    });
+                });
+
+                // Activer la suppression sur les tags déjà presents
+                selectedTagsContainer.querySelectorAll('.tag').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        tagClick(this);
+                    });
+                });
+
+                // Fermer le dropdown quand on clique ailleurs
+                document.addEventListener('click', function (e) {
+                    if (!customSelector.contains(e.target)) {
+                        optionsContainer.classList.add('hidden');
+                    }
+                });
+            }
+
+            return {
+                init: init,
+                clearTags: clearTags,
+                setTags: setTags,
+                clearInheritedTags: clearInheritedTags,
+                setInheritedTags: setInheritedTags
+            }
+        })
+
+        document.addEventListener('DOMContentLoaded', TagSelector{{ field.vars.name|capitalize }}().init())
+    </script>
+</div>

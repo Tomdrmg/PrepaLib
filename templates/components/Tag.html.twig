@@ -1,0 +1,17 @@
+<div{{ attributes }} class="{% if withRemoveButton %}cursor-pointer {% endif %}tag inline-flex items-center rounded-md px-2 py-1 gap-1 text-xs font-medium ring-2 ring-inset" style="
+     --base-color: {{ color }};
+     background-color: color-mix(in srgb, var(--base-color), transparent 80%);
+     color: var(--base-color);
+     --tw-ring-color: color-mix(in srgb, var(--base-color) 20%, transparent);"
+>
+    <svg viewBox="0 0 6 6" aria-hidden="true" style="fill: var(--base-color)" class="w-1.5 h-1.5 knh">
+        <circle r="3" cx="3" cy="3">
+        </circle>
+    </svg>
+    <span>{{ name }}</span>
+    {% if withRemoveButton %}
+        <span class="flex-shrink-0 flex items-center justify-center rounded-full text-{{ color }}-400">
+            ×
+        </span>
+    {% endif %}
+</div>
