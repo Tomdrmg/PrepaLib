@@ -99,7 +99,7 @@
                         </label>
                         <select
                             id="exerciseList{{ subject.id }}Limit"
-                            onchange="ExerciseList{{ subject.id }}().limitChange(this)"
+                            onchange="ExerciseList{{ subject.id }}.limitChange(this)"
                             class="block w-full px-4 py-2 text-sm text-text-200 bg-foreground-300 border border-foreground-200 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-accent-purple-500 focus:border-accent-purple-500 transition"
                         >
                             <option value="5">5</option>
@@ -183,7 +183,7 @@
                     });
                 }
 
-                ExercisePref().setPref(exerciseId, edit, stopLoading, stopLoading);
+                ExercisePref.setPref(exerciseId, edit, stopLoading, stopLoading);
             }
 
             let exerciseContainer;
@@ -473,8 +473,8 @@
                 setPage: setPage,
                 limitChange: limitChange,
             }
-        });
+        })();
 
-        document.addEventListener('DOMContentLoaded', ExerciseList{{ subject.id }}().init);
+        document.addEventListener('DOMContentLoaded', ExerciseList{{ subject.id }}.init);
     </script>
 </div>

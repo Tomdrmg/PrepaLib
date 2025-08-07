@@ -55,22 +55,22 @@
                             <div class="flex flex-row divide-x divide-[var(--category-color)] border-t md:border-t-0 md:border-l border-[var(--category-color)]">
                                 {% set pref = exercise.getPrefFor(user) %}
                                 <div data-unselected-color="text-text-300" class="w-3/4 md:w-auto difficulty p-2 flex flex-row gap-2 justify-center">
-                                    <div onclick="ExerciseTree{{ subject.id }}().setTreePref({{ exercise.id }}, {'difficulty': 0})"
+                                    <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'difficulty': 0})"
                                          data-selected-color="text-accent-blue-500" data-difficulty="0"
                                          class="difficulty-element {% if pref and pref.difficulty == 0 %}text-accent-blue-500{% else %}text-text-300{% endif %} flex text-lg cursor-pointer justify-center items-center">
                                         <i class="fa-regular fa-grin-stars text-lg"></i>
                                     </div>
-                                    <div onclick="ExerciseTree{{ subject.id }}().setTreePref({{ exercise.id }}, {'difficulty': 1})"
+                                    <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'difficulty': 1})"
                                          data-selected-color="text-accent-green-500" data-difficulty="1"
                                          class="difficulty-element {% if pref and pref.difficulty == 1 %}text-accent-green-500{% else %}text-text-300{% endif %} flex text-lg cursor-pointer justify-center items-center">
                                         <i class="fa-regular fa-smile text-lg"></i>
                                     </div>
-                                    <div onclick="ExerciseTree{{ subject.id }}().setTreePref({{ exercise.id }}, {'difficulty': 2})"
+                                    <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'difficulty': 2})"
                                          data-selected-color="text-accent-yellow-500" data-difficulty="2"
                                          class="difficulty-element {% if pref and pref.difficulty == 2 %}text-accent-yellow-500{% else %}text-text-300{% endif %} flex text-lg cursor-pointer justify-center items-center">
                                         <i class="fa-regular fa-meh text-lg"></i>
                                     </div>
-                                    <div onclick="ExerciseTree{{ subject.id }}().setTreePref({{ exercise.id }}, {'difficulty': 3})"
+                                    <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'difficulty': 3})"
                                          data-selected-color="text-accent-red-500" data-difficulty="3"
                                          class="difficulty-element {% if pref and pref.difficulty == 3 %}text-accent-red-500{% else %}text-text-300{% endif %} flex text-lg cursor-pointer justify-center items-center">
                                         <i class="fa-regular fa-frown text-lg"></i>
@@ -78,21 +78,21 @@
                                 </div>
                                 <div class="px-1 flex flex-row w-1/4 md:w-auto justify-center">
                                     <div class="done p-1">
-                                        <div onclick="ExerciseTree{{ subject.id }}().setTreePref({{ exercise.id }}, {'done': true})"
+                                        <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'done': true})"
                                              class="{% if pref and pref.done %}hidden!{% endif %} false flex items-center justify-center h-full cursor-pointer">
                                             <i class="w-4 h-4 fa-solid fa-circle-check text-text-300"></i>
                                         </div>
-                                        <div onclick="ExerciseTree{{ subject.id }}().setTreePref({{ exercise.id }}, {'done': false})"
+                                        <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'done': false})"
                                              class="{% if not pref or not pref.done %}hidden!{% endif %} true flex items-center justify-center h-full cursor-pointer">
                                             <i class="w-4 h-4 fa-solid fa-circle-check text-accent-green-500"></i>
                                         </div>
                                     </div>
                                     <div class="favorite p-1">
-                                        <div onclick="ExerciseTree{{ subject.id }}().setTreePref({{ exercise.id }}, {'favorite': true})"
+                                        <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'favorite': true})"
                                              class="{% if pref and pref.favorite %}hidden!{% endif %} false flex items-center justify-center h-full cursor-pointer">
                                             <i class="w-4 h-4 fa-regular fa-star text-text-300"></i>
                                         </div>
-                                        <div onclick="ExerciseTree{{ subject.id }}().setTreePref({{ exercise.id }}, {'favorite': false})"
+                                        <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'favorite': false})"
                                              class="{% if not pref or not pref.favorite %}hidden!{% endif %} true flex items-center justify-center h-full cursor-pointer">
                                             <i class="w-4 h-4 fa-solid fa-star text-accent-yellow-500"></i>
                                         </div>
@@ -192,7 +192,7 @@
                 </div>
 
                 <div class="px-8 py-2 bg-foreground-300/50 border-t rounded-b-xl border-foreground-300 text-center flex flex-col">
-                    <span onclick="ExerciseTree{{ subject.id }}().setNew()" class="resetCategoryButtontext-text-300 hover:text-text-200 text-sm transition duration-500 mb-2">Vous êtes en train de modifier une catégorie existante. Cliquez ici pour passer en mode création.</span>
+                    <span onclick="ExerciseTree{{ subject.id }}.setNew()" class="resetCategoryButton text-text-300 hover:text-text-200 text-sm transition duration-500 mb-2">Vous êtes en train de modifier une catégorie existante. Cliquez ici pour passer en mode création.</span>
                 </div>
             </div>
         </div>
@@ -247,7 +247,7 @@
                         });
                     }
 
-                    ExercisePref().setPref(exerciseId, edit, stopLoading, stopLoading);
+                    ExercisePref.setPref(exerciseId, edit, stopLoading, stopLoading);
                 }
                 {% endif %}
 
@@ -263,7 +263,7 @@
                 function cancelForm() {
                     formPopup.classList.add("hidden");
                     formPopup.classList.remove("flex");
-                    TagSelector{{ form.tags.vars.name|capitalize }}().clearTags();
+                    TagSelector{{ form.tags.vars.name|capitalize }}.clearTags();
                     formName.value = "";
                     formColor.value = "#000000";
                     formId.value = null;
@@ -284,8 +284,8 @@
                         formColor.value = color;
                         formId.value = id;
                         formParent.value = parentId;
-                        TagSelector{{ form.tags.vars.name|capitalize }}().setTags(tags);
-                        TagSelector{{ form.tags.vars.name|capitalize }}().setInheritedTags(inheritedTags);
+                        TagSelector{{ form.tags.vars.name|capitalize }}.setTags(tags);
+                        TagSelector{{ form.tags.vars.name|capitalize }}.setInheritedTags(inheritedTags);
                         resetButton.classList.remove("hidden");
                     }
                 }
@@ -297,8 +297,8 @@
                     formColor.value = parentColor;
                     formId.value = null;
                     formParent.value = parentId;
-                    TagSelector{{ form.tags.vars.name|capitalize }}().clearTags();
-                    TagSelector{{ form.tags.vars.name|capitalize }}().setInheritedTags(inheritedTags);
+                    TagSelector{{ form.tags.vars.name|capitalize }}.clearTags();
+                    TagSelector{{ form.tags.vars.name|capitalize }}.setInheritedTags(inheritedTags);
                     resetButton.classList.add("hidden");
                 }
                 {% endif %}
@@ -416,9 +416,9 @@
                     {% if admin %}
                     formPopup = exerciseTreeComponent.querySelector('.form-popup');
                     formName = document.getElementById("{{ form.name.vars.id }}");
-                    formColor = document.getElementById("{{ form.name.vars.id }}");
-                    formId = document.getElementById("{{ form.name.vars.id }}");
-                    formParent = document.getElementById("{{ form.name.vars.id }}");
+                    formColor = document.getElementById("{{ form.color.vars.id }}");
+                    formId = document.getElementById("{{ form.id.vars.id }}");
+                    formParent = document.getElementById("{{ form.parent.vars.id }}");
                     resetButton = exerciseTreeComponent.querySelector(".resetCategoryButton");
 
                     //init
@@ -484,9 +484,9 @@
                     onWindowLoad: onWindowLoad,
                     updateAll: updateAll,
                 }
-            });
+            })();
 
-            document.addEventListener('DOMContentLoaded', ExerciseTree{{ subject.id }}().init);
-            window.addEventListener('load', ExerciseTree{{ subject.id }}().onWindowLoad);
+            document.addEventListener('DOMContentLoaded', ExerciseTree{{ subject.id }}.init);
+            window.addEventListener('load', ExerciseTree{{ subject.id }}.onWindowLoad);
         </script>
 </ul>
