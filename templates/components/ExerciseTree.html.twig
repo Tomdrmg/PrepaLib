@@ -108,9 +108,7 @@
                                     {% endfor %}
                                 </div>
                             {% endif %}
-                            <div class="text-xs md:text-sm prose prose-invert whitespace-pre max-w-none">
-                                {{ exercise.statement.content|raw }}
-                            </div>
+                            <div class="text-xs md:text-sm prose prose-invert whitespace-pre max-w-none">{{ exercise.statement.content|raw }}</div>
                             {% if admin %}
                                 <div class="flex items-center gap-3">
                                     <a href="{{ path('app_admin_edit_exercise', {'exercise': exercise.id}) }}" class="text-xs p-2 md:text-sm bg-[var(--category-color)] hover:bg-[var(--category-color-hover)] transition duration-300 rounded">Modifier</a>
@@ -129,9 +127,7 @@
                                 <p class="non-commented-text text-xs text-text-300 {% if pref.comment is not empty %}hidden{% endif %}">
                                     Vous n'avez pas encore commenté cet exercice
                                 </p>
-                                <p class="comment-container whitespace-pre text-xs text-text-300 {% if pref.comment is empty %}hidden{% endif %}">
-                                    {{ pref.comment }}
-                                </p>
+                                <p class="comment-container whitespace-pre text-xs text-text-300 {% if pref.comment is empty %}hidden{% endif %}">{{ pref.comment }}</p>
                             </div>
                         {% endif %}
                     </div>

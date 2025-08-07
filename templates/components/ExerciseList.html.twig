@@ -249,9 +249,7 @@
                                                 </div>
                                             </div>
                                             <div class="p-4 flex flex-col gap-3 md:col-span-2 border-t border-b border-[var(--category-color)]">
-                                                <div class="text-xs md:text-sm prose prose-invert max-w-none whitespace-pre latex">
-                                                    ${exercise.statement}
-                                                </div>
+                                                <div class="text-xs md:text-sm prose prose-invert max-w-none whitespace-pre latex">${exercise.statement}</div>
                                                 <div class="flex items-center justify-center gap-3">
                                                     <a href="${'{{ path('app_exercise', {'exercise': 'EXERCISE_ID'}) }}'.replaceAll('EXERCISE_ID', exercise.id)}" class="text-xs p-2 md:text-sm bg-accent-purple-700 hover:bg-accent-accent-purple-600 transition duration-300 rounded">Accéder à l'exercice</a>
                                                 </div>
@@ -262,9 +260,7 @@
                                                 <p class="non-commented-text text-xs text-text-300 ${exercise.pref.comment.replace(/\s+/g, ' ').trim() !== '' ? 'hidden' : ''}">
                                                     Vous n'avez pas encore commenté cet exercice
                                                 </p>
-                                                <p class="comment-container text-xs whitespace-pre text-text-300 ${exercise.pref.comment.replace(/\s+/g, ' ').trim() !== '' ? '' : 'hidden'}">
-                                                    ${exercise.pref.comment}
-                                                </p>
+                                                <p class="comment-container text-xs whitespace-pre text-text-300 ${exercise.pref.comment.replace(/\s+/g, ' ').trim() !== '' ? '' : 'hidden'}">${exercise.pref.comment}</p>
                                             </div>
                                         </div>
                                     </li>`;
