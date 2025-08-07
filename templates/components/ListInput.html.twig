@@ -24,7 +24,9 @@
         Ajouter un {{ title|lower }}
     </button>
 
-    {{ form_widget(field, {'attr': {'class': 'hidden hidden-tags-input'}}) }}
+    {% if field is empty %}
+        {{ form_widget(field, {'attr': {'class': 'hidden'}}) }}
+    {% endif %}
     {{ form_errors(field) }}
 
     <script>
