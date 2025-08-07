@@ -108,7 +108,7 @@
                                     {% endfor %}
                                 </div>
                             {% endif %}
-                            <div class="text-xs md:text-sm prose prose-invert max-w-none">
+                            <div class="text-xs md:text-sm prose prose-invert whitespace-pre max-w-none">
                                 {{ exercise.statement.content|raw }}
                             </div>
                             {% if admin %}
@@ -129,7 +129,7 @@
                                 <p class="non-commented-text text-xs text-text-300 {% if pref.comment is not empty %}hidden{% endif %}">
                                     Vous n'avez pas encore commenté cet exercice
                                 </p>
-                                <p class="comment-container text-xs text-text-300 {% if pref.comment is empty %}hidden{% endif %}">
+                                <p class="comment-container whitespace-pre text-xs text-text-300 {% if pref.comment is empty %}hidden{% endif %}">
                                     {{ pref.comment }}
                                 </p>
                             </div>

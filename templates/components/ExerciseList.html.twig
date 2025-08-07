@@ -249,7 +249,7 @@
                                                 </div>
                                             </div>
                                             <div class="p-4 flex flex-col gap-3 md:col-span-2 border-t border-b border-[var(--category-color)]">
-                                                <div class="text-xs md:text-sm prose prose-invert max-w-none latex">
+                                                <div class="text-xs md:text-sm prose prose-invert max-w-none whitespace-pre latex">
                                                     ${exercise.statement}
                                                 </div>
                                                 <div class="flex items-center justify-center gap-3">
@@ -262,7 +262,7 @@
                                                 <p class="non-commented-text text-xs text-text-300 ${exercise.pref.comment.replace(/\s+/g, ' ').trim() !== '' ? 'hidden' : ''}">
                                                     Vous n'avez pas encore commenté cet exercice
                                                 </p>
-                                                <p class="comment-container text-xs text-text-300 ${exercise.pref.comment.replace(/\s+/g, ' ').trim() !== '' ? '' : 'hidden'}">
+                                                <p class="comment-container text-xs whitespace-pre text-text-300 ${exercise.pref.comment.replace(/\s+/g, ' ').trim() !== '' ? '' : 'hidden'}">
                                                     ${exercise.pref.comment}
                                                 </p>
                                             </div>
@@ -387,7 +387,7 @@
             }
 
             function init() {
-                rciseListComponent = document.getElementById('exercise-list-{{ subject.id }}');
+                exerciseListComponent = document.getElementById('exercise-list-{{ subject.id }}');
 
                 listLoader = exerciseListComponent.querySelector('.list-loader');
 
