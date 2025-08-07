@@ -193,6 +193,18 @@
 
                 for (const exercise of exercises) {
                     const d = document.createElement("div");
+                    let tagsPart = '';
+
+                    if (exercise.tags.length > 0) {
+                        tagsPart += '<div class="flex flex-row flex-wrap gap-2">';
+
+                        for (const tag of exercise.tags) {
+                            tagsPart += `<twig:Tag name="${tag.name}" color="${ tag.color }"/>`;
+                        }
+
+                        tagsPart += '</div>';
+                    }
+
                     d.innerHTML = `<li style="--category-color: ${exercise.category.color};" class="mt-2 relative">
                                         <div class="absolute -top-3 left-4 bg-foreground-500 px-2 text-sm text-[var(--category-color)] font-semibold z-10">
                                             ${exercise.firstCategory.name}
@@ -249,6 +261,7 @@
                                                 </div>
                                             </div>
                                             <div class="p-4 flex flex-col gap-3 md:col-span-2 border-t border-b border-[var(--category-color)]">
+                                                ${tagsPart}
                                                 <div class="text-xs md:text-sm prose prose-invert max-w-none whitespace-pre latex">${exercise.statement}</div>
                                                 <div class="flex items-center justify-center gap-3">
                                                     <a href="${'{{ path('app_exercise', {'exercise': 'EXERCISE_ID'}) }}'.replaceAll('EXERCISE_ID', exercise.id)}" class="text-xs p-2 md:text-sm bg-accent-purple-700 hover:bg-accent-accent-purple-600 transition duration-300 rounded">Accéder à l'exercice</a>
