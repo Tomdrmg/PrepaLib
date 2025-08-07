@@ -81,7 +81,8 @@ final class ResourceController extends AbstractController
 
         $totalResults = $result['totalResults'];
         $exercises = $result['exercises'];
-        $totalPages = (int) ceil($totalResults / $limit);
+        $totalPages = $result['totalPages'];
+        $page = $result['page'];
 
         $data = [];
         /**

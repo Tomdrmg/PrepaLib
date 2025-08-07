@@ -16,9 +16,6 @@ class ExercisePref
     #[ORM\Column]
     private ?bool $favorite = null;
 
-    #[ORM\Column]
-    private ?bool $todo = null;
-
     #[ORM\Column(length: 2000)]
     private ?string $comment = null;
 
@@ -49,18 +46,6 @@ class ExercisePref
     public function setFavorite(bool $favorite): static
     {
         $this->favorite = $favorite;
-
-        return $this;
-    }
-
-    public function isTodo(): ?bool
-    {
-        return $this->todo;
-    }
-
-    public function setTodo(bool $todo): static
-    {
-        $this->todo = $todo;
 
         return $this;
     }

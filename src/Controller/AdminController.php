@@ -138,7 +138,9 @@ final class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $category->setParent($entityManager->getRepository(ExerciseCategory::class)->find($form->get('parent')->getData()));
+            if ($form->get('parent')->getData() !== null) {
+                $category->setParent($entityManager->getRepository(ExerciseCategory::class)->find($form->get('parent')->getData()));
+            }
             $editId = $form->get('id')->getData();
 
             if ($editId !== null) {

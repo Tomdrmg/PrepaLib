@@ -88,12 +88,17 @@ class ExerciseRepository extends ServiceEntityRepository
         }
 
         $totalResults = count($exercises);
+        $totalPages = (int) ceil($totalResults / $limit);
+        $page = min($page, $totalPages);
+        $page = max($page, 1);
         $offset = ($page - 1) * $limit;
         $paginated = array_slice($exercises, $offset, $limit);
 
         return [
             'totalResults' => $totalResults,
+            'totalPages' => $totalPages,
             'exercises' => $paginated,
+            'page' => $page
         ];
     }
 
