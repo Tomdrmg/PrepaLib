@@ -27,7 +27,8 @@
                         dim: '\\text{dim}',
                         sup: '\\text{sup}',
                         inf: '\\text{inf}',
-                        et: '\\text{ et }'
+                        et: '\\text{ et }',
+                        hspace: '\\text{ hspace }',
                     }
                 },
                 options: {
@@ -48,7 +49,7 @@
                     previewContainer.className = 'latex-preview-container mt-2';
                     previewContainer.innerHTML = `
                 <div class="text-sm text-text-300">Prévisualisation :</div>
-                <div class="latex-preview p-4 bg-foreground-400 rounded" data-preview-for="${id}"></div>
+                <div class="latex-preview whitespace-pre p-4 bg-foreground-400 rounded" data-preview-for="${id}"></div>
             `;
                     input.parentNode.insertBefore(previewContainer, input.nextSibling);
                 }
