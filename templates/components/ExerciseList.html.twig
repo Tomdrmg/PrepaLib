@@ -275,7 +275,7 @@
                 totalResultsElem.innerHTML = totalResults;
 
                 function getLeftArrow(enabled) {
-                    return `<span${enabled ? ` onclick="ExerciseList{{ subject.id }}().setPage(${page - 1})"` : ''} class="${enabled ? 'cursor-pointer hover:bg-foreground-300 focus:outline-offset-0' : 'text-text-500'} relative inline-flex items-center rounded-l-md px-2 py-2 inset-ring inset-ring-foreground-300 focus:z-20">
+                    return `<span${enabled ? ` onclick="ExerciseList{{ subject.id }}.setPage(${page - 1})"` : ''} class="${enabled ? 'cursor-pointer hover:bg-foreground-300 focus:outline-offset-0' : 'text-text-500'} relative inline-flex items-center rounded-l-md px-2 py-2 inset-ring inset-ring-foreground-300 focus:z-20">
                                 <span class="sr-only">Previous</span>
                                 <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5">
                                     <path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" fill-rule="evenodd" />
@@ -284,7 +284,7 @@
                 }
 
                 function getRightArrow(enabled) {
-                    return `<span${enabled ? ` onclick="ExerciseList{{ subject.id }}().setPage(${page + 1})"` : ''} class="${enabled ? 'cursor-pointer hover:bg-foreground-300 focus:outline-offset-0' : 'text-text-500'} relative inline-flex items-center rounded-r-md px-2 py-2 inset-ring inset-ring-foreground-300 focus:z-20">
+                    return `<span${enabled ? ` onclick="ExerciseList{{ subject.id }}.setPage(${page + 1})"` : ''} class="${enabled ? 'cursor-pointer hover:bg-foreground-300 focus:outline-offset-0' : 'text-text-500'} relative inline-flex items-center rounded-r-md px-2 py-2 inset-ring inset-ring-foreground-300 focus:z-20">
                                 <span class="sr-only">Next</span>
                                 <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5">
                                     <path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
@@ -297,7 +297,7 @@
                 }
 
                 function getButton(current, number) {
-                    return `<span${current ? '' : ` onclick="ExerciseList{{ subject.id }}().setPage(${number})"`} class="relative inline-flex items-center px-4 py-2 text-sm font-semibold ${current ? 'z-10 focus:z-20 z-10 bg-accent-purple-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple-600' : 'inset-ring inset-ring-foreground-200 hover:bg-foreground-200 focus:z-20 focus:outline-offset-0'}">${number}</span>`
+                    return `<span${current ? '' : ` onclick="ExerciseList{{ subject.id }}.setPage(${number})"`} class="relative inline-flex items-center px-4 py-2 text-sm font-semibold ${current ? 'z-10 focus:z-20 z-10 bg-accent-purple-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple-600' : 'inset-ring inset-ring-foreground-200 hover:bg-foreground-200 focus:z-20 focus:outline-offset-0'}">${number}</span>`
                 }
 
                 pageButtons.innerHTML = getLeftArrow(page > 1);
