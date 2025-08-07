@@ -218,19 +218,6 @@ class Exercise
         return $allTags;
     }
 
-    public function getCategoryPath(): string
-    {
-        $path = $this->category->getName();
-        $category = $this->category->getParent();
-
-        while ($category) {
-            $path = $category->getName().' > '.$path;
-            $category = $category->getParent();
-        }
-
-        return $path;
-    }
-
     public function getFirstCategory(): ExerciseCategory
     {
         $category = $this->getCategory();
