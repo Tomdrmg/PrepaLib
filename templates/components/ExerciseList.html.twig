@@ -236,7 +236,7 @@
 
                     d.innerHTML = `<li style="--category-color: ${exercise.category.color};" class="mt-2 relative">
                                         <div class="absolute -top-3 left-4 bg-foreground-500 px-2 text-sm text-[var(--category-color)] font-semibold z-10">
-                                            ${exercise.path}
+                                            ${exercise.firstCategory.name}
                                         </div>
 
                                         <div class="grid grid-cols-1 prefs-${exercise.id} md:grid-cols-[1fr_auto] md:grid-rows-[auto_auto] mt-5 rounded transition text-text-200 ring ring-inset ring-[var(--category-color)]">
