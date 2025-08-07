@@ -69,23 +69,23 @@
             document.addEventListener('DOMContentLoaded', function () {
                 // Initialisation des prévisualisations existantes
                 document.querySelectorAll('.latex-input').forEach(initLatexPreview);
-            });
 
-            // Initialisation automatique des latex preview ajoutées et les latex tout court
-            const observer = new MutationObserver((mutations) => {
-                for (const mutation of mutations) {
-                    for (const addedNode of mutation.addedNodes) {
-                        if (addedNode.nodeType !== Node.ELEMENT_NODE) continue;
+                // Initialisation automatique des latex preview ajoutées et les latex tout court
+                const observer = new MutationObserver((mutations) => {
+                    for (const mutation of mutations) {
+                        for (const addedNode of mutation.addedNodes) {
+                            if (addedNode.nodeType !== Node.ELEMENT_NODE) continue;
 
-                        addedNode.querySelectorAll('.latex-input').forEach(initLatexPreview);
-                        MathJax.typesetPromise(addedNode.querySelectorAll('.latex'));
+                            addedNode.querySelectorAll('.latex-input').forEach(initLatexPreview);
+                            MathJax.typesetPromise(addedNode.querySelectorAll('.latex'));
+                        }
                     }
-                }
-            });
+                });
 
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
             });
         </script>
         <script>
