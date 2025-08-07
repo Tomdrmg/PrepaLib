@@ -93,7 +93,6 @@ final class ResourceController extends AbstractController
             if (!$pref) {
                 $pref = new ExercisePref();
                 $pref->setDifficulty(-1);
-                $pref->setTodo(false);
                 $pref->setDone(false);
                 $pref->setFavorite(false);
                 $pref->setComment("");
