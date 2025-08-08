@@ -124,10 +124,10 @@
                             <div class="w-min p-2 min-w-full md:col-span-2 lg:col-span-1 border-t lg:border-l border-[var(--category-color)]">
                                 <span class="text-xs font-semibold">Commentaire personnel :</span>
                                 <br/>
-                                <p class="non-commented-text text-xs text-text-300 {% if pref.comment is not empty %}hidden{% endif %}">
+                                <p class="non-commented-text text-xs text-text-300 {% if pref and pref.comment is not empty %}hidden{% endif %}">
                                     Vous n'avez pas encore commenté cet exercice
                                 </p>
-                                <p class="comment-container whitespace-pre text-xs text-text-300 {% if pref.comment is empty %}hidden{% endif %}">{{ pref.comment }}</p>
+                                <p class="comment-container whitespace-pre text-xs text-text-300 {% if pref and pref.comment is empty %}hidden{% endif %}">{% if pref and pref.comment %}{{ pref.comment }}{% endif %}</p>
                             </div>
                         {% endif %}
                     </div>

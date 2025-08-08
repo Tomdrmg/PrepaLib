@@ -328,3 +328,15 @@ nav {
     }
 }
 
+.math-list {
+    @apply list-decimal list-inside whitespace-normal;
+
+    li {
+        @apply ml-4;
+    }
+}
+
+.math-list .math-list {
+    list-style-type: lower-alpha;
+}
+

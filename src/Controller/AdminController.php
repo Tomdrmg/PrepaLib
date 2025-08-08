@@ -294,6 +294,14 @@ final class AdminController extends AbstractController
     {
         $subjectId = $exercise->getCategory()->getSubject()->getId();
 
+        $entityManager->remove($exercise->getStatement());
+        $entityManager->remove($exercise->getSolution());
+        foreach ($exercise->getHints() as $hint) {
+            $entityManager->remove($hint);
+        }
+        foreach ($exercise->getExercisePrefs() as $pref) {
+            $entityManager->remove($pref);
+        }
         $entityManager->remove($exercise);
         $entityManager->flush();
         $this->addFlash("success", "L'exercice a bien été supprimée.");

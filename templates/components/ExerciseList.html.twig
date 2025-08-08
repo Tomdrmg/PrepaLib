@@ -111,9 +111,11 @@
                         >
                             <option value="5">5</option>
                             <option value="10" selected>10</option>
+                            <option value="15">15</option>
                             <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
                             <option value="50">50</option>
-                            <option value="100">100</option>
                         </select>
                     </div>
                 </div>
@@ -348,14 +350,14 @@
                     for (let i = 1; i <= totalPages; i++) {
                         pageButtons.innerHTML += getButton(page === i, i);
                     }
-                } else if (page <= 5) {
+                } else if (page <= 4) {
                     for (let i = 1; i <= 5; i++) {
                         pageButtons.innerHTML += getButton(page === i, i);
                     }
 
                     pageButtons.innerHTML += getEllipsisButton();
                     pageButtons.innerHTML += getButton(false, totalPages);
-                } else if (page >= totalPages - 4) {
+                } else if (page >= totalPages - 3) {
                     pageButtons.innerHTML += getButton(false, 1);
                     pageButtons.innerHTML += getEllipsisButton();
 
