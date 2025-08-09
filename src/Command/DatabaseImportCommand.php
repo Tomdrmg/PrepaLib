@@ -91,18 +91,7 @@ class DatabaseImportCommand extends Command
                 }
 
                 foreach ($category->getExercises() as $exercise) {
-                    foreach ($exercise->getExercisePrefs() as $pref) {
-                        $this->entityManager->remove($pref);
-                    }
-
-                    foreach ($exercise->getHints() as $hint) {
-                        $this->entityManager->remove($hint->getElement());
-                        $this->entityManager->remove($hint);
-                    }
-
-                    $this->entityManager->remove($exercise->getStatement());
-                    $this->entityManager->remove($exercise->getSolution());
-                    $this->entityManager->remove($exercise);
+                    $this->removeExercise($exercise);
                 }
 
                 $this->entityManager->remove($category);
@@ -114,18 +103,7 @@ class DatabaseImportCommand extends Command
                 }
 
                 foreach ($category->getExercises() as $exercise) {
-                    foreach ($exercise->getExercisePrefs() as $pref) {
-                        $this->entityManager->remove($pref);
-                    }
-
-                    foreach ($exercise->getHints() as $hint) {
-                        $this->entityManager->remove($hint->getElement());
-                        $this->entityManager->remove($hint);
-                    }
-
-                    $this->entityManager->remove($exercise->getStatement());
-                    $this->entityManager->remove($exercise->getSolution());
-                    $this->entityManager->remove($exercise);
+                    $this->removeExercise($exercise);
                 }
             }
 
@@ -439,5 +417,22 @@ class DatabaseImportCommand extends Command
         $pos = $i; // mise à jour de la position pour la recherche suivante
 
         return [$startTag . $content . '}', $content];
+    }
+
+    private function removeExercise(Exercise $exercise)
+    {
+        foreach ($exercise->getTags() as $tag) {
+            $this->entityManager->remove($tag);
+        }
+
+        foreach ($exercise->getExercisePrefs() as $pref) {
+            $this->entityManager->remove($pref);
+        }
+
+        foreach ($exercise->getHints() as $hint) {
+            $this->entityManager->remove($hint);
+        }
+
+        $this->entityManager->remove($exercise);
     }
 }
