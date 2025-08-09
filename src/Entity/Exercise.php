@@ -37,22 +37,25 @@ class Exercise
     private ?ExerciseCategory $category = null;
 
     /**
-     * @var Collection<int, Element>
-     */
-    #[ORM\OneToMany(targetEntity: Element::class, mappedBy: 'exercise')]
-    private Collection $hints;
-
-    /**
      * @var Collection<int, Tag>
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'exercises')]
     private Collection $tags;
 
+    /**
+     * @var Collection<int, Hint>
+     */
+    #[ORM\OneToMany(targetEntity: Hint::class, mappedBy: 'exercise')]
+    private Collection $hints;
+
+    #[ORM\Column]
+    private ?int $sortNumber = null;
+
     public function __construct()
     {
         $this->exercisePrefs = new ArrayCollection();
-        $this->hints = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->hints = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -139,36 +142,6 @@ class Exercise
     }
 
     /**
-     * @return Collection<int, Element>
-     */
-    public function getHints(): Collection
-    {
-        return $this->hints;
-    }
-
-    public function addHint(Element $hint): static
-    {
-        if (!$this->hints->contains($hint)) {
-            $this->hints->add($hint);
-            $hint->setExercise($this);
-        }
-
-        return $this;
-    }
-
-    public function removeHint(Element $hint): static
-    {
-        if ($this->hints->removeElement($hint)) {
-            // set the owning side to null (unless already changed)
-            if ($hint->getExercise() === $this) {
-                $hint->setExercise(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Tag>
      */
     public function getTags(): Collection
@@ -228,6 +201,19 @@ class Exercise
         return $category;
     }
 
+    public function getPath(): string
+    {
+        $path = $this->title;
+
+        $category = $this->category;;
+        while ($category) {
+            $path = $category->getName().' > '.$path;
+            $category = $category->getParent();
+        }
+
+        return $path;
+    }
+
     public function getPrefFor(?User $user): ?ExercisePref
     {
         if (!$user) return null;
@@ -237,5 +223,47 @@ class Exercise
         })->first();
 
         return $pref ? $pref : null;
+    }
+
+    /**
+     * @return Collection<int, Hint>
+     */
+    public function getHints(): Collection
+    {
+        return $this->hints;
+    }
+
+    public function addHint(Hint $hint): static
+    {
+        if (!$this->hints->contains($hint)) {
+            $this->hints->add($hint);
+            $hint->setExercise($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHint(Hint $hint): static
+    {
+        if ($this->hints->removeElement($hint)) {
+            // set the owning side to null (unless already changed)
+            if ($hint->getExercise() === $this) {
+                $hint->setExercise(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSortNumber(): ?int
+    {
+        return $this->sortNumber;
+    }
+
+    public function setSortNumber(int $sortNumber): static
+    {
+        $this->sortNumber = $sortNumber;
+
+        return $this;
     }
 }

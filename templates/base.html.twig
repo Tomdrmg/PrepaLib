@@ -328,6 +328,45 @@
     {% endblock %}
 </head>
 <body class="text-text-100 font-noto-sans bg-background-500 min-h-[100dvh] min-w-[100dvw] p-0 m-0 select-none">
+    <div class="fixed top-4 right-4 space-y-3 z-50">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div
+                    x-data="{ show: true }"
+                    x-init="setTimeout(() => show = false, 4000)"
+                    x-show="show"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-2"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-300"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 translate-y-2"
+                    class="px-4 py-3 rounded-lg shadow-lg text-sm flex items-start gap-2 w-80
+                        {% if label == 'success' %}
+                            bg-accent-green-900 border border-accent-green-800
+                        {% elseif label == 'error' %}
+                            bg-accent-red-900 border border-accent-red-800
+                        {% elseif label == 'warning' %}
+                            bg-accent-yellow-900 border border-accent-yellow-800
+                        {% else %}
+                            bg-accent-blue-900 border border-accent-blue-800
+                        {% endif %}
+                    " role="alert">
+
+                    <span class="flex-1">{{ message|raw }}</span>
+
+                    <button type="button" class="ml-2 text-gray-400 hover:text-gray-200"
+                            @click="show = false">
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg"
+                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+</div>
     <twig:Loader />
     {% block body %}
     {% endblock %}

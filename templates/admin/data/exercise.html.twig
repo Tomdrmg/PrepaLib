@@ -10,14 +10,21 @@
             <div class="p-8">
                 {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
 
-                {# Titre #}
+                {# Sort Number #}
+                <div>
+                    {{ form_label(form.sortNumber) }}
+                    {{ form_widget(form.sortNumber, {'attr': {'class': 'w-full'}}) }}
+                    {{ form_errors(form.sortNumber) }}
+                </div>
+
+                {# Title #}
                 <div>
                     {{ form_label(form.title) }}
                     {{ form_widget(form.title, {'attr': {'class': 'w-full'}}) }}
                     {{ form_errors(form.title) }}
                 </div>
 
-                {# Énoncé #}
+                {# Statement #}
                 <div>
                     {{ form_label(form.statement) }}
                     {{ form_widget(form.statement, {'attr': {'class': 'latex-input w-full'}}) }}
@@ -31,7 +38,7 @@
                     {{ form_errors(form.solution) }}
                 </div>
 
-                {# Indices #}
+                {# Hints #}
                 <twig:ListInput class="mb-6" subClass="latex-input w-full" title="Indice" field="{{ form.hints }}"/>
 
                 {# Tags #}

@@ -298,13 +298,13 @@
                                                     <a href="${'{{ path('app_exercise', {'exercise': 'EXERCISE_ID'}) }}'.replaceAll('EXERCISE_ID', exercise.id)}" class="text-xs p-2 md:text-sm bg-accent-purple-700 hover:bg-accent-accent-purple-600 transition duration-300 rounded">Accéder à l'exercice</a>
                                                 </div>
                                             </div>
-                                            <div class="w-min p-2 min-w-full md:col-span-2 lg:col-span-1">
+                                            <div class="w-min p-2 min-w-full md:col-span-2">
                                                 <span class="text-xs font-semibold">Commentaire personnel :</span>
                                                 <br/>
                                                 <p class="non-commented-text text-xs text-text-300 ${exercise.pref.comment.replace(/\s+/g, ' ').trim() !== '' ? 'hidden' : ''}">
                                                     Vous n'avez pas encore commenté cet exercice
                                                 </p>
-                                                <p class="comment-container text-xs whitespace-pre text-text-300 ${exercise.pref.comment.replace(/\s+/g, ' ').trim() !== '' ? '' : 'hidden'}">${exercise.pref.comment}</p>
+                                                <p class="comment-container text-xs whitespace-pre-wrap text-text-300 ${exercise.pref.comment.replace(/\s+/g, ' ').trim() !== '' ? '' : 'hidden'}">${exercise.pref.comment}</p>
                                             </div>
                                         </div>
                                     </li>`;

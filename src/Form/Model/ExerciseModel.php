@@ -9,11 +9,12 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class ExerciseModel
 {
+    public int $sortNumber = 0;
     public string $title = '';
     public string $statement = '';
     public ?string $solution = null;
     /**
-     * @var string[]
+     * @var HintModel[]
      */
     public array $hints = [];
     /**

@@ -67,30 +67,6 @@ final class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/favorite', name: 'app_favorite')]
-    public function favorite(): Response
-    {
-        return $this->render('user/soon/soon.html.twig', [
-
-        ]);
-    }
-
-    #[Route('/profile/todo', name: 'app_todo')]
-    public function todo(): Response
-    {
-        return $this->render('user/soon/soon.html.twig', [
-
-        ]);
-    }
-
-    #[Route('/profile/done', name: 'app_done')]
-    public function done(): Response
-    {
-        return $this->render('user/soon/soon.html.twig', [
-
-        ]);
-    }
-
     #[Route('/profile/delete', name: 'app_delete_account')]
     public function delete(): Response
     {

@@ -46,6 +46,9 @@ class ExerciseCategory
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'exerciseCategories')]
     private Collection $tags;
 
+    #[ORM\Column]
+    private ?int $sortNumber = -1;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
@@ -224,5 +227,17 @@ class ExerciseCategory
         }
 
         return $allTags;
+    }
+
+    public function getSortNumber(): ?int
+    {
+        return $this->sortNumber;
+    }
+
+    public function setSortNumber(int $sortNumber): static
+    {
+        $this->sortNumber = $sortNumber;
+
+        return $this;
     }
 }

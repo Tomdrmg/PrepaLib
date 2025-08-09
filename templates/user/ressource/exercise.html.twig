@@ -1,0 +1,258 @@
+{% extends "user/user.base.html.twig" %}
+
+{% block title %}{{ exercise.category.subject.name }} | Exercice{% endblock %}
+
+{% block main_class %}items-center p-2 md:p-4 pt-[88px]!{% endblock %}
+
+{% block main %}
+    <div class="container px-2 py-8 md:px-4 md:py-10">
+
+        <div class="flex px-3 flex-col gap-3 md:flex-row items-center justify-between">
+            <span class="text-xs text-text-300">{{ exercise.path }}</span>
+
+            <div class="flex flex-row py-1 px-2 prefs-{{ exercise.id }} bg-foreground-500 rounded-t-lg">
+                {% set pref = exercise.getPrefFor(app.user) %}
+                <div data-unselected-color="text-text-300" class="w-3/4 md:w-auto difficulty p-2 flex flex-row gap-2 justify-center">
+                    <div onclick="Exercise.setPref({'difficulty': 0})"
+                         data-selected-color="text-accent-blue-500" data-difficulty="0"
+                         class="difficulty-element {% if pref and pref.difficulty == 0 %}text-accent-blue-500{% else %}text-text-300{% endif %} flex text-lg cursor-pointer justify-center items-center">
+                        <i class="fa-regular fa-grin-stars text-lg"></i>
+                    </div>
+                    <div onclick="Exercise.setPref({'difficulty': 1})"
+                         data-selected-color="text-accent-green-500" data-difficulty="1"
+                         class="difficulty-element {% if pref and pref.difficulty == 1 %}text-accent-green-500{% else %}text-text-300{% endif %} flex text-lg cursor-pointer justify-center items-center">
+                        <i class="fa-regular fa-smile text-lg"></i>
+                    </div>
+                    <div onclick="Exercise.setPref({'difficulty': 2})"
+                         data-selected-color="text-accent-yellow-500" data-difficulty="2"
+                         class="difficulty-element {% if pref and pref.difficulty == 2 %}text-accent-yellow-500{% else %}text-text-300{% endif %} flex text-lg cursor-pointer justify-center items-center">
+                        <i class="fa-regular fa-meh text-lg"></i>
+                    </div>
+                    <div onclick="Exercise.setPref({'difficulty': 3})"
+                         data-selected-color="text-accent-red-500" data-difficulty="3"
+                         class="difficulty-element {% if pref and pref.difficulty == 3 %}text-accent-red-500{% else %}text-text-300{% endif %} flex text-lg cursor-pointer justify-center items-center">
+                        <i class="fa-regular fa-frown text-lg"></i>
+                    </div>
+                </div>
+                <div class="px-1 flex flex-row w-auto justify-center">
+                    <div class="done p-1">
+                        <div onclick="Exercise.setPref({'done': true})"
+                             class="{% if pref and pref.done %}hidden!{% endif %} false flex items-center justify-center h-full cursor-pointer">
+                            <i class="w-4 h-4 fa-solid fa-circle-check text-text-300"></i>
+                        </div>
+                        <div onclick="Exercise.setPref({'done': false})"
+                             class="{% if not pref or not pref.done %}hidden!{% endif %} true flex items-center justify-center h-full cursor-pointer">
+                            <i class="w-4 h-4 fa-solid fa-circle-check text-accent-green-500"></i>
+                        </div>
+                    </div>
+                    <div class="favorite p-1">
+                        <div onclick="Exercise.setPref({'favorite': true})"
+                             class="{% if pref and pref.favorite %}hidden!{% endif %} false flex items-center justify-center h-full cursor-pointer">
+                            <i class="w-4 h-4 fa-regular fa-star text-text-300"></i>
+                        </div>
+                        <div onclick="Exercise.setPref({'favorite': false})"
+                             class="{% if not pref or not pref.favorite %}hidden!{% endif %} true flex items-center justify-center h-full cursor-pointer">
+                            <i class="w-4 h-4 fa-solid fa-star text-accent-yellow-500"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-foreground-500 shadow rounded-lg relative">
+            <div class="exercise-loader absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center hidden! z-10 bg-foreground-500/60">
+                <svg aria-hidden="true" class="w-8 h-8 text-foreground-300 animate-spin fill-accent-purple-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                </svg>
+                <span class="sr-only">Chargement...</span>
+            </div>
+
+            <div class="flex flex-col gap-10 p-3">
+                <div class="mt-4">
+                    <h1 class="text-2xl font-bold text-center">{{ exercise.title }}</h1>
+                </div>
+
+                <div>
+                    {% if exercise.fullTags is not empty %}
+                        <div class="w-full flex flex-row px-3 items-center gap-3">
+                            <hr class="text-text-100 grow"/>
+                            <span class="uppercase font-bold text-xs">Tags</span>
+                            <hr class="text-text-100 grow"/>
+                        </div>
+
+                        <div class="flex flex-row flex-wrap gap-2 p-4">
+                            {% for tag in exercise.fullTags %}
+                                <twig:Tag name="{{ tag.name }}" color="{{ tag.color }}"/>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="w-full flex flex-row px-3 items-center gap-3">
+                        <hr class="text-text-100 grow"/>
+                        <span class="uppercase font-bold text-xs">énoncé</span>
+                        <hr class="text-text-100 grow"/>
+                    </div>
+                </div>
+
+                    <div class="p-4">
+                        <div class="text-xs md:text-sm overflow-auto text-wrap! whitespace-pre pb-2.5">{{ exercise.statement.content|raw }}</div>
+                    </div>
+
+                <div class="w-full flex flex-row items-center gap-3">
+                    <hr class="text-text-100 grow"/>
+                    <span class="uppercase font-bold text-xs">Solution</span>
+                    <hr class="text-text-100 grow"/>
+                </div>
+
+                {% set hasSolution = exercise.solution.content|trim is empty %}
+                    <div id="solution" class="p-4 min-h-40 bg-foreground-400/50 rounded ring ring-inset ring-foreground-300 relative">
+                        <div id="solution-cover" class="{% if hasSolution %}cursor-pointer{% endif%} opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center p-4 absolute top-0 bottom-0 left-0 right-0 bg-foreground-400 rounded ring ring-inset ring-foreground-300">
+                            <h2 class="text-xl font-bold text-center">Solution</h2>
+                            {% if hasSolution %}
+                                <span class="italic text-center text-sm">Cliquer pour découvrir.</span>
+                            {% else %}
+                                <span class="italic text-center text-sm">Aucune solution disponible.</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="text-xs md:text-sm overflow-auto text-wrap! whitespace-pre pb-2.5">{{ exercise.solution.content|raw }}</div>
+                    </div>
+
+                {% if exercise.hints is not empty %}
+                    <div class="w-full flex flex-row items-center gap-3">
+                        <hr class="text-text-100 grow"/>
+                        <span class="uppercase font-bold text-xs">Indices</span>
+                        <hr class="text-text-100 grow"/>
+                    </div>
+
+                    <div class="flex flex-row flex-wrap justify-center">
+                        {% for hint in exercise.hints %}
+                            <div class="xl:px-3 py-3 w-full xl:w-1/2">
+                                <div class="hint w-full relative min-h-[300px] h-full cursor-pointer transition-all duration-1000 transform-3d rounded-xl group mx-auto">
+                                    <!-- Front face -->
+                                    <div class="before:bg-accent-purple-500 after:bg-accent-purple-500 absolute top-0 left-0 w-full h-full backface-hidden transition-all duration-1000 z-[1] p-5 flex items-center justify-center rounded-xl shadow-[15px_15px_10px_rgba(0,0,0,0.2)]">
+                                        <div class="absolute top-0 left-0 w-full h-full bg-foreground-400 z-[2] rounded-xl ring ring-inset ring-foreground-300"></div>
+                                        <div class="absolute w-full h-full overflow-hidden z-[3] rounded-xl">
+                                            <div class="bg-accent-purple-500 absolute h-32 w-32 -top-[75px] -right-[75px] rounded-full transition-transform duration-1000 group-hover:scale-[20]"></div>
+                                        </div>
+                                        <div class="relative z-[4] w-full text-center">
+                                            <h2 class="uppercase font-bold text-center text-xl">Indice #{{ loop.index }}</h2>
+                                            {% if hint.lore is not empty %}
+                                                <span class="italic text-sm text-center">{{ hint.lore }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Back face -->
+                                    <div class="before:absolute before:top-0 before:left-0 before:w-full before:h-full before:z-1 before:rounded-xl before:[transform:rotateZ(0)] before:transition-transform after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-1 after:rounded-xl after:[transform:rotateZ(0)] after:transition-transform before:bg-accent-purple-500 after:bg-accent-purple-500 absolute top-0 left-0 w-full h-full backface-hidden transition-all duration-1000 z-[1] p-5 sm:p-10 text-lg [transform:rotateY(180deg)] rounded-xl shadow group-hover:before:rotate-[-2deg] group-hover:after:rotate-[2deg]">
+                                        <div class="absolute top-0 left-0 w-full h-full bg-foreground-400 z-[2] rounded-xl ring ring-inset ring-foreground-300"></div>
+                                        <div class="relative z-[4] h-full flex">
+                                            <div class="text-xs md:text-sm whitespace-pre-wrap">{{ hint.element.content }}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Ghost block to force height -->
+                                    <div aria-hidden="true" class="invisible text-xs md:text-sm pointer-events-none select-none whitespace-pre-wrap mt-2 p-5 sm:p-10">{{ hint.element.content }}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+
+                <div class="w-full flex flex-row items-center gap-3">
+                    <hr class="text-text-100 grow"/>
+                    <span class="uppercase font-bold text-xs">Commentaire</span>
+                    <hr class="text-text-100 grow"/>
+                </div>
+
+                {{ form_start(form, {'attr': {'class': 'space-y-6 p-4 pt-0'}}) }}
+
+                {{ form_label(form.text) }}
+                {{ form_widget(form.text) }}
+                {{ form_errors(form.text) }}
+
+                {{ form_widget(form.submit) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <script>
+            Exercise = (function() {
+                let loader;
+
+                function setLoading() {
+                    loader.classList.remove('hidden!');
+                }
+
+                function stopLoading() {
+                    loader.classList.add('hidden!');
+                }
+
+                function setPref(edit) {
+                    setLoading();
+
+                    if (edit.difficulty !== null) {
+                        document.querySelectorAll(`.prefs-{{ exercise.id }} .difficulty-element`).forEach(btn => {
+                            if (parseInt(btn.dataset.difficulty) === edit.difficulty) {
+                                const classes = btn.dataset.selectedColor.split(' ');
+                                let b = true;
+
+                                for (const cl of classes) {
+                                    if (!btn.classList.contains(cl)) b = false;
+                                }
+
+                                if (b) edit.difficulty = -1;
+                            }
+                        });
+                    }
+
+                    ExercisePref.setPref({{ exercise.id }}, edit, stopLoading, stopLoading);
+                }
+
+                function init() {
+                    loader = document.querySelector('.exercise-loader');
+                }
+
+                return {
+                    init: init,
+                    stopLoading: stopLoading,
+                    setLoading: setLoading,
+                    setPref: setPref,
+                }
+            })();
+
+            document.addEventListener('DOMContentLoaded', () => {
+                Exercise.init();
+
+                const solution = document.getElementById('solution');
+                const solutionCover = document.getElementById('solution-cover');
+
+                {% if hasSolution %}
+                    solutionCover.addEventListener('click', (e) => {
+                        solutionCover.classList.add('opacity-0', 'pointer-events-none');
+                        solutionCover.classList.remove('opacity-100', 'pointer-events-all');
+                        e.stopPropagation();
+                    })
+
+                    solution.addEventListener('click', (e) => {
+                        solutionCover.classList.remove('opacity-0', 'pointer-events-none');
+                        solutionCover.classList.add('opacity-100', 'pointer-events-all');
+                        e.stopPropagation();
+                    })
+                {% endif %}
+
+                document.querySelectorAll('.hint').forEach((hint) => {
+                    hint.addEventListener('click', (e) => {
+                        if (hint.style.transform !== 'rotateY(180deg)') {
+                            hint.style.transform = 'rotateY(180deg)';
+                        } else {
+                            hint.style.transform = 'rotateY(0)';
+                        }
+                    })
+                })
+            })
+        </script>
+    </div>
+{% endblock %}

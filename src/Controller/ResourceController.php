@@ -3,11 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Exercise;
+use App\Entity\ExerciseCategory;
 use App\Entity\ExercisePref;
 use App\Entity\Subject;
 use App\Entity\User;
+use App\Form\CommentType;
+use App\Form\Model\TextModel;
 use App\Form\OnlyTagsType;
 use App\Repository\ExerciseRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,11 +38,94 @@ final class ResourceController extends AbstractController
     }
 
     #[Route('/ressources/exercice/{exercise}', name: 'app_exercise')]
-    public function exercise(Exercise $exercise): Response
+    public function exercise(Exercise $exercise, Request $request, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser();
+
+        $pref = $exercise->getPrefFor($user);
+
+        if (!$pref) {
+            $pref = new ExercisePref();
+            $pref->setExercise($exercise);
+            $pref->setUser($user);
+            $pref->setDone(false);
+            $pref->setFavorite(false);
+            $pref->setDifficulty(-1);
+            $pref->setComment("");
+
+            $entityManager->persist($pref);
+        }
+
+        $comment = new TextModel();
+        $comment->text = $pref->getComment();
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $pref->setComment($comment->text?: '');
+            $entityManager->flush();
+            $this->addFlash('success', "Votre commentaire personnel a bien été modifié.");
+            return $this->redirectToRoute('app_exercise', ['exercise' => $exercise->getId()]);
+        }
+
         return $this->render('user/ressource/exercise.html.twig', [
-            "exercise" => $exercise
+            "exercise" => $exercise,
+            "form" => $form->createView(),
         ]);
+    }
+
+    #[Route('/api/ressources/{category}/exercises', name: 'api_category_exercises', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
+    public function categoryExercises(ExerciseCategory $category): JsonResponse
+    {
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+
+        $data = [];
+        /**
+         * @var Exercise $exercise
+         */
+        foreach ($category->getExercises() as $exercise) {
+            $data[] = $this->exerciseToArray($user, $exercise);
+        }
+
+        return new JsonResponse([
+            'results' => $data,
+        ]);
+    }
+
+    private function exerciseToArray(User $user, Exercise $exercise): array
+    {
+        $pref = $exercise->getPrefFor($user);
+        if (!$pref) {
+            $pref = new ExercisePref();
+            $pref->setDifficulty(-1);
+            $pref->setExercise($exercise);
+            $pref->setDone(false);
+            $pref->setFavorite(false);
+            $pref->setComment("");
+        }
+
+        return [
+            'id' => $exercise->getId(),
+            'title' => $exercise->getTitle(),
+            'statement' => $exercise->getStatement()->getContent(),
+            'category' => [
+                'name' => $exercise->getCategory()->getName(),
+                'color' => $exercise->getCategory()->getColor(),
+            ],
+            'firstCategory' => [
+                'name' => $exercise->getFirstCategory()->getName(),
+                'color' => $exercise->getFirstCategory()->getColor(),
+            ],
+            'tags' => array_map(fn($tag) => [
+                'name' => $tag->getName(),
+                'color' => $tag->getColor()
+            ], $exercise->getFullTags()),
+            'pref' => $pref->toArray()
+        ];
     }
 
     #[Route('/api/ressources/exercises', name: 'api_list_exercises', methods: ['GET'])]
@@ -89,34 +177,7 @@ final class ResourceController extends AbstractController
          * @var Exercise $exercise
          */
         foreach ($exercises as $exercise) {
-            $pref = $exercise->getPrefFor($user);
-            if (!$pref) {
-                $pref = new ExercisePref();
-                $pref->setDifficulty(-1);
-                $pref->setExercise($exercise);
-                $pref->setDone(false);
-                $pref->setFavorite(false);
-                $pref->setComment("");
-            }
-
-            $data[] = [
-                'id' => $exercise->getId(),
-                'title' => $exercise->getTitle(),
-                'statement' => $exercise->getStatement()->getContent(),
-                'category' => [
-                    'name' => $exercise->getCategory()->getName(),
-                    'color' => $exercise->getCategory()->getColor(),
-                ],
-                'firstCategory' => [
-                    'name' => $exercise->getFirstCategory()->getName(),
-                    'color' => $exercise->getFirstCategory()->getColor(),
-                ],
-                'tags' => array_map(fn($tag) => [
-                    'name' => $tag->getName(),
-                    'color' => $tag->getColor()
-                ], $exercise->getFullTags()),
-                'pref' => $pref->toArray()
-            ];
+            $data[] = $this->exerciseToArray($user, $exercise);
         }
 
         return new JsonResponse([

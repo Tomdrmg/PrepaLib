@@ -48,9 +48,7 @@
                         {% if app.user %}
                             <li><a href="{{ path('app_profile') }}" class="text-text-300 hover:text-text-100 transition">Mes Informations</a></li>
                             <li><a href="{{ path('app_security') }}" class="text-text-300 hover:text-text-100 transition">Sécurité</a></li>
-                            <li><a href="{{ path('app_favorite') }}" class="text-text-300 hover:text-text-100 transition">Favoris</a></li>
-                            <li><a href="{{ path('app_todo') }}" class="text-text-300 hover:text-text-100 transition">À Faire</a></li>
-                            <li><a href="{{ path('app_done') }}" class="text-text-300 hover:text-text-100 transition">Terminés</a></li>
+                            <li><a href="{{ path('app_logout') }}" class="text-text-300 hover:text-text-100 transition">Déconnexion</a></li>
                         {% else %}
                             <li><a href="{{ path('app_login') }}" class="text-text-300 hover:text-text-100 transition">Connexion</a></li>
                             <li><a href="{{ path('app_register') }}" class="text-text-300 hover:text-text-100 transition">Inscription</a></li>

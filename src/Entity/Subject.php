@@ -139,7 +139,7 @@ class Subject
     {
         $total = 0;
         foreach ($this->exerciseCategories as $exerciseCategory) {
-            $total += $exerciseCategory->countExercises();
+            $total += $exerciseCategory->getExercises()->count();
         }
 
         return $total;

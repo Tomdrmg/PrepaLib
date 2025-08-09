@@ -24,6 +24,9 @@ class ExerciseCategoryType extends AbstractType
                 'required' => false,
                 'mapped' => false,
             ])
+            ->add('sortNumber', NumberType::class, [
+                'label' => 'Priorité pour le tri'
+            ])
             ->add('color', ColorType::class, [
                 'label' => 'Couleur',
             ])

@@ -114,18 +114,6 @@
                                         Retour au Site
                                     </a>
                                 {% else %}
-                                    <a href="{{ path('app_favorite') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
-                                        <i class="fa-solid fa-star aspect-square text-lg"></i>
-                                        Favoris
-                                    </a>
-                                    <a href="{{ path('app_todo') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
-                                        <i class="fa-solid fa-clipboard-list aspect-square text-lg"></i>
-                                        À Faire
-                                    </a>
-                                    <a href="{{ path('app_done') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
-                                        <i class="fa-solid fa-clipboard-check aspect-square text-lg"></i>
-                                        Terminés
-                                    </a>
                                     {% if is_granted('ROLE_ADMIN') %}
                                         <a href="{{ path('app_admin_dashboard') }}" class="px-4 py-2 hover:bg-accent-blue-400 flex items-center gap-2 text-accent-blue-700">
                                             <i class="fa-solid fa-user-tie aspect-square text-lg"></i>

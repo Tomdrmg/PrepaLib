@@ -4,7 +4,7 @@
             --category-bg-color: color-mix(in srgb, var(--category-color), transparent 85%);
             --category-color-hover: color-mix(in srgb, var(--category-color), black 15%)"
     >
-        <div class="min-h-10 mt-1 category-toggle cursor-pointer flex flex-row gap-2 rounded transition text-[var(--category-color)] bg-[var(--category-bg-color)] ring ring-inset ring-[var(--category-color)]" data-toggle-id="cat-{{ subject.id }}-{{ category.id }}">
+        <div class="min-h-10 mt-1 category-toggle cursor-pointer flex flex-row gap-2 rounded transition text-[var(--category-color)] bg-[var(--category-bg-color)] ring ring-inset ring-[var(--category-color)]" data-toggle-id="{{ category.id }}">
             <div class="px-2 py-1 flex flex-row items-center gap-2">
                 <span class="toggle-icon text-xs md:text-xs">▶</span>
                 <span class="font-bold text-sm md:text-base">{{ category.name }}</span>
@@ -25,7 +25,7 @@
                     <div data-cat-name="{{ category.name }}" data-cat-id="{{ category.id }}" data-cat-color="{{ category.color }}" data-cat-full-tags="{{ category.fullTags|map(t => t.id)|join(',') }}" class="category-add-sub cursor-pointer flex items-center justify-center w-10 border-l border-l-[var(--category-color)]">
                         <i class="fa-solid fa-folder-plus"></i>
                     </div>
-                    <div data-cat-name="{{ category.name }}" data-cat-color="{{ category.color }}" data-cat-id="{{ category.id }}" data-cat-parent-id="{% if category.parent %}{{ category.parent.id }}{% else %}null{% endif %}" data-cat-tags="{{ category.tags|map(t => t.id)|join(',') }}" data-cat-inherited-tags="{% if category.parent %}{{ category.parent.fullTags|map(t => t.id)|join(',') }}{% else %}{% endif %}" class="category-edit cursor-pointer flex items-center justify-center w-10 border-l border-l-[var(--category-color)]">
+                    <div data-cat-name="{{ category.name }}" data-cat-color="{{ category.color }}" data-cat-sort-number="{{ category.sortNumber }}" data-cat-id="{{ category.id }}" data-cat-parent-id="{% if category.parent %}{{ category.parent.id }}{% else %}null{% endif %}" data-cat-tags="{{ category.tags|map(t => t.id)|join(',') }}" data-cat-inherited-tags="{% if category.parent %}{{ category.parent.fullTags|map(t => t.id)|join(',') }}{% else %}{% endif %}" class="category-edit cursor-pointer flex items-center justify-center w-10 border-l border-l-[var(--category-color)]">
                         <i class="fa-solid fa-edit"></i>
                     </div>
                     <div data-href="{{ path('app_admin_delete_category', {'category': category.id}) }}" class="cursor-pointer flex items-center justify-center w-10 border-l border-l-[var(--category-color)]">
@@ -35,109 +35,10 @@
             </div>
         </div>
 
-        <ul id="cat-{{ subject.id }}-{{ category.id }}" data-parent-cat="cat-{{ subject.id }}-{% if category.parent %}{{ category.parent.id }}{% else %}-1{% endif %}" class="exercise-category transition-all duration-500 ml-0.5 md:ml-2 relative before:absolute before:top-0 before:left-0 before:bottom-0 before:w-[1px] before:bg-[var(--category-color)] overflow-y-hidden" style="max-height: 0">
-            {% for child in category.children %}
+        <ul data-cat-id="{{ category.id }}" data-parent-cat="{% if category.parent %}{{ category.parent.id }}{% else %}-1{% endif %}" class="pb-2 after:absolute after:left-0 after:right-0 after:bottom-0 after:h-[1px] after:bg-[var(--category-color)] exercise-category transition-all duration-500 ml-0.5 md:ml-2 relative before:absolute before:top-0 before:left-0 before:bottom-0 before:w-[1px] before:bg-[var(--category-color)] overflow-y-hidden hidden">
+            {% for child in category.children|sort((a, b) => a.sortNumber <=> b.sortNumber) %}
                 {{ _self.render_category(subject, admin, user, child, false) }}
             {% endfor %}
-
-            {% for exercise in category.exercises %}
-                <li class="ml-2.5 md:ml-4 mt-2 relative before:absolute before:-left-4 before:w-4 before:h-[1px] before:top-5 before:bg-[var(--category-color)] transition-all duration-500">
-                    <div class="grid grid-cols-1 mt-1 {% if user %}prefs-{{ exercise.id }} md:grid-cols-[1fr_auto] md:grid-rows-[auto_auto]{% endif%} rounded transition text-text-200 ring ring-inset ring-[var(--category-color)]">
-                        <div class="min-h-10 flex flex-row gap-3 items-center rounded-t">
-                            <div class="rounded-tl h-full w-10 bg-[var(--category-color)]">
-                                <div class="flex h-full w-full items-center justify-center">
-                                    <i class=" fa-solid fa-file text-sm"></i>
-                                </div>
-                            </div>
-                            <span class="text-sm md:text-base font-semibold md:font-bold">{{ exercise.title }}</span>
-                        </div>
-                        {% if user %}
-                            <div class="flex flex-row divide-x divide-[var(--category-color)] border-t md:border-t-0 md:border-l border-[var(--category-color)]">
-                                {% set pref = exercise.getPrefFor(user) %}
-                                <div data-unselected-color="text-text-300" class="w-3/4 md:w-auto difficulty p-2 flex flex-row gap-2 justify-center">
-                                    <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'difficulty': 0})"
-                                         data-selected-color="text-accent-blue-500" data-difficulty="0"
-                                         class="difficulty-element {% if pref and pref.difficulty == 0 %}text-accent-blue-500{% else %}text-text-300{% endif %} flex text-lg cursor-pointer justify-center items-center">
-                                        <i class="fa-regular fa-grin-stars text-lg"></i>
-                                    </div>
-                                    <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'difficulty': 1})"
-                                         data-selected-color="text-accent-green-500" data-difficulty="1"
-                                         class="difficulty-element {% if pref and pref.difficulty == 1 %}text-accent-green-500{% else %}text-text-300{% endif %} flex text-lg cursor-pointer justify-center items-center">
-                                        <i class="fa-regular fa-smile text-lg"></i>
-                                    </div>
-                                    <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'difficulty': 2})"
-                                         data-selected-color="text-accent-yellow-500" data-difficulty="2"
-                                         class="difficulty-element {% if pref and pref.difficulty == 2 %}text-accent-yellow-500{% else %}text-text-300{% endif %} flex text-lg cursor-pointer justify-center items-center">
-                                        <i class="fa-regular fa-meh text-lg"></i>
-                                    </div>
-                                    <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'difficulty': 3})"
-                                         data-selected-color="text-accent-red-500" data-difficulty="3"
-                                         class="difficulty-element {% if pref and pref.difficulty == 3 %}text-accent-red-500{% else %}text-text-300{% endif %} flex text-lg cursor-pointer justify-center items-center">
-                                        <i class="fa-regular fa-frown text-lg"></i>
-                                    </div>
-                                </div>
-                                <div class="px-1 flex flex-row w-1/4 md:w-auto justify-center">
-                                    <div class="done p-1">
-                                        <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'done': true})"
-                                             class="{% if pref and pref.done %}hidden!{% endif %} false flex items-center justify-center h-full cursor-pointer">
-                                            <i class="w-4 h-4 fa-solid fa-circle-check text-text-300"></i>
-                                        </div>
-                                        <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'done': false})"
-                                             class="{% if not pref or not pref.done %}hidden!{% endif %} true flex items-center justify-center h-full cursor-pointer">
-                                            <i class="w-4 h-4 fa-solid fa-circle-check text-accent-green-500"></i>
-                                        </div>
-                                    </div>
-                                    <div class="favorite p-1">
-                                        <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'favorite': true})"
-                                             class="{% if pref and pref.favorite %}hidden!{% endif %} false flex items-center justify-center h-full cursor-pointer">
-                                            <i class="w-4 h-4 fa-regular fa-star text-text-300"></i>
-                                        </div>
-                                        <div onclick="ExerciseTree{{ subject.id }}.setTreePref({{ exercise.id }}, {'favorite': false})"
-                                             class="{% if not pref or not pref.favorite %}hidden!{% endif %} true flex items-center justify-center h-full cursor-pointer">
-                                            <i class="w-4 h-4 fa-solid fa-star text-accent-yellow-500"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
-                        <div class="p-4 flex flex-col gap-3 md:col-span-2 lg:col-span-1 border-t border-[var(--category-color)]">
-                            {% if exercise.fullTags is not empty %}
-                                <div class="flex flex-row flex-wrap gap-2">
-                                    {% for tag in exercise.fullTags %}
-                                        <twig:Tag name="{{ tag.name }}" color="{{ tag.color }}"/>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            <div class="text-xs md:text-sm overflow-auto text-wrap! whitespace-pre pb-2.5">{{ exercise.statement.content|raw }}</div>
-                            {% if admin %}
-                                <div class="flex items-center gap-3">
-                                    <a href="{{ path('app_admin_edit_exercise', {'exercise': exercise.id}) }}" class="text-xs p-2 md:text-sm bg-[var(--category-color)] hover:bg-[var(--category-color-hover)] transition duration-300 rounded">Modifier</a>
-                                    <a href="{{ path('app_admin_delete_exercise', {'exercise': exercise.id}) }}" class="text-xs p-2 md:text-sm bg-[var(--category-color)] hover:bg-[var(--category-color-hover)] transition duration-300 rounded">Supprimer</a>
-                                </div>
-                            {% else %}
-                                <div class="flex items-center justify-center gap-3">
-                                    <a href="{{ path('app_exercise', {'exercise': exercise.id}) }}" class="text-xs p-2 md:text-sm bg-accent-purple-700 hover:bg-accent-purple-600 transition duration-300 rounded">Accéder à l'exercice</a>
-                                </div>
-                            {% endif %}
-                        </div>
-                        {% if user %}
-                            <div class="w-min p-2 min-w-full md:col-span-2 lg:col-span-1 border-t lg:border-l border-[var(--category-color)]">
-                                <span class="text-xs font-semibold">Commentaire personnel :</span>
-                                <br/>
-                                <p class="non-commented-text text-xs text-text-300 {% if pref and pref.comment is not empty %}hidden{% endif %}">
-                                    Vous n'avez pas encore commenté cet exercice
-                                </p>
-                                <p class="comment-container whitespace-pre text-xs text-text-300 {% if pref and pref.comment is empty %}hidden{% endif %}">{% if pref and pref.comment %}{{ pref.comment }}{% endif %}</p>
-                            </div>
-                        {% endif %}
-                    </div>
-                </li>
-            {% endfor %}
-            <li class="relative transition-all duration-500">
-                <div class="h-[1px] bg-[var(--category-color)] w-full mt-2">
-
-                </div>
-            </li>
         </ul>
     </li>
 {% endmacro %}
@@ -145,7 +46,6 @@
 <ul{{ attributes }} id="exercise-tree-{{ subject.id }}" style="position: relative">
     {% set admin = admin and form %}
 
-    {% if user %}
         <div class="tree-loader absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center hidden! z-10 bg-foreground-500/60">
             <svg aria-hidden="true" class="w-8 h-8 text-foreground-300 animate-spin fill-accent-purple-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -153,7 +53,6 @@
             </svg>
             <span class="sr-only">Chargement...</span>
         </div>
-    {% endif %}
 
     {% if admin %}
         <div class="form-popup hidden fixed items-center justify-center z-50 top-0 bottom-0 left-0 right-0 bg-background-900/60">
@@ -165,10 +64,15 @@
                     {{ form_widget(form.parent) }}
 
                     <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-                        <div class="md:flex-1">
+                        <div class="md:flex-2">
                             {{ form_label(form.name) }}
                             {{ form_widget(form.name) }}
                             {{ form_errors(form.name) }}
+                        </div>
+                        <div class="md:flex-1">
+                            {{ form_label(form.sortNumber) }}
+                            {{ form_widget(form.sortNumber) }}
+                            {{ form_errors(form.sortNumber) }}
                         </div>
                         <div>
                             {{ form_label(form.color) }}
@@ -194,7 +98,7 @@
         </div>
     {% endif %}
 
-    {% for category in subject.highestExerciseCategories %}
+    {% for category in subject.highestExerciseCategories|sort((a, b) => a.sortNumber <=> b.sortNumber) %}
         {{ _self.render_category(subject, admin, user, category, true) }}
     {% endfor %}
 
@@ -213,8 +117,6 @@
             const ExerciseTree{{ subject.id }} = (function () {
                 let exerciseTreeComponent;
                 let toggles;
-
-                {% if user %}
                 let treeLoader;
 
                 function setLoading() {
@@ -225,6 +127,7 @@
                     treeLoader.classList.add('hidden!');
                 }
 
+                {% if user %}
                 function setTreePref(exerciseId, edit) {
                     setLoading();
 
@@ -250,6 +153,7 @@
                 {% if admin %}
                 let formPopup;
                 let formName;
+                let formSortNumber;
                 let formColor;
                 let formId;
                 let formParent;
@@ -262,6 +166,7 @@
                     TagSelector{{ form.tags.vars.name|capitalize }}.clearTags();
                     formName.value = "";
                     formColor.value = "#000000";
+                    formSortNumber.value = 0;
                     formId.value = null;
                     formParent.value = null;
                     resetButton.classList.add("hidden");
@@ -272,12 +177,13 @@
                     resetButton.classList.add("hidden");
                 }
 
-                function edit(name, color, id, parentId, tags, inheritedTags) {
+                function edit(name, color, sortNumber, id, parentId, tags, inheritedTags) {
                     if (parentId) {
                         formPopup.classList.remove("hidden");
                         formPopup.classList.add("flex");
                         formName.value = name;
                         formColor.value = color;
+                        formSortNumber.value = sortNumber;
                         formId.value = id;
                         formParent.value = parentId;
                         TagSelector{{ form.tags.vars.name|capitalize }}.setTags(tags);
@@ -292,6 +198,7 @@
                     formName.value = "";
                     formColor.value = parentColor;
                     formId.value = null;
+                    formSortNumber.value = 0;
                     formParent.value = parentId;
                     TagSelector{{ form.tags.vars.name|capitalize }}.clearTags();
                     TagSelector{{ form.tags.vars.name|capitalize }}.setInheritedTags(inheritedTags);
@@ -300,83 +207,238 @@
                 {% endif %}
 
                 // Categories
-                function collapseAll() {
-                    [...toggles]
-                        .sort((a, b) => Number(b.dataset.toggleId) - Number(a.dataset.toggleId))
-                        .forEach(toggle => {
-                            if (localStorage.getItem(toggle.dataset.toggleId) === "opened") {
-                                switchCategory(toggle);
-                            }
-                        });
+                function switchCategory(category) {
+                    if (!category) return;
+
+                    if (isOpen(category))
+                        closeCategory(category, true);
+                    else
+                        openCategory(category, true);
                 }
 
-                function expandAll() {
-                    [...toggles]
-                        .sort((a, b) => Number(b.dataset.toggleId) - Number(a.dataset.toggleId))
-                        .forEach(toggle => {
-                            if (localStorage.getItem(toggle.dataset.toggleId) !== "opened") {
-                                switchCategory(toggle);
-                            }
-                        });
+                function removeExercises(category) {
+                    category.querySelectorAll('.exercise').forEach(exercise => {
+                        exercise.remove();
+                    })
                 }
 
-                function switchCategory(toggle) {
-                    const id = toggle.dataset.toggleId;
-                    const category = document.getElementById(id);
+                function setExercises(category, exercises) {
+                    for (const exercise of exercises) {
+                        const d = document.createElement("div");
+                        let tagsPart = '';
 
-                    if (category) {
-                        let delta;
+                        if (exercise.tags.length > 0) {
+                            tagsPart += '<div class="flex flex-row flex-wrap gap-2">';
 
-                        if (category.style.maxHeight && category.style.maxHeight !== "0px") {
-                            localStorage.removeItem(category.id);
-
-                            delta = -parseInt(category.style.maxHeight, 10);
-                            category.style.maxHeight = "0px";
-                            for (const child of category.children) {
-                                child.style.transform = "translateY(-" + category.scrollHeight + "px)";
+                            for (const tag of exercise.tags) {
+                                tagsPart += `<twig:Tag name="${tag.name}" color="${ tag.color }"/>`;
                             }
-                        } else {
-                            localStorage.setItem(category.id, "opened");
 
-                            category.style.maxHeight = category.scrollHeight + "px";
-                            delta = parseInt(category.style.maxHeight, 10);
-                            for (const child of category.children) {
-                                child.style.transform = null;
-                            }
+                            tagsPart += '</div>';
                         }
 
-                        let toggleIcon = toggle.getElementsByClassName('toggle-icon')[0];
-                        if (toggleIcon.textContent.trim().startsWith('▶')) {
-                            toggleIcon.textContent = toggleIcon.textContent.replace('▶', '▼');
-                        } else if (toggleIcon.textContent.trim().startsWith('▼')) {
-                            toggleIcon.textContent = toggleIcon.textContent.replace('▼', '▶');
-                        }
+                        d.innerHTML = `<li class="exercise ml-2.5 md:ml-4 mt-2 relative before:absolute before:-left-4 before:w-4 before:h-[1px] before:top-5 before:bg-[var(--category-color)] transition-all duration-500">
+                                            <div class="grid grid-cols-1 mt-1 {% if user %}prefs-${exercise.id} md:grid-cols-[1fr_auto] md:grid-rows-[auto_auto]{% endif%} rounded transition text-text-200 ring ring-inset ring-[var(--category-color)]">
+                                                <div class="min-h-10 flex flex-row gap-3 items-center rounded-t">
+                                                    <div class="rounded-tl h-full w-10 bg-[var(--category-color)]">
+                                                        <div class="flex h-full w-full items-center justify-center">
+                                                            <i class=" fa-solid fa-file text-sm"></i>
+                                                        </div>
+                                                    </div>
+                                                    <span class="text-sm md:text-base font-semibold md:font-bold">${exercise.title}</span>
+                                                </div>
+                                                {% if user %}
+                                                    <div class="flex flex-row divide-x divide-[var(--category-color)] border-t md:border-t-0 md:border-l border-[var(--category-color)]">
+                                                        <div data-unselected-color="text-text-300" class="w-3/4 md:w-auto difficulty p-2 flex flex-row gap-2 justify-center">
+                                                        <div onclick="ExerciseTree{{ subject.id }}.setTreePref(${exercise.id}, {'difficulty': 0})"
+                                                             data-selected-color="text-accent-blue-500" data-difficulty="0"
+                                                             class="difficulty-element ${exercise.pref.difficulty === 0 ? 'text-accent-blue-500' : 'text-text-300'} text-lg cursor-pointer flex justify-center items-center">
+                                                            <i class="fa-regular fa-grin-stars text-lg"></i>
+                                                        </div>
+                                                        <div onclick="ExerciseTree{{ subject.id }}.setTreePref(${exercise.id}, {'difficulty': 1})"
+                                                             data-selected-color="text-accent-green-500" data-difficulty="1"
+                                                             class="difficulty-element ${exercise.pref.difficulty === 1 ? 'text-accent-green-500' : 'text-text-300'} text-lg cursor-pointer flex justify-center items-center">
+                                                            <i class="fa-regular fa-smile text-lg"></i>
+                                                        </div>
+                                                        <div onclick="ExerciseTree{{ subject.id }}.setTreePref(${exercise.id}, {'difficulty': 2})"
+                                                             data-selected-color="text-accent-yellow-500" data-difficulty="2"
+                                                             class="difficulty-element ${exercise.pref.difficulty === 2 ? 'text-accent-yellow-500' : 'text-text-300'} text-lg cursor-pointer flex justify-center items-center">
+                                                            <i class="fa-regular fa-meh text-lg"></i>
+                                                        </div>
+                                                        <div onclick="ExerciseTree{{ subject.id }}.setTreePref(${exercise.id}, {'difficulty': 3})"
+                                                             data-selected-color="text-accent-red-500" data-difficulty="3"
+                                                             class="difficulty-element ${exercise.pref.difficulty === 3 ? 'text-accent-red-500' : 'text-text-300'} text-lg cursor-pointer flex justify-center items-center">
+                                                            <i class="fa-regular fa-frown text-lg"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div class="px-1 flex flex-row w-1/4 md:w-auto justify-center">
+                                                        <div class="done p-1">
+                                                            <div onclick="ExerciseTree{{ subject.id }}.setTreePref(${exercise.id}, {'done': true})"
+                                                                 class="${exercise.pref.done ? 'hidden!' : ''} false flex items-center justify-center h-full cursor-pointer">
+                                                                <i class="w-4 h-4 fa-solid fa-circle-check text-text-300"></i>
+                                                            </div>
+                                                            <div onclick="ExerciseTree{{ subject.id }}.setTreePref(${ exercise.id }, {'done': false})"
+                                                                 class="${exercise.pref.done ? '': 'hidden!'} true flex items-center justify-center h-full cursor-pointer">
+                                                                <i class="w-4 h-4 fa-solid fa-circle-check text-accent-green-500"></i>
+                                                            </div>
+                                                        </div>
+                                                        <div class="favorite p-1">
+                                                            <div onclick="ExerciseTree{{ subject.id }}.setListPref(${ exercise.id }, {'favorite': true})"
+                                                                 class="${exercise.pref.favorite ? 'hidden!' : ''} false flex items-center justify-center h-full cursor-pointer">
+                                                                <i class="w-4 h-4 fa-regular fa-star text-text-300"></i>
+                                                            </div>
+                                                            <div onclick="ExerciseTree{{ subject.id }}.setListPref(${ exercise.id }, {'favorite': false})"
+                                                                 class="${exercise.pref.favorite ? '': 'hidden!'} true flex items-center justify-center h-full cursor-pointer">
+                                                                <i class="w-4 h-4 fa-solid fa-star text-accent-yellow-500"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    </div>
+                                                {% endif %}
+                                                <div class="p-4 flex flex-col gap-3 md:col-span-2 lg:col-span-1 border-t border-[var(--category-color)]">
+                                                     ${tagsPart}
+                                                    <div class="text-xs md:text-sm overflow-auto text-wrap! whitespace-pre pb-2.5 latex">${exercise.statement}</div>
+                                                    {% if admin %}
+                                                        <div class="flex items-center gap-3">
+                                                            <a href="${'{{ path('app_admin_edit_exercise', {'exercise': 'EXERCISE_ID'}) }}'.replaceAll('EXERCISE_ID', exercise.id)}" class="text-xs p-2 md:text-sm bg-[var(--category-color)] hover:bg-[var(--category-color-hover)] transition duration-300 rounded">Modifier</a>
+                                                            <a href="${'{{ path('app_admin_delete_exercise', {'exercise': 'EXERCISE_ID'}) }}'.replaceAll('EXERCISE_ID', exercise.id)}" class="text-xs p-2 md:text-sm bg-[var(--category-color)] hover:bg-[var(--category-color-hover)] transition duration-300 rounded">Supprimer</a>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="flex items-center justify-center gap-3">
+                                                            <a href="${'{{ path('app_exercise', {'exercise': 'EXERCISE_ID'}) }}'.replaceAll('EXERCISE_ID', exercise.id)}" class="text-xs p-2 md:text-sm bg-accent-purple-700 hover:bg-accent-purple-600 transition duration-300 rounded">Accéder à l'exercice</a>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                {% if user %}
+                                                    <div class="w-min p-2 min-w-full md:col-span-2 lg:col-span-1 border-t lg:border-l border-[var(--category-color)]">
+                                                        <span class="text-xs font-semibold">Commentaire personnel :</span>
+                                                        <br/>
+                                                        <p class="non-commented-text text-xs text-text-300 ${exercise.pref.comment.replace(/\s+/g, ' ').trim() !== '' ? 'hidden' : ''}">
+                                                            Vous n'avez pas encore commenté cet exercice
+                                                        </p>
+                                                        <p class="comment-container whitespace-pre-wrap text-xs text-text-300 ${exercise.pref.comment.replace(/\s+/g, ' ').trim() !== '' ? '' : 'hidden'}">${exercise.pref.comment}</p>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </li>`;
 
-                        updateParent(category, delta);
+                        category.appendChild(d.querySelector('li'));
                     }
                 }
 
-                function updateParent(category, delta) {
-                    if (category) {
-                        const id = category.dataset.parentCat;
-                        const parent = document.getElementById(id);
+                function updateExercises(category, loading = false) {
+                    if (loading) setLoading();
+                    fetch('{{ path('api_category_exercises', {'category': 'CATEGORY_ID'}) }}'.replace('CATEGORY_ID', getCategoryId(category)), {
+                        method: 'GET',
+                        credentials: 'include'
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erreur HTTP : ' + response.status);
+                            }
 
-                        if (parent && parent.style.maxHeight && parent.style.maxHeight !== "0px") {
-                            parent.style.maxHeight = (parseInt(parent.style.maxHeight, 10) + delta) + "px";
-                            updateParent(parent, delta);
+                            return response.json();
+                        })
+                        .then(data => {
+                            setExercises(category, data.results);
+                            if (loading) stopLoading()
+                        })
+                        .catch(error => {
+                            console.error('Erreur fetch :', error); // TODO : NOTIFICATION
+                            if (loading) stopLoading()
+                        });
+                }
+
+                function setOpenedCategory(category) {
+                    if (category)
+                        localStorage.setItem("tree-category-{{ subject.id }}-opened", getCategoryId(category));
+                    else
+                        localStorage.removeItem("tree-category-{{ subject.id }}-opened");
+                }
+
+                function getOpenedCategory() {
+                    return getCategory(localStorage.getItem("tree-category-{{ subject.id }}-opened"));
+                }
+
+                function getCategoryId(category) {
+                    return category ? category.dataset.catId : '-1';
+                }
+
+                function getCategory(id) {
+                    return exerciseTreeComponent.querySelector(`.exercise-category[data-cat-id="${id}"]`);
+                }
+
+                function getCategoryFromToggle(toggle) {
+                    const catId = toggle.dataset.toggleId;
+                    console.log(catId);
+                    return getCategory(catId);
+                }
+
+                function getParent(category) {
+                    const parentId = category.dataset.parentCat;
+                    return getCategory(parentId);
+                }
+
+                function getToggle(category) {
+                    return exerciseTreeComponent.querySelector(`.category-toggle[data-toggle-id="${getCategoryId(category)}"]`);
+                }
+
+                function getToggleIcon(category) {
+                    return getToggle(category).querySelector(`.toggle-icon`);
+                }
+
+                function isOpen(category) {
+                    return category && !category.classList.contains('hidden');
+                }
+
+                function openCategory(category, closeOthers) {
+                    if (!category) return;
+
+                    if (closeOthers) {
+                        closeAllCategories();
+                        setOpenedCategory(category);
+                    }
+
+                    const toggleIcon = getToggleIcon(category);
+                    toggleIcon.textContent = toggleIcon.textContent.replace('▶', '▼');
+
+                    category.classList.remove('hidden');
+
+                    updateExercises(category, closeOthers);
+                    openCategory(getParent(category), false);
+                }
+
+                function closeCategory(category, openParent) {
+                    if (!category) return;
+
+                    category.classList.add('hidden');
+
+                    const toggleIcon = getToggleIcon(category);
+                    toggleIcon.textContent = toggleIcon.textContent.replace('▼', '▶');
+                    removeExercises(category);
+
+                    if (openParent) {
+                        setOpenedCategory(null);
+                        const parent = getParent(category);
+
+                        if (parent) {
+                            openCategory(parent, false);
                         }
                     }
+                }
+
+                function closeAllCategories() {
+                    setOpenedCategory(null);
+                    localStorage.removeItem("tree-category-{{ subject.id }}-opened");
+                    document.querySelectorAll('.exercise-category').forEach(category => {
+                        closeCategory(category, false);
+                    })
                 }
 
                 function updateAll() {
-                    document.querySelectorAll('.category-toggle').forEach(toggle => {
-                        const id = toggle.dataset.toggleId;
-                        const category = document.getElementById(id);
-
-                        if (category && localStorage.getItem(category.id) === "opened") {
-                            category.style.maxHeight = category.scrollHeight + "px";
-                            delta = parseInt(category.style.maxHeight, 10);
-                            updateParent(category, delta);
+                    document.querySelectorAll('.exercise-category').forEach(category => {
+                        if (isOpen(category)) {
+                            category.classList.remove('hidden');
                         }
                     })
                 }
@@ -385,34 +447,20 @@
                     window.addEventListener("resize", updateAll);
 
                     MathJax.typesetPromise().then(() => {
-                        document.querySelectorAll('.category-toggle').forEach(toggle => {
-                            if (localStorage.getItem(toggle.dataset.toggleId) === "opened") {
-                                switchCategory(toggle);
-                            }
-                        })
-
-                        document.querySelectorAll('.exercise-category').forEach(category => {
-                            if (localStorage.getItem(category.id) !== "opened") {
-                                for (const child of category.children) {
-                                    child.style.transform = "translateY(-" + category.scrollHeight + "px)";
-                                }
-                            }
-                        })
+                        openCategory(getOpenedCategory(), true);
                     });
                 }
 
                 function init() {
                     exerciseTreeComponent = document.getElementById('exercise-tree-{{ subject.id }}');
                     toggles = exerciseTreeComponent.querySelectorAll('.category-toggle');
-
-                    {% if user %}
                     treeLoader = exerciseTreeComponent.querySelector('.tree-loader');
-                    {% endif %}
 
                     {% if admin %}
                     formPopup = exerciseTreeComponent.querySelector('.form-popup');
                     formName = document.getElementById("{{ form.name.vars.id }}");
                     formColor = document.getElementById("{{ form.color.vars.id }}");
+                    formSortNumber = document.getElementById("{{ form.sortNumber.vars.id }}");
                     formId = document.getElementById("{{ form.id.vars.id }}");
                     formParent = document.getElementById("{{ form.parent.vars.id }}");
                     resetButton = exerciseTreeComponent.querySelector(".resetCategoryButton");
@@ -434,15 +482,15 @@
 
                     exerciseTreeComponent.querySelectorAll('.category-edit').forEach(e => {
                         e.addEventListener('click', (event) => {
-                            edit(e.dataset.catName, e.dataset.catColor, e.dataset.catId, e.dataset.catParentId, e.dataset.catTags, e.dataset.catInheritedTags);
+                            edit(e.dataset.catName, e.dataset.catColor, e.dataset.catSortNumber, e.dataset.catId, e.dataset.catParentId, e.dataset.catTags, e.dataset.catInheritedTags);
                             event.stopPropagation();
                         });
                     });
                     {% endif %}
 
-                    exerciseTreeComponent.querySelectorAll('.category-toggle').forEach(toggle => {
+                    toggles.forEach(toggle => {
                         toggle.addEventListener('click', () => {
-                            switchCategory(toggle);
+                            switchCategory(getCategoryFromToggle(toggle), true);
                         });
                     });
 
@@ -474,11 +522,15 @@
                     add: add,
                     setNew: setNew,
                     {% endif %}
-                    collapseAll: collapseAll,
-                    expandAll: expandAll,
-                    updateParent: updateParent,
-                    onWindowLoad: onWindowLoad,
+                    openCategory: openCategory,
+                    closeCategory: closeCategory,
+                    getCategory: getCategory,
                     updateAll: updateAll,
+                    getToggle: getToggle,
+                    getToggleIcon: getToggleIcon,
+                    getCategoryFromToggle: getCategoryFromToggle,
+                    getOpenedCategory: getOpenedCategory,
+                    onWindowLoad: onWindowLoad,
                 }
             })();
 

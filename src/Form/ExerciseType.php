@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,6 +19,9 @@ class ExerciseType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('sortNumber', NumberType::class, [
+                'label' => 'Priorité pour le tri (numéro de l\'exercice)'
+            ])
             ->add('title', TextType::class, [
                 'label' => 'Titre de l’exercice'
             ])
@@ -31,12 +35,8 @@ class ExerciseType extends AbstractType
                 'required' => false
             ])
             ->add('hints', CollectionType::class, [
-                'label' => 'Indices (LaTeX)',
-                'entry_type' => TextareaType::class,
-                'entry_options' => [
-                    'label' => false,
-                    'attr' => ['rows' => 3, 'class' => 'latex-input']
-                ],
+                'label' => 'Indices',
+                'entry_type' => HintType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false

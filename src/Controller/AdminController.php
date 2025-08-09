@@ -7,6 +7,7 @@ use App\Entity\Element;
 use App\Entity\ElementList;
 use App\Entity\Exercise;
 use App\Entity\ExerciseCategory;
+use App\Entity\Hint;
 use App\Entity\Subject;
 use App\Entity\Tag;
 use App\Entity\TagList;
@@ -14,6 +15,7 @@ use App\Entity\User;
 use App\Form\ExerciseCategoryType;
 use App\Form\ExerciseType;
 use App\Form\Model\ExerciseModel;
+use App\Form\Model\HintModel;
 use App\Form\SubjectType;
 use App\Form\TagType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -152,6 +154,7 @@ final class AdminController extends AbstractController
 
                 $storedCategory->setName($category->getName());
                 $storedCategory->setColor($category->getColor());
+                $storedCategory->setSortNumber($category->getSortNumber());
                 $storedCategory->setParent($category->getParent());
 
                 foreach ($storedCategory->getTags() as $tag) {
@@ -189,6 +192,8 @@ final class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $exercise = new Exercise();
 
+            $exercise->setSortNumber($exerciseModel->sortNumber);
+
             $exercise->setCategory($category);
 
             $exercise->setTitle($exerciseModel->title);
@@ -207,11 +212,18 @@ final class AdminController extends AbstractController
                 $exercise->addTag($tag);
             }
 
-            foreach ($exerciseModel->hints as $hintContent) {
-                $hint = new Element();
-                $hint->setContent($hintContent);
-                $entityManager->persist($hint);
-                $exercise->addHint($hint);
+            foreach ($exerciseModel->hints as $hintModel) {
+                $newHintElem = new Element();
+                $newHintElem->setContent($hintModel->content);
+                $entityManager->persist($newHintElem);
+
+                $newHint = new Hint();
+                $newHint->setExercise($exercise);
+                $newHint->setElement($newHintElem);
+                $newHint->setLore($hintModel->lore ?: '');
+                $entityManager->persist($newHint);
+
+                $exercise->addHint($newHint);
             }
 
             $entityManager->persist($exercise);
@@ -230,6 +242,7 @@ final class AdminController extends AbstractController
     public function editExercise(Exercise $exercise, Request $request, EntityManagerInterface $entityManager): Response
     {
         $exerciseModel = new ExerciseModel();
+        $exerciseModel->sortNumber = $exercise->getSortNumber();
         $exerciseModel->title = $exercise->getTitle();
         $exerciseModel->statement = $exercise->getStatement()->getContent();
         if ($exercise->getSolution() !== null)
@@ -240,13 +253,17 @@ final class AdminController extends AbstractController
         }
 
         foreach ($exercise->getHints() as $hint) {
-            $exerciseModel->hints[] = $hint->getContent();
+            $hintModel = new HintModel();
+            $hintModel->content = $hint->getElement()->getContent();
+            $hintModel->lore = $hint->getLore();
+            $exerciseModel->hints[] = $hintModel;
         }
 
         $form = $this->createForm(ExerciseType::class, $exerciseModel);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $exercise->setSortNumber($exerciseModel->sortNumber);
             $exercise->setTitle($exerciseModel->title);
             $exercise->getStatement()->setContent($exerciseModel->statement);
             $exercise->getSolution()->setContent($exerciseModel->solution ? $exerciseModel->solution : '');
@@ -261,10 +278,17 @@ final class AdminController extends AbstractController
                 $entityManager->remove($oldHint);
             }
 
-            foreach ($exerciseModel->hints as $hintContent) {
-                $newHint = new Element();
-                $newHint->setContent($hintContent);
+            foreach ($exerciseModel->hints as $hintModel) {
+                $newHintElem = new Element();
+                $newHintElem->setContent($hintModel->content);
+                $entityManager->persist($newHintElem);
+
+                $newHint = new Hint();
+                $newHint->setExercise($exercise);
+                $newHint->setElement($newHintElem);
+                $newHint->setLore($hintModel->lore ?: '');
                 $entityManager->persist($newHint);
+
                 $exercise->addHint($newHint);
             }
 

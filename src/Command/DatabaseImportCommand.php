@@ -68,13 +68,14 @@ class DatabaseImportCommand extends Command
 
             $this->importExercises($category, $content, $clear, $io);
             $this->entityManager->flush();
-        } if (preg_match('/^exercises:dir:(\d+)$/', $type, $matches)) {
+        } if (preg_match('/^exercises:dir:(\d+):(#[0-9A-Fa-f]{6})$/', $type, $matches)) {
             if (!is_dir($path)) {
                 $io->error("'$path' isn't a directory.");
                 return Command::FAILURE;
             }
 
             $categoryId = (int) $matches[1];
+            $color = $matches[2];
 
             /** @var ExerciseCategory|null $exercise */
             $category = $this->entityManager->getRepository(ExerciseCategory::class)->find($categoryId);
@@ -84,11 +85,45 @@ class DatabaseImportCommand extends Command
                 return Command::FAILURE;
             }
 
-            if ($clear) {
+            $removeCategoryRec = function (ExerciseCategory $category) use (&$removeCategoryRec) {
+                foreach ($category->getChildren() as $child) {
+                    $removeCategoryRec($child);
+                }
+
                 foreach ($category->getExercises() as $exercise) {
+                    foreach ($exercise->getExercisePrefs() as $pref) {
+                        $this->entityManager->remove($pref);
+                    }
+
+                    foreach ($exercise->getHints() as $hint) {
+                        $this->entityManager->remove($hint);
+                    }
+
+                    $this->entityManager->remove($exercise);
+                }
+
+                $this->entityManager->remove($category);
+            };
+
+            if ($clear) {
+                foreach ($category->getChildren() as $child) {
+                    $removeCategoryRec($child);
+                }
+
+                foreach ($category->getExercises() as $exercise) {
+                    foreach ($exercise->getExercisePrefs() as $pref) {
+                        $this->entityManager->remove($pref);
+                    }
+
+                    foreach ($exercise->getHints() as $hint) {
+                        $this->entityManager->remove($hint);
+                    }
+
                     $this->entityManager->remove($exercise);
                 }
             }
+
+            $tds = [];
 
             foreach (scandir($path) as $file) {
                 if ($file === '.' || $file === '..') {
@@ -101,16 +136,29 @@ class DatabaseImportCommand extends Command
                     $fileContent = file_get_contents($fullPath);
 
                     if (preg_match('/\\\\chapter\{([^}]*)}/', $fileContent, $matchesIn)) {
-                        $subCategory = new ExerciseCategory();
-                        $subCategory->setName("TD n°$matches[1] : $matchesIn[1]");
-                        $subCategory->setColor('#75b7e8');
-                        $subCategory->setParent($category);
-                        $subCategory->setSubject($category->getSubject());
-                        $this->entityManager->persist($subCategory);
+                        $number = (int) $matches[1];
+                        $chapterName = $matchesIn[1];
 
-                        $this->importExercises($subCategory, $fileContent, false, $io);
+                        $tds[$number] = [
+                            'name' => $chapterName,
+                            'content' => $fileContent,
+                        ];
                     }
                 }
+            }
+
+            ksort($tds);
+
+            foreach ($tds as $number => $td) {
+                $subCategory = new ExerciseCategory();
+                $subCategory->setName('TD n°'.$number.' : '.$td['name']);
+                $subCategory->setColor($color); // for tds : '#75b7e8', for ds: '#fc6262'
+                $subCategory->setParent($category);
+                $subCategory->setSubject($category->getSubject());
+                $subCategory->setSortNumber($number);
+                $this->entityManager->persist($subCategory);
+
+                $this->importExercises($subCategory, $td['content'], false, $io);
             }
 
             $this->entityManager->flush();
@@ -128,6 +176,10 @@ class DatabaseImportCommand extends Command
         if (preg_match_all('/\\\\begin\{exo\}.*?\\\\end\{exo\}/s', $content, $matches)) {
             if ($clear) {
                 foreach ($category->getExercises() as $exercise) {
+                    foreach ($exercise->getExercisePrefs() as $pref) {
+                        $this->entityManager->remove($pref);
+                    }
+
                     $this->entityManager->remove($exercise);
                 }
             }
@@ -137,6 +189,7 @@ class DatabaseImportCommand extends Command
 
                 $exercise = new Exercise();
                 $exercise->setCategory($category);
+                $exercise->setSortNumber($converted['number']);
                 $exercise->setTitle($converted['title']);
 
                 $statement = new Element();
@@ -158,10 +211,12 @@ class DatabaseImportCommand extends Command
 
     private function convert(string $exoBlock): array
     {
-        // 1. Extract title
+        // 1. Extract title and number
         $title = '';
-        if (preg_match('/\\\\begin\{exo\}\[(.*?)\]/', $exoBlock, $titleMatch)) {
+        $number = 0;
+        if (preg_match('/\\\\begin\{exo\}\[(Exercice ([0-9]+).*?)\]/', $exoBlock, $titleMatch)) {
             $title = trim($titleMatch[1]);
+            $number = (int) $titleMatch[2];
         }
 
         // 2. Remove \begin{exo}...\end{exo}
@@ -321,6 +376,7 @@ class DatabaseImportCommand extends Command
         // 10. Send the final result
         return [
             'title'   => $title,
+            'number'  => $number,
             'content' => $exoContent
         ];
     }
