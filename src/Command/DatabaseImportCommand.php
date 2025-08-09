@@ -422,7 +422,7 @@ class DatabaseImportCommand extends Command
     private function removeExercise(Exercise $exercise)
     {
         foreach ($exercise->getTags() as $tag) {
-            $this->entityManager->remove($tag);
+            $exercise->removeTag($tag);
         }
 
         foreach ($exercise->getExercisePrefs() as $pref) {
