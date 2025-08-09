@@ -96,9 +96,12 @@ class DatabaseImportCommand extends Command
                     }
 
                     foreach ($exercise->getHints() as $hint) {
+                        $this->entityManager->remove($hint->getElement());
                         $this->entityManager->remove($hint);
                     }
 
+                    $this->entityManager->remove($exercise->getStatement());
+                    $this->entityManager->remove($exercise->getSolution());
                     $this->entityManager->remove($exercise);
                 }
 
@@ -116,9 +119,12 @@ class DatabaseImportCommand extends Command
                     }
 
                     foreach ($exercise->getHints() as $hint) {
+                        $this->entityManager->remove($hint->getElement());
                         $this->entityManager->remove($hint);
                     }
 
+                    $this->entityManager->remove($exercise->getStatement());
+                    $this->entityManager->remove($exercise->getSolution());
                     $this->entityManager->remove($exercise);
                 }
             }
