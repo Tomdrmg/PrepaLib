@@ -39,7 +39,7 @@ class AssignColorsToTagsCommand extends Command
         // Générer 30 couleurs pastel sur le spectre
         for ($i = 0; $i < $maxColors; $i++) {
             $hue = ($i / $maxColors) * 360;
-            $pastelColors[] = $this->hslToHex($hue, 40, 80); // pastel : S=40%, L=80%
+            $pastelColors[] = $this->hslToHex($hue, 100, 75);
         }
 
         foreach ($tags as $index => $tag) {
