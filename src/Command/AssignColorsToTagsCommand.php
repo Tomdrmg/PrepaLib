@@ -29,22 +29,28 @@ class AssignColorsToTagsCommand extends Command
         $total = count($tags);
 
         if ($total === 0) {
-            $output->writeln("<comment>No tag found.</comment>");
+            $output->writeln("<comment>Aucun tag trouvé.</comment>");
             return Command::SUCCESS;
         }
 
-        foreach ($tags as $index => $tag) {
-            $hue = ($index / $total) * 360;
-            $saturation = 100;
-            $lightness = 75;
+        $maxColors = 30; // nombre max de couleurs uniques
+        $pastelColors = [];
 
-            $hexColor = $this->hslToHex($hue, $saturation, $lightness);
-            $tag->setColor($hexColor);
+        // Générer 30 couleurs pastel sur le spectre
+        for ($i = 0; $i < $maxColors; $i++) {
+            $hue = ($i / $maxColors) * 360;
+            $pastelColors[] = $this->hslToHex($hue, 40, 80); // pastel : S=40%, L=80%
+        }
+
+        foreach ($tags as $index => $tag) {
+            $color = $pastelColors[$index % $maxColors];
+            $tag->setColor($color);
+            $output->writeln("Tag #{$tag->getId()} → {$color}");
         }
 
         $this->em->flush();
 
-        $output->writeln("<info>Colors successfuly assigned to {$total} tags.</info>");
+        $output->writeln("<info>Couleurs pastel (max {$maxColors}) assignées à {$total} tags.</info>");
         return Command::SUCCESS;
     }
 
