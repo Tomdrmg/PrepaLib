@@ -380,7 +380,7 @@
             function updateExercises() {
                 setLoading();
 
-                const url = new URL('{{ path('api_list_exercises') }}', window.location.origin);
+                const url = new URL('{{ path('api_list_exercises', {'subject': subject.id}) }}', window.location.origin);
 
                 if (filters.page !== 1) url.searchParams.set('page', filters.page);
                 if (filters.limit !== 10) url.searchParams.set('limit', filters.limit);

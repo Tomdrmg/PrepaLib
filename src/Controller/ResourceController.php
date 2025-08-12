@@ -25,12 +25,17 @@ final class ResourceController extends AbstractController
     #[Route('/ressources/{subject}', name: 'app_subject')]
     public function subjectHome(Subject $subject): Response
     {
-        return $this->redirectToRoute('app_subject_exercises', ['subject' => $subject->getId()]);
+        return $this->render('user/ressource/subject.html.twig', [
+            "subject" => $subject,
+        ]);
     }
 
-    #[Route('/ressources/{subject}/exercises', name: 'app_subject_exercises')]
+    #[Route('/ressources/{subject}/exercises', name: 'app_exercises')]
     public function subjectExercices(Subject $subject): Response
     {
+        if ($subject->countExercises() == 0)
+            return $this->redirectToRoute('app_subject', ['subject' => $subject->getId()]);
+
         return $this->render('user/ressource/exercises.html.twig', [
             "subject" => $subject,
             "form" => $this->createForm(OnlyTagsType::class)->createView(),
@@ -74,7 +79,7 @@ final class ResourceController extends AbstractController
         ]);
     }
 
-    #[Route('/api/ressources/{category}/exercises', name: 'api_category_exercises', methods: ['GET'])]
+    #[Route('/api/ressources/cat/{category}/exercises', name: 'api_category_exercises', methods: ['GET'])]
     #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
     public function categoryExercises(ExerciseCategory $category): JsonResponse
     {
@@ -133,9 +138,9 @@ final class ResourceController extends AbstractController
         ];
     }
 
-    #[Route('/api/ressources/exercises', name: 'api_list_exercises', methods: ['GET'])]
+    #[Route('/api/ressources/sub/{subject}/exercises', name: 'api_list_exercises', methods: ['GET'])]
     #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
-    public function listExercises(Request $request, ExerciseRepository $exerciseRepo): JsonResponse
+    public function listExercises(Subject $subject, Request $request, ExerciseRepository $exerciseRepo): JsonResponse
     {
         /**
          * @var User $user
@@ -170,7 +175,7 @@ final class ResourceController extends AbstractController
         $page = max(1, $request->query->getInt('page', 1));
         $limit = min(50, $request->query->getInt('limit', 10));
 
-        $result = $exerciseRepo->findFilteredExercisesWithCount($user, $difficulties, $done, $favorite, $tagIds, $search, $tagsMode, $page, $limit);
+        $result = $exerciseRepo->findFilteredExercisesWithCount($subject, $user, $difficulties, $done, $favorite, $tagIds, $search, $tagsMode, $page, $limit);
 
         $totalResults = $result['totalResults'];
         $exercises = $result['exercises'];
@@ -191,6 +196,17 @@ final class ResourceController extends AbstractController
             'totalResults' => $totalResults,
             'totalPages' => $totalPages,
             'results' => $data,
+        ]);
+    }
+
+    #[Route('/ressources/{subject}/essential', name: 'app_essential')]
+    public function subjectEssential(Subject $subject): Response
+    {
+        if (!$subject->getEssential() || $subject->getEssential()->getParts()->isEmpty())
+            return $this->redirectToRoute('app_subject', ['subject' => $subject->getId()]);
+
+        return $this->render('user/ressource/essential.html.twig', [
+            "subject" => $subject
         ]);
     }
 }

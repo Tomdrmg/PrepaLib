@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Exercise;
+use App\Entity\Subject;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -30,6 +31,7 @@ class ExerciseRepository extends ServiceEntityRepository
     }
 
     public function findFilteredExercisesWithCount(
+        Subject $subject,
         User $user,
         array $difficulties = [],
         ?bool $done = null,
@@ -44,6 +46,8 @@ class ExerciseRepository extends ServiceEntityRepository
             ->leftJoin('e.category', 'c')
             ->leftJoin('e.statement', 's')
             ->leftJoin('e.exercisePrefs', 'p', 'WITH', 'p.user = :user')
+            ->andWhere('c.subject = :subject')
+            ->setParameter('subject', $subject)
             ->addSelect('c', 'p')
             ->setParameter('user', $user);
 

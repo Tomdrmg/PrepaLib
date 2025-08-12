@@ -5,14 +5,14 @@
 {% block main_class %}items-center p-4 pt-[88px] justify-center{% endblock %}
 
 {% block main %}
-        <div class="container px-4 py-8">
-            <div class="mb-8 text-center">
+        <div class="container px-4 py-8 gap-8 flex flex-col justify-center items-center">
+            <div class="text-center">
                 <i class="h-16! w-16 {{ subject.faicon }}"></i>
                 <h1 class="text-3xl font-bold text-text-100 mt-4">PrépaLib</h1>
                 <p class="text-text-300 mt-2">Modifier la matière: {{ subject.name }}</p>
             </div>
 
-            <div class="rounded-xl bg-foreground-500 overflow-hidden max-w-3xl mx-auto">
+            <div class="rounded-xl bg-foreground-500 overflow-hidden max-w-3xl w-full">
                 <div class="p-8">
                     {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
                     <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
@@ -32,7 +32,40 @@
                     {{ form_end(form) }}
                 </div>
                 <div class="px-8 py-2 bg-foreground-300/50 border-t border-foreground-300 text-center flex flex-col">
-                    <a href="{{ path('app_admin_exercises', {'subject': subject.id}) }}" class="text-text-300 hover:text-text-200 text-sm transition duration-500 mb-2">Gérer les exercices ({{ subject.countExercises() }})</a>
+                </div>
+            </div>
+
+            <div class="flex flex-row w-full">
+                <div class="w-full md:w-1/2 p-4 h-60">
+                    <a href="{{ path('app_admin_exercises', {'subject': subject.id}) }}" class="gap-3 relative group ring ring-inset ring-foreground-400 transition duration-300 w-full h-full flex items-center justify-center bg-foreground-500 rounded-lg shadow hover:bg-foreground-400">
+
+                        <i class="text-4xl fa-solid fa-dumbbell"></i>
+
+                        <div class="flex flex-col">
+                            <span class="font-bold text-2xl">Exercices</span>
+                            <span class="text-xs md:text-sm italic">Cliquer pour accéder</span>
+                        </div>
+
+                        <div class="-z-10 before:absolute before:top-0 before:left-0 before:w-full before:h-full before:rounded-xl before:[transform:rotateZ(0)] before:transition-transform after:absolute after:top-0 after:left-0 after:w-full after:h-full after:rounded-xl after:[transform:rotateZ(0)] after:transition-transform before:bg-accent-purple-500 after:bg-accent-purple-500 absolute top-0 left-0 w-full h-full transition-all duration-1000 p-5 sm:p-10 text-lg [transform:rotateY(180deg)] rounded-xl shadow group-hover:before:rotate-[-2deg] group-hover:after:rotate-[2deg]">
+
+                        </div>
+                    </a>
+                </div>
+
+                <div class="w-full md:w-1/2 p-4 h-60">
+                    <a href="{{ path('app_admin_essential', {'subject': subject.id}) }}" class="gap-3 relative group ring ring-inset ring-foreground-400 transition duration-300 w-full h-full flex items-center justify-center bg-foreground-500 rounded-lg shadow hover:bg-foreground-400">
+
+                        <i class="text-4xl fa-solid fa-toolbox"></i>
+
+                        <div class="flex flex-col">
+                            <span class="font-bold text-2xl">L'essentiel</span>
+                            <span class="text-xs md:text-sm italic">Cliquer pour accéder</span>
+                        </div>
+
+                        <div class="-z-10 before:absolute before:top-0 before:left-0 before:w-full before:h-full before:rounded-xl before:[transform:rotateZ(0)] before:transition-transform after:absolute after:top-0 after:left-0 after:w-full after:h-full after:rounded-xl after:[transform:rotateZ(0)] after:transition-transform before:bg-accent-purple-500 after:bg-accent-purple-500 absolute top-0 left-0 w-full h-full transition-all duration-1000 p-5 sm:p-10 text-lg [transform:rotateY(180deg)] rounded-xl shadow group-hover:before:rotate-[-2deg] group-hover:after:rotate-[2deg]">
+
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>

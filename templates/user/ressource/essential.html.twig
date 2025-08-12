@@ -1,0 +1,32 @@
+{% extends "user/user.base.html.twig" %}
+
+{% block title %}L'essentiel {{ subject.name }}{% endblock %}
+
+{% block main_class %}items-center p-2 md:p-4 pt-[88px]!{% endblock %}
+
+{% block main %}
+    <div class="container px-2 py-8 md:px-4 md:py-10">
+        <div class="bg-foreground-500 shadow rounded-lg relative">
+            <div class="flex flex-col gap-6 md:gap-10 p-3">
+                <div class="mt-3 md:mt-4 py-4 md:py-6 flex items-center justify-center text-center">
+                    <twig:DoubleText text="{{ subject.name }} : L'essentiel" smFont="24" lgFont="49"/>
+                </div>
+
+                <div class="items-center mx-4 md:mx-6 flex gap-4 flex-row relative p-4 text-accent-red-500 bg-accent-red-500/15 rounded overflow-hidden before:absolute before:top-0 before:bottom-0 before:left-0 before:w-1.5 before:bg-accent-red-500">
+                    <i class="fa-solid fa-warning text-xl"></i>
+                    <span class="text-sm md:text-normal">Ceci est une fiche personnelle contenant les points clés à retenir selon moi, certains points importants peuvent manquer.</span>
+                </div>
+
+                {% for part in subject.essential.parts %}
+                    <div class="w-full flex flex-row items-center gap-3">
+                        <hr class="text-text-100 grow"/>
+                        <span class="uppercase font-bold text-xs">{{ part.title }}</span>
+                        <hr class="text-text-100 grow"/>
+                    </div>
+
+                    <div class="text-xs md:text-sm overflow-auto whitespace-pre-wrap pb-2.5">{{ part.element.content|raw }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

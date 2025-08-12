@@ -33,6 +33,9 @@ class Subject
     #[ORM\OneToMany(targetEntity: ExerciseCategory::class, mappedBy: 'subject')]
     private Collection $exerciseCategories;
 
+    #[ORM\OneToOne(mappedBy: 'subject', cascade: ['persist', 'remove'])]
+    private ?SubjectEssential $essential = null;
+
     public function __construct()
     {
         $this->courses = new ArrayCollection();
@@ -158,5 +161,22 @@ class Subject
         }
 
         return $allExercises;
+    }
+
+    public function getEssential(): ?SubjectEssential
+    {
+        return $this->essential;
+    }
+
+    public function setEssential(SubjectEssential $essential): static
+    {
+        // set the owning side of the relation if necessary
+        if ($essential->getSubject() !== $this) {
+            $essential->setSubject($this);
+        }
+
+        $this->essential = $essential;
+
+        return $this;
     }
 }

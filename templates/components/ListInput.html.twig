@@ -21,7 +21,7 @@
     </div>
 
     <button type="button" id="add-{{ field.vars.name }}-btn" class="mt-2!">
-        Ajouter un {{ title|lower }}
+        Ajouter {% if une %}une{% else %}un{% endif %} {{ title|lower }}
     </button>
 
     {% if field is empty %}

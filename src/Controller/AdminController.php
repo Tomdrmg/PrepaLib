@@ -5,13 +5,16 @@ namespace App\Controller;
 use App\Entity\Chapter;
 use App\Entity\Element;
 use App\Entity\ElementList;
+use App\Entity\EssentialPart;
 use App\Entity\Exercise;
 use App\Entity\ExerciseCategory;
 use App\Entity\Hint;
 use App\Entity\Subject;
+use App\Entity\SubjectEssential;
 use App\Entity\Tag;
 use App\Entity\TagList;
 use App\Entity\User;
+use App\Form\EssentialType;
 use App\Form\ExerciseCategoryType;
 use App\Form\ExerciseType;
 use App\Form\Model\ExerciseModel;
@@ -132,7 +135,7 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/exercises/{subject}', name: 'app_admin_exercises')]
+    #[Route('/admin/{subject}/exercises', name: 'app_admin_exercises')]
     public function exercises(Subject $subject, Request $request, EntityManagerInterface $entityManager): Response
     {
         $category = new ExerciseCategory();
@@ -295,5 +298,27 @@ final class AdminController extends AbstractController
         $this->addFlash("success", "Le tag a bien été supprimer.");
 
         return $this->redirectToRoute('app_admin_tags');
+    }
+
+    #[Route('/admin/{subject}/essential', name: 'app_admin_essential')]
+    public function subjectEssential(Subject $subject, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $essential = $subject->getEssential()?: new SubjectEssential();
+        $form = $this->createForm(EssentialType::class, $essential);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $essential->setSubject($subject);
+            $entityManager->persist($essential);
+
+            $entityManager->flush();
+            $this->addFlash("success", "L'essentiel ".$subject->getName()." a bien été modifié.");
+            return $this->redirectToRoute('app_admin_essential', ['subject' => $subject->getId()]);
+        }
+
+        return $this->render('admin/data/essential.html.twig', [
+            "subject" => $subject,
+            "form" => $form->createView()
+        ]);
     }
 }
