@@ -1,14 +1,15 @@
 <?php
 namespace App\Form;
 
-use App\Form\Model\HintModel;
+use App\Entity\LoredElement;
+use App\Form\Model\LoredElementModel;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class HintType extends AbstractType
+class LoredElementType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -18,16 +19,15 @@ class HintType extends AbstractType
                 'attr' => ['maxlength' => 255],
                 'required' => false,
             ])
-            ->add('content', TextareaType::class, [
+            ->add('element', ElementType::class, [
                 'label' => 'Contenu (LaTeX)',
-                'attr' => ['rows' => 3, 'class' => 'latex-input']
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => HintModel::class,
+            'data_class' => LoredElement::class,
         ]);
     }
 }

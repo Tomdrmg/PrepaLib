@@ -83,11 +83,16 @@ final class ResourceController extends AbstractController
          */
         $user = $this->getUser();
 
-        $data = [];
         /**
-         * @var Exercise $exercise
+         * @var Exercise[] $exercises
          */
-        foreach ($category->getExercises() as $exercise) {
+        $exercises = $category->getExercises()->toArray();
+        usort($exercises, function ($a, $b) {
+            return $a->getSortNumber() <=> $b->getSortNumber();
+        });
+
+        $data = [];
+        foreach ($exercises as $exercise) {
             $data[] = $this->exerciseToArray($user, $exercise);
         }
 

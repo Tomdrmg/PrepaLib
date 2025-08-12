@@ -2,6 +2,8 @@
 
 namespace App\Form;
 
+use App\Entity\Exercise;
+use App\Entity\ExerciseCategory;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -25,18 +27,23 @@ class ExerciseType extends AbstractType
             ->add('title', TextType::class, [
                 'label' => 'Titre de l’exercice'
             ])
-            ->add('statement', TextareaType::class, [
+            ->add('statement', ElementType::class, [
                 'label' => 'Énoncé (LaTeX)',
-                'attr' => ['rows' => 6, 'class' => 'latex-input']
             ])
-            ->add('solution', TextareaType::class, [
+            ->add('solution', ElementType::class, [
                 'label' => 'Solution (LaTeX)',
-                'attr' => ['rows' => 6, 'class' => 'latex-input'],
                 'required' => false
+            ])
+            ->add('shortAnswers', CollectionType::class, [
+                'label' => 'Réponses Courtes',
+                'entry_type' => LoredElementType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false
             ])
             ->add('hints', CollectionType::class, [
                 'label' => 'Indices',
-                'entry_type' => HintType::class,
+                'entry_type' => LoredElementType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false
@@ -56,7 +63,7 @@ class ExerciseType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ExerciseModel::class,
+            'data_class' => Exercise::class,
         ]);
     }
 }

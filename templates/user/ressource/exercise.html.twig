@@ -96,8 +96,29 @@
                 </div>
 
                     <div class="p-4">
-                        <div class="text-xs md:text-sm overflow-auto text-wrap! whitespace-pre pb-2.5">{{ exercise.statement.content|raw }}</div>
+                        <div class="text-xs md:text-sm overflow-auto whitespace-pre-wrap pb-2.5">{{ exercise.statement.content|raw }}</div>
                     </div>
+
+                {% if exercise.shortAnswers is not empty %}
+                    <div class="w-full flex flex-row items-center gap-3">
+                        <hr class="text-text-100 grow"/>
+                        <span class="uppercase font-bold text-xs">Résultats Uniquement</span>
+                        <hr class="text-text-100 grow"/>
+                    </div>
+
+                    <div class="flex flex-col gap-4">
+                        {% for answer in exercise.shortAnswers %}
+                            <div class="p-4 min-h-24 bg-foreground-400/50 rounded ring ring-inset ring-foreground-300 relative">
+                                <div class="cursor-pointer spoiler opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center p-4 absolute top-0 bottom-0 left-0 right-0 bg-foreground-400 rounded ring ring-inset ring-foreground-300 z-10">
+                                    <span class="text-sm text-center font-bold">Réponse: {{ answer.lore }}</span>
+                                    <span class="italic text-center text-sm">Cliquer pour découvrir.</span>
+                                </div>
+
+                                <div class="text-xs md:text-sm overflow-auto whitespace-pre-wrap pb-2.5">{{ answer.element.content|raw }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
                 <div class="w-full flex flex-row items-center gap-3">
                     <hr class="text-text-100 grow"/>
@@ -105,9 +126,9 @@
                     <hr class="text-text-100 grow"/>
                 </div>
 
-                {% set hasSolution = exercise.solution.content|trim is empty %}
-                    <div id="solution" class="p-4 min-h-40 bg-foreground-400/50 rounded ring ring-inset ring-foreground-300 relative">
-                        <div id="solution-cover" class="{% if hasSolution %}cursor-pointer{% endif%} opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center p-4 absolute top-0 bottom-0 left-0 right-0 bg-foreground-400 rounded ring ring-inset ring-foreground-300">
+                {% set hasSolution = exercise.solution.content|trim is not empty %}
+                    <div class="p-4 min-h-40 bg-foreground-400/50 rounded ring ring-inset ring-foreground-300 relative">
+                        <div class="{% if hasSolution %}cursor-pointer spoiler{% endif %} pointer-events-[all] opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center p-4 absolute top-0 bottom-0 left-0 right-0 bg-foreground-400 rounded ring ring-inset ring-foreground-300 z-10">
                             <h2 class="text-xl font-bold text-center">Solution</h2>
                             {% if hasSolution %}
                                 <span class="italic text-center text-sm">Cliquer pour découvrir.</span>
@@ -116,7 +137,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="text-xs md:text-sm overflow-auto text-wrap! whitespace-pre pb-2.5">{{ exercise.solution.content|raw }}</div>
+                        <div class="text-xs md:text-sm overflow-auto whitespace-pre-wrap pb-2.5">{{ exercise.solution.content|raw }}</div>
                     </div>
 
                 {% if exercise.hints is not empty %}
@@ -226,22 +247,20 @@
             document.addEventListener('DOMContentLoaded', () => {
                 Exercise.init();
 
-                const solution = document.getElementById('solution');
-                const solutionCover = document.getElementById('solution-cover');
 
-                {% if hasSolution %}
-                    solutionCover.addEventListener('click', (e) => {
-                        solutionCover.classList.add('opacity-0', 'pointer-events-none');
-                        solutionCover.classList.remove('opacity-100', 'pointer-events-all');
-                        e.stopPropagation();
-                    })
+                    document.querySelectorAll(".spoiler").forEach(spoiler => {
+                        spoiler.addEventListener('click', (e) => {
+                            if (spoiler.classList.contains('opacity-100')) {
+                                spoiler.classList.add('opacity-0');
+                                spoiler.classList.remove('opacity-100');
+                            } else {
+                                spoiler.classList.remove('opacity-0');
+                                spoiler.classList.add('opacity-100');
+                            }
 
-                    solution.addEventListener('click', (e) => {
-                        solutionCover.classList.remove('opacity-0', 'pointer-events-none');
-                        solutionCover.classList.add('opacity-100', 'pointer-events-all');
-                        e.stopPropagation();
+                            e.stopPropagation();
+                        })
                     })
-                {% endif %}
 
                 document.querySelectorAll('.hint').forEach((hint) => {
                     hint.addEventListener('click', (e) => {

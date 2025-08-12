@@ -27,19 +27,22 @@
                 {# Statement #}
                 <div>
                     {{ form_label(form.statement) }}
-                    {{ form_widget(form.statement, {'attr': {'class': 'latex-input w-full'}}) }}
+                    {{ form_widget(form.statement, {'attr': {'class': 'w-full'}}) }}
                     {{ form_errors(form.statement) }}
                 </div>
 
                 {# Solution #}
                 <div>
                     {{ form_label(form.solution) }}
-                    {{ form_widget(form.solution, {'attr': {'class': 'latex-input w-full'}}) }}
+                    {{ form_widget(form.solution, {'attr': {'class': 'w-full'}}) }}
                     {{ form_errors(form.solution) }}
                 </div>
 
+                {# Short Answers #}
+                <twig:ListInput class="mb-6" subClass="w-full" title="Réponse Courte" field="{{ form.shortAnswers }}"/>
+
                 {# Hints #}
-                <twig:ListInput class="mb-6" subClass="latex-input w-full" title="Indice" field="{{ form.hints }}"/>
+                <twig:ListInput class="mb-6" subClass="w-full" title="Indice" field="{{ form.hints }}"/>
 
                 {# Tags #}
                 <twig:TagSelector class="mb-6" inheritedTags="{{ category.fullTags }}" field="{{ form.tags }}"/>

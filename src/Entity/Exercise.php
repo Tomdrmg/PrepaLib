@@ -18,11 +18,11 @@ class Exercise
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\OneToOne()]
+    #[ORM\OneToOne(cascade: ["persist", "remove"])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Element $statement = null;
 
-    #[ORM\OneToOne()]
+    #[ORM\OneToOne(cascade: ["persist", "remove"])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Element $solution = null;
 
@@ -42,20 +42,27 @@ class Exercise
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'exercises')]
     private Collection $tags;
 
-    /**
-     * @var Collection<int, Hint>
-     */
-    #[ORM\OneToMany(targetEntity: Hint::class, mappedBy: 'exercise')]
-    private Collection $hints;
-
     #[ORM\Column]
     private ?int $sortNumber = null;
+
+    /**
+     * @var Collection<int, LoredElement>
+     */
+    #[ORM\OneToMany(targetEntity: LoredElement::class, mappedBy: 'hintFor', cascade: ["persist", "remove"])]
+    private Collection $hints;
+
+    /**
+     * @var Collection<int, LoredElement>
+     */
+    #[ORM\OneToMany(targetEntity: LoredElement::class, mappedBy: 'answerFor', cascade: ["persist", "remove"])]
+    private Collection $shortAnswers;
 
     public function __construct()
     {
         $this->exercisePrefs = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->hints = new ArrayCollection();
+        $this->shortAnswers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -225,36 +232,6 @@ class Exercise
         return $pref ? $pref : null;
     }
 
-    /**
-     * @return Collection<int, Hint>
-     */
-    public function getHints(): Collection
-    {
-        return $this->hints;
-    }
-
-    public function addHint(Hint $hint): static
-    {
-        if (!$this->hints->contains($hint)) {
-            $this->hints->add($hint);
-            $hint->setExercise($this);
-        }
-
-        return $this;
-    }
-
-    public function removeHint(Hint $hint): static
-    {
-        if ($this->hints->removeElement($hint)) {
-            // set the owning side to null (unless already changed)
-            if ($hint->getExercise() === $this) {
-                $hint->setExercise(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getSortNumber(): ?int
     {
         return $this->sortNumber;
@@ -263,6 +240,66 @@ class Exercise
     public function setSortNumber(int $sortNumber): static
     {
         $this->sortNumber = $sortNumber;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LoredElement>
+     */
+    public function getHints(): Collection
+    {
+        return $this->hints;
+    }
+
+    public function addHint(LoredElement $hint): static
+    {
+        if (!$this->hints->contains($hint)) {
+            $this->hints->add($hint);
+            $hint->setHintFor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHint(LoredElement $hint): static
+    {
+        if ($this->hints->removeElement($hint)) {
+            // set the owning side to null (unless already changed)
+            if ($hint->getHintFor() === $this) {
+                $hint->setHintFor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LoredElement>
+     */
+    public function getShortAnswers(): Collection
+    {
+        return $this->shortAnswers;
+    }
+
+    public function addShortAnswer(LoredElement $shortAnswer): static
+    {
+        if (!$this->shortAnswers->contains($shortAnswer)) {
+            $this->shortAnswers->add($shortAnswer);
+            $shortAnswer->setAnswerFor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShortAnswer(LoredElement $shortAnswer): static
+    {
+        if ($this->shortAnswers->removeElement($shortAnswer)) {
+            // set the owning side to null (unless already changed)
+            if ($shortAnswer->getAnswerFor() === $this) {
+                $shortAnswer->setAnswerFor(null);
+            }
+        }
 
         return $this;
     }

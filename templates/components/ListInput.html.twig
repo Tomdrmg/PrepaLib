@@ -31,56 +31,64 @@
 
     <script>
         // Gestion des élements
-        let collection;
-        let addBtn;
+        ListInput{{ field.vars.name|capitalize }} = (function () {
+            let collection;
 
-        function updateIndices() {
-            const items = collection.querySelectorAll('.collection-item');
-            items.forEach((item, index) => {
-                const display = item.querySelector('.index-display');
-                if (display) {
-                    display.textContent = `${index + 1}`;
-                }
-            });
-        }
+            function updateIndices() {
+                const items = collection.querySelectorAll('.collection-item');
+                items.forEach((item, index) => {
+                    const display = item.querySelector('.index-display');
+                    if (display) {
+                        display.textContent = `${index + 1}`;
+                    }
+                });
+            }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            collection = document.querySelector('.{{ field.vars.name }}-collection');
-            addBtn = document.querySelector('#add-{{ field.vars.name }}-btn');
+            function init() {
+                collection = document.querySelector('.{{ field.vars.name }}-collection');
+                const addBtn = document.querySelector('#add-{{ field.vars.name }}-btn');
 
-            addBtn.addEventListener('click', () => {
-                const prototype = collection.dataset.prototype;
-                const index = collection.dataset.index;
+                addBtn.addEventListener('click', () => {
+                    const prototype = collection.dataset.prototype;
+                    const index = collection.dataset.index;
 
-                const newForm = prototype.replace(/__name__/g, index);
-                const newFormElement = document.createElement('div');
-                newFormElement.className = '{{ field.vars.name }}-item collection-item';
-                newFormElement.innerHTML = `<div class="flex">
+                    const newForm = prototype.replace(/__name__/g, index);
+                    const newFormElement = document.createElement('div');
+                    newFormElement.className = '{{ field.vars.name }}-item collection-item';
+                    newFormElement.innerHTML = `<div class="flex">
                                             <span class="grow block font-bold uppercase text-sm ml-2 mb-3">{{ title }} #<span class="index-display"></span></span>
                                             <span class="remove-{{ field.vars.name }}-btn  collection-remove-btn">
                                                 Supprimer
                                             </span>
                                         </div>`
-                    + newForm;
+                        + newForm;
 
-                newFormElement.querySelector(".remove-{{ field.vars.name }}-btn").addEventListener('click', () => {
-                    newFormElement.remove();
+                    newFormElement.querySelector(".remove-{{ field.vars.name }}-btn").addEventListener('click', () => {
+                        newFormElement.remove();
+                        updateIndices();
+                    });
+
+                    collection.appendChild(newFormElement);
+                    collection.dataset.index = parseInt(index) + 1;
                     updateIndices();
                 });
 
-                collection.appendChild(newFormElement);
-                collection.dataset.index = parseInt(index) + 1;
+                document.querySelectorAll('.remove-{{ field.vars.name }}-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        this.closest('.{{ field.vars.name }}-item').remove();
+                        updateIndices();
+                    });
+                });
+
                 updateIndices();
-            });
+            }
 
-            document.querySelectorAll('.remove-{{ field.vars.name }}-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    this.closest('.{{ field.vars.name }}-item').remove();
-                    updateIndices();
-                });
-            });
+            return {
+                init: init,
+                updateIndices: updateIndices,
+            }
+        })();
 
-            updateIndices();
-        });
+        document.addEventListener('DOMContentLoaded', ListInput{{ field.vars.name|capitalize }}.init);
     </script>
 </div>

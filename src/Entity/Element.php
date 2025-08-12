@@ -20,6 +20,9 @@ class Element
     #[ORM\ManyToOne(inversedBy: 'hints')]
     private ?Exercise $exercise = null;
 
+    #[ORM\ManyToOne(inversedBy: 'shortAnswers')]
+    private ?Exercise $exerciseAnswer = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +48,18 @@ class Element
     public function setExercise(?Exercise $exercise): static
     {
         $this->exercise = $exercise;
+
+        return $this;
+    }
+
+    public function getExerciseAnswer(): ?Exercise
+    {
+        return $this->exerciseAnswer;
+    }
+
+    public function setExerciseAnswer(?Exercise $exerciseAnswer): static
+    {
+        $this->exerciseAnswer = $exerciseAnswer;
 
         return $this;
     }

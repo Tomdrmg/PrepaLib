@@ -1,7 +1,6 @@
 <?php
 namespace App\Form;
 
-use App\Form\Model\HintModel;
 use App\Form\Model\TextModel;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;

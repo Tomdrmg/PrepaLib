@@ -185,46 +185,12 @@ final class AdminController extends AbstractController
     #[Route('/admin/exercise/add/{category}', name: 'app_admin_add_exercise')]
     public function addExercise(ExerciseCategory $category, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $exerciseModel = new ExerciseModel();
-        $form = $this->createForm(ExerciseType::class, $exerciseModel);
+        $exercise = new Exercise();
+        $form = $this->createForm(ExerciseType::class, $exercise);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $exercise = new Exercise();
-
-            $exercise->setSortNumber($exerciseModel->sortNumber);
-
             $exercise->setCategory($category);
-
-            $exercise->setTitle($exerciseModel->title);
-
-            $solution = new Element();
-            $solution->setContent($exerciseModel->solution ? $exerciseModel->solution : '');
-            $entityManager->persist($solution);
-            $exercise->setSolution($solution);
-
-            $statement = new Element();
-            $statement->setContent($exerciseModel->statement);
-            $entityManager->persist($statement);
-            $exercise->setStatement($statement);
-
-            foreach ($exerciseModel->tags as $tag) {
-                $exercise->addTag($tag);
-            }
-
-            foreach ($exerciseModel->hints as $hintModel) {
-                $newHintElem = new Element();
-                $newHintElem->setContent($hintModel->content);
-                $entityManager->persist($newHintElem);
-
-                $newHint = new Hint();
-                $newHint->setExercise($exercise);
-                $newHint->setElement($newHintElem);
-                $newHint->setLore($hintModel->lore ?: '');
-                $entityManager->persist($newHint);
-
-                $exercise->addHint($newHint);
-            }
 
             $entityManager->persist($exercise);
             $entityManager->flush();
@@ -241,57 +207,10 @@ final class AdminController extends AbstractController
     #[Route('/admin/exercise/edit/{exercise}', name: 'app_admin_edit_exercise')]
     public function editExercise(Exercise $exercise, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $exerciseModel = new ExerciseModel();
-        $exerciseModel->sortNumber = $exercise->getSortNumber();
-        $exerciseModel->title = $exercise->getTitle();
-        $exerciseModel->statement = $exercise->getStatement()->getContent();
-        if ($exercise->getSolution() !== null)
-            $exerciseModel->solution = $exercise->getSolution()->getContent();
-
-        foreach ($exercise->getTags() as $tag) {
-            $exerciseModel->tags->add($tag);
-        }
-
-        foreach ($exercise->getHints() as $hint) {
-            $hintModel = new HintModel();
-            $hintModel->content = $hint->getElement()->getContent();
-            $hintModel->lore = $hint->getLore();
-            $exerciseModel->hints[] = $hintModel;
-        }
-
-        $form = $this->createForm(ExerciseType::class, $exerciseModel);
+        $form = $this->createForm(ExerciseType::class, $exercise);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $exercise->setSortNumber($exerciseModel->sortNumber);
-            $exercise->setTitle($exerciseModel->title);
-            $exercise->getStatement()->setContent($exerciseModel->statement);
-            $exercise->getSolution()->setContent($exerciseModel->solution ? $exerciseModel->solution : '');
-
-            $exercise->getTags()->clear();
-            foreach ($exerciseModel->tags as $tag) {
-                $exercise->addTag($tag);
-            }
-
-            foreach ($exercise->getHints() as $oldHint) {
-                $exercise->removeHint($oldHint);
-                $entityManager->remove($oldHint);
-            }
-
-            foreach ($exerciseModel->hints as $hintModel) {
-                $newHintElem = new Element();
-                $newHintElem->setContent($hintModel->content);
-                $entityManager->persist($newHintElem);
-
-                $newHint = new Hint();
-                $newHint->setExercise($exercise);
-                $newHint->setElement($newHintElem);
-                $newHint->setLore($hintModel->lore ?: '');
-                $entityManager->persist($newHint);
-
-                $exercise->addHint($newHint);
-            }
-
             $entityManager->flush();
             $this->addFlash("success", "L'exercice a bien été modifié.");
             return $this->redirectToRoute('app_admin_exercises', ['subject' => $exercise->getCategory()->getSubject()->getId()]);
