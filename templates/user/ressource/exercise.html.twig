@@ -96,7 +96,7 @@
                 </div>
 
                     <div class="p-4">
-                        <div class="text-xs md:text-sm overflow-auto whitespace-pre-wrap pb-2.5">{{ exercise.statement.content|raw }}</div>
+                        <div class="text-xs md:text-sm overflow-auto whitespace-pre-wrap pb-2.5 latex">{{ exercise.statement.content|raw }}</div>
                     </div>
 
                 {% if exercise.shortAnswers is not empty %}
@@ -114,7 +114,7 @@
                                     <span class="italic text-center text-sm">Cliquer pour découvrir.</span>
                                 </div>
 
-                                <div class="text-xs md:text-sm overflow-auto whitespace-pre-wrap pb-2.5">{{ answer.element.content|raw }}</div>
+                                <div class="text-xs md:text-sm overflow-auto whitespace-pre-wrap pb-2.5 latex">{{ answer.element.content|raw }}</div>
                             </div>
                         {% endfor %}
                     </div>
@@ -137,7 +137,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="text-xs md:text-sm overflow-auto whitespace-pre-wrap pb-2.5">{{ exercise.solution.content|raw }}</div>
+                        <div class="text-xs md:text-sm overflow-auto whitespace-pre-wrap pb-2.5 latex">{{ exercise.solution.content|raw }}</div>
                     </div>
 
                 {% if exercise.hints is not empty %}
@@ -169,12 +169,12 @@
                                     <div class="before:absolute before:top-0 before:left-0 before:w-full before:h-full before:z-1 before:rounded-xl before:[transform:rotateZ(0)] before:transition-transform after:absolute after:top-0 after:left-0 after:w-full after:h-full after:z-1 after:rounded-xl after:[transform:rotateZ(0)] after:transition-transform before:bg-accent-purple-500 after:bg-accent-purple-500 absolute top-0 left-0 w-full h-full backface-hidden transition-all duration-1000 z-[1] p-5 sm:p-10 text-lg [transform:rotateY(180deg)] rounded-xl shadow group-hover:before:rotate-[-2deg] group-hover:after:rotate-[2deg]">
                                         <div class="absolute top-0 left-0 w-full h-full bg-foreground-400 z-[2] rounded-xl ring ring-inset ring-foreground-300"></div>
                                         <div class="relative z-[4] h-full flex">
-                                            <div class="text-xs md:text-sm whitespace-pre-wrap">{{ hint.element.content }}</div>
+                                            <div class="text-xs md:text-sm whitespace-pre-wrap latex">{{ hint.element.content }}</div>
                                         </div>
                                     </div>
 
                                     <!-- Ghost block to force height -->
-                                    <div aria-hidden="true" class="invisible text-xs md:text-sm pointer-events-none select-none whitespace-pre-wrap mt-2 p-5 sm:p-10">{{ hint.element.content }}</div>
+                                    <div aria-hidden="true" class="invisible text-xs md:text-sm pointer-events-none select-none whitespace-pre-wrap mt-2 p-5 sm:p-10 latex">{{ hint.element.content }}</div>
                                 </div>
                             </div>
                         {% endfor %}
