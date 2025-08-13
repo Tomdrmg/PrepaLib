@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="La bibliothèque faite pour les prépas.">
     <link rel="icon" href="{{ asset("images/icon.png") }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-numbers/prism-line-numbers.css">
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
@@ -14,9 +16,243 @@
         <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
         <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <!-- Prism.js core -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+        <!-- Languages -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ocaml.min.js"></script>
+        <!-- Lines -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-numbers/prism-line-numbers.min.js"></script>
         {{ encore_entry_script_tags('app') }}
         <script>
+            function transformText(text) {
+                // CODES
+                while (text.lastIndexOf("\\code{") !== -1) {
+                    let start = text.lastIndexOf("\\code{");
+                    let end = start + "\\code{".length;
+                    let braces = 1;
+
+                    while (braces > 0 && end < text.length) {
+                        if (text[end] === '{') braces++;
+                        else if (text[end] === '}') braces--;
+                        end++;
+                    }
+
+                    let content = text.slice(start + "\\code{".length, end - 1);
+                    let language = "";
+                    let matcher = /\[([^\[\]]*)\]([\s\S]*)$/.exec(content);
+                    if (matcher) {
+                        console.log(matcher);
+                        language = matcher[1];
+                        content = matcher[2];
+                    }
+
+                    text = `${text.slice(0, start)}<pre class="line-numbers"><code class="language-${language.trim()}">${content.trim()}</code></pre>${text.slice(end)}`;
+                }
+
+                // ORENV
+                while (text.lastIndexOf("\\orenv{") !== -1) {
+                    let start = text.lastIndexOf("\\orenv{");
+                    let end = start + "\\orenv{".length;
+                    let braces = 1;
+
+                    while (braces > 0 && end < text.length) {
+                        if (text[end] === '{') braces++;
+                        else if (text[end] === '}') braces--;
+
+                        if (text[end] === '\\' && end + 1 < text.length && text[end + 1] === '\\' && braces === 1) {
+                            text = text.slice(0, end) + '\\\\ \\ou \\\\' + text.slice(end + 2);
+                            end = end + '\\\\ \\ou \\\\'.length;
+                        } else {
+                            end++;
+                        }
+                    }
+
+                    text = text.slice(0, start) + '\\left|\\;\\begin{array}{l}' + text.slice(start + "\\orenv{".length, end - 1) + '\\end{array}\\right.' + text.slice(end);
+                }
+
+                // TRUTH TABLES
+                while (text.lastIndexOf("\\truthtable{") !== -1) {
+                    let start = text.lastIndexOf("\\truthtable{");
+                    let end = start + "\\truthtable{".length;
+                    let braces = 1;
+
+                    while (braces > 0 && end < text.length) {
+                        if (text[end] === '{') braces++;
+                        else if (text[end] === '}') braces--;
+                        end++;
+                    }
+
+                    let latexContent = '';
+                    if (braces === 0) {
+                        let content = text.slice(start + "\\truthtable{".length, end - 1);
+                        let lines = content.split("\\\\")
+
+                        if (lines.length > 1) {
+                            let headers = lines[0].split('&');
+                            latexContent = '\\begin{array}{c ' + ('| c'.repeat(headers.length - 1)) + '}';
+                            for (let i = 0; i < headers.length; i++) {
+                                if (i > 0) latexContent += "&";
+                                latexContent += headers[i].trim();
+                            }
+
+                            for (let i = 1; i < lines.length; i++) {
+                                let cols = lines[i].replaceAll(/[^VF]/g, "");
+                                latexContent += '\\\\';
+                                if (i === 1) latexContent += '\\hline';
+                                for (let j = 0; j < cols.length; j++) {
+                                    if (j > 0) latexContent += "&";
+                                    latexContent += '\\mathbf{' + cols[j].trim() + '}';
+                                }
+                            }
+
+                            latexContent += '\\end{array}';
+                        }
+                    }
+
+                    text = text.slice(0, start) + latexContent + text.slice(end);
+                }
+
+                // VARIATION TABLE
+                while (text.lastIndexOf("\\vartab{") !== -1) {
+                    const start = text.lastIndexOf("\\vartab{");
+                    let end = start + "\\vartab{".length;
+                    let braces = 1;
+
+                    while (braces > 0 && end < text.length) {
+                        if (text[end] === '{') braces++;
+                        else if (text[end] === '}') braces--;
+                        end++;
+                    }
+
+                    let finalContent = '';
+                    const content = text.slice(start + "\\vartab{".length, end - 1);
+                    const matcher = /\[([^\[\]]+)]\[([^\[\]]+)]\[ *(\[[^\[\]]+\] *(?: *(?:&amp;){2}(?:up|down) *\[[^\[\]]+\])*) *]/g.exec(content);
+                    if (matcher && matcher[0] === matcher.input) {
+                        const func = matcher[1];
+                        const varr = matcher[2];
+                        const vals = matcher[3].split(/(?:&amp;){2}/g);
+
+                        let valsArr = [];
+                        for (let i = 0; i < vals.length; i++) {
+                            const valArgs = /\[([^\[\]]*)\]/g.exec(vals[i])[1].trim().split("&amp;");
+                            valsArr.push({
+                                value: valArgs[0].trim(),
+                                derivativeDefined: valArgs.length > 0 && valArgs[1].trim() !== "null",
+                                derivativeNull: valArgs.length > 0 && parseInt(valArgs[1].trim(), 10) === 0,
+                                prevArrow: i === 0 ? null : vals[i].trim().startsWith("up") ? "up" : "down",
+                                nextArrow: i === vals.length - 1 ? null : vals[i + 1].trim().startsWith("up") ? "up" : "down",
+                                functionDefined: valArgs.length !== 4,
+                                firstVal: valArgs.length < 3 ? null : valArgs[2].trim(),
+                                secondVal: valArgs.length < 4 ? null : valArgs[3].trim(),
+                            });
+                        }
+
+                        finalContent = `<div class="math-grid" style="grid-template-columns: auto repeat(${valsArr.length * 2 - 1}, 1fr)">`;
+
+                        // First row
+                        finalContent += `<div class="first-col first-row">$${varr}$</div>`;
+                        for (let i = 0 ; i < valsArr.length; i++) {
+                            if (i > 0) finalContent += "<div class=\"first-row\"></div>";
+                            finalContent += `<div class="first-row">$${valsArr[i].value}$</div>`;
+                        }
+
+                        // Second row
+                        finalContent += `<div class="first-col second-row">$${func}\\prim\\par{${varr}}$</div>`;
+                        for (let i = 0 ; i < valsArr.length; i++) {
+                            if (i > 0) finalContent += `<div class="second-row">$${valsArr[i].prevArrow === "up" ? "+" : "-"}$</div>`;
+                            finalContent += `<div class="second-row ${valsArr[i].derivativeDefined ? valsArr[i].derivativeNull ? 'f-null' : '' : 'f-undefined'}">${valsArr[i].derivativeNull ? '$0$' : ''}</div>`;
+                        }
+
+                        // Third/Fourth/Fifth rows
+                        finalContent += `<div class="first-col func">$${func}\\par{${varr}}$</div>`;
+                        for (let i = 0 ; i < valsArr.length; i++) {
+                            if (i > 0) finalContent += `<div></div>`;
+                            if (!valsArr[i].functionDefined) {
+                                finalContent += `<div class="f-undefined">
+                                                        <div>$ {^{${valsArr[i].prevArrow === "up" ? valsArr[i].firstVal : ''}}} $</div>
+                                                        <div>$ {^{${valsArr[i].nextArrow === "down" ? valsArr[i].secondVal : ''}}} $</div>
+                                                 </div>`;
+                            } else {
+                                finalContent += `<div>$ ${(i === 0 && valsArr[i].nextArrow === "up") || valsArr[i].prevArrow === "up" ? valsArr[i].firstVal : ''} $</div>`;
+                            }
+                        }
+
+                        for (let i = 0 ; i < valsArr.length; i++) {
+                            if (i > 0) finalContent += `<div>$${valsArr[i].prevArrow === "up" ? "\\nearrow" : "\\searrow"}$</div>`;
+                            finalContent += `<div${valsArr[i].functionDefined ? '' : ' class="f-undefined"'}></div>`;
+                        }
+
+                        for (let i = 0 ; i < valsArr.length; i++) {
+                            if (i > 0) finalContent += `<div></div>`;
+                            if (!valsArr[i].functionDefined) {
+                                finalContent += `<div class="f-undefined">
+                                                        <div>$ {_{${valsArr[i].prevArrow === "down" ? valsArr[i].firstVal : ''}}} $</div>
+                                                        <div>$ {_{${valsArr[i].nextArrow === "up" ? valsArr[i].secondVal : ''}}} $</div>
+                                                 </div>`;
+                            } else {
+                                finalContent += `<div>$ ${(i === 0 && valsArr[i].nextArrow === "down") || valsArr[i].prevArrow === "down" ? valsArr[i].firstVal : ''} $</div>`;
+                            }
+                        }
+
+                        finalContent += "</div>";
+                    }
+
+                    text = text.slice(0, start) + finalContent + text.slice(end);
+                }
+
+                // LISTS
+                text = text.replace(/<li>([\s\S]*?)<\/li>/g, function(_, content) {
+                    return '<li>' + content.trim() + '</li>';
+                });
+
+                let prev = null;
+                let regexI = /\\item\s*\[([^\]]*)\]/g;
+                let regexL = /\\list\s*\[([^\]]*)\]/g;
+                let regexLd = /\\listd\s*\[([^\]]*)\]/g;
+                let regexLn = /\\listn\s*\[([^\]]*)\]/g;
+
+                do {
+                    prev = text;
+
+                    text = text.replace(regexI, function(_, content){
+                        return '<li>' + content.trim() + '</li>';
+                    });
+
+                    text = text.replace(regexL, function(_, content){
+                        return '<ul class="math-list">' + content.trim() + '</ul>';
+                    });
+
+                    text = text.replace(regexLd, function(_, content){
+                        return '<ul class="math-list" style="list-style-type: disc">' + content.trim() + '</ul>';
+                    });
+
+                    text = text.replace(regexLn, function(_, content){
+                        return '<ul class="math-list" style="list-style-type: none">' + content.trim() + '</ul>';
+                    });
+                } while (text !== prev);
+
+                return text;
+            }
+
             MathJax = {
+                startup: {
+                    typeset: false,
+                    ready: () => {
+                        MathJax.startup.defaultReady();
+
+                        if (document.readyState === "loading") {
+                            document.addEventListener("DOMContentLoaded", initLatexElements);
+                        } else {
+                            initLatexElements();
+                        }
+                    }
+                },
                 tex: {
                     inlineMath: [['$', '$']],
                     processEscapes: true,
@@ -28,7 +264,10 @@
                         dim: '\\text{dim}',
                         sup: '\\text{sup}',
                         inf: '\\text{inf}',
-                        et: '\\text{ et }',
+                        et: '\\text{et}',
+                        etq: '\\quad\\text{et}\\quad',
+                        ou: '\\text{ou}',
+                        ouq: '\\quad\\text{ou}\\quad',
                         divise: '\\mid',
                         prem: '\\mathbb P',
                         K: '\\mathbb K',
@@ -71,6 +310,10 @@
                         Qms: '\\mathbb Q_-^*',
                         Zms: '\\mathbb Z_-^*',
                         Nms: '\\mathbb N_-^*',
+                        Rimp: '\\fbox{$\\Rightarrow$}',
+                        Limp: '\\fbox{$\\Leftarrow$}',
+                        Rincl: '\\fbox{$\\subseteq$}',
+                        Lincl: '\\fbox{$\\supseteq$}',
                         conj: ['\\overline{ #1 }', 1],
                         func: ["#1 : #2 \\longrightarrow #3", 3],
                         funcf: ["\\begin{array}{c} #1:& #2 & \\longrightarrow & #3 \\\\ & #4 & \\longmapsto & #5 \\end{array}", 5],
@@ -104,8 +347,8 @@
                         intervintie: ["\\llbracket #1; #2 \\llbracket", 2],
                         intervintei: ["\\rrbracket #1; #2 \\rrbracket", 2],
                         intervintee: ["\\rrbracket #1; #2 \\llbracket", 2],
-                        pinf: ["+\\infty"],
-                        minf: ["-\\infty"],
+                        pinf: ["{+\\infty}"],
+                        minf: ["{-\\infty}"],
                         braces: ["\\left\\{ #1 \\right\\}", 1],
                         cotan: ["\\text{cotan }"],
                         o: ["o\\par{ #1 }", 1],
@@ -211,18 +454,40 @@
 
                 const render = () => {
                     preview.innerHTML = input.value;
-                    if (window.MathJax && MathJax.typesetPromise) {
-                        MathJax.typesetPromise([preview]);
-                    }
+                    renderLatex(preview);
                 };
 
                 input.addEventListener('input', render);
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Tab') {
+                        e.preventDefault();
+                        const start = this.selectionStart;
+                        const end = this.selectionEnd;
+
+                        this.value = this.value.substring(0, start) + "\t" + this.value.substring(end);
+
+                        this.selectionStart = this.selectionEnd = start + 1;
+                    }
+                });
+
                 render();
             };
 
-            document.addEventListener('DOMContentLoaded', function () {
+            const renderLatex = (element) => {
+                element.innerHTML = transformText(element.innerHTML);
+                if (window.MathJax && MathJax.typesetPromise) {
+                    MathJax.typesetPromise([element]);
+                }
+
+                element.querySelectorAll('code').forEach((code) => {
+                    Prism.highlightElement(code);
+                })
+            }
+
+            const initLatexElements = () => {
                 // Initialisation des prévisualisations existantes
                 document.querySelectorAll('.latex-input').forEach(initLatexPreview);
+                document.querySelectorAll('.latex').forEach(renderLatex);
 
                 // Initialisation automatique des latex preview ajoutées et les latex tout court
                 const observer = new MutationObserver((mutations) => {
@@ -231,7 +496,7 @@
                             if (addedNode.nodeType !== Node.ELEMENT_NODE) continue;
 
                             addedNode.querySelectorAll('.latex-input').forEach(initLatexPreview);
-                            MathJax.typesetPromise(addedNode.querySelectorAll('.latex'));
+                            addedNode.querySelectorAll('.latex').forEach(renderLatex);
                         }
                     }
                 });
@@ -240,7 +505,7 @@
                     childList: true,
                     subtree: true
                 });
-            });
+            }
         </script>
         <script>
             const ExercisePref = (function() {

@@ -15,6 +15,7 @@ class ElementType extends AbstractType
         $builder->add('content', TextareaType::class, [
             'label' => false,
             'attr' => ['rows' => 6, 'class' => 'latex-input'],
+            'empty_data' => '',
         ]);
     }
 

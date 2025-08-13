@@ -32,7 +32,7 @@
     <div class="relative">
         <div class="custom-tags-selector">
             <div class="{{ selectorStyle }} selected-option p-2 border border-foreground-300 rounded cursor-pointer flex items-center justify-between">
-                <span>Sélectionnez un tag pour l'ajouter...</span>
+                <input type="text" placeholder="Sélectionner un tag pour l'ajouter..." class="tag-filter w-full bg-transparent! outline-none! ring-0! border-0!"/>
                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
                 </svg>
@@ -63,6 +63,7 @@
             let inheritedTagsContainer;
             let selectedTagsContainer;
             let hiddenTagsInput;
+            let tagFilter;
 
             const allTags = [
                 {% for choice in field.vars.choices %}
@@ -149,7 +150,7 @@
                     // Réajouter au select
                     const optionTemplate = document.createElement('div');
                     optionTemplate.innerHTML = `
-                                        <div class="option-item p-2 hover:bg-foreground-300 cursor-pointer flex items-center"
+                                        <div class="${tag.name.toLowerCase().includes(tagFilter.value.toLowerCase()) ? '' : 'hidden '}option-item p-2 hover:bg-foreground-300 cursor-pointer flex items-center"
                                              data-value="${tag.id}" data-tag-name="${tag.name}" data-tag-color="${tag.color}">
                                             <twig:Tag name="${tag.name}" color="${tag.color}"/>
                                         </div>`
@@ -212,11 +213,26 @@
                 selectedTagsContainer = tagSelectorComponent.querySelector('.selected-tags');
                 hiddenTagsInput = tagSelectorComponent.querySelector('.hidden-tags-input');
 
+                tagFilter = tagSelectorComponent.querySelector('.tag-filter');
+
                 customSelector = tagSelectorComponent.querySelector('.custom-tags-selector');
                 selectedOption = customSelector.querySelector('.selected-option');
                 optionsContainer = customSelector.querySelector('.options-container');
 
                 updateHiddenInput()
+
+                tagFilter.addEventListener('input', function() {
+                    const search = this.value.toLowerCase();
+
+                    optionsContainer.querySelectorAll('.option-item').forEach(option => {
+                        const name = option.dataset.tagName.toLowerCase();
+                        if (name.includes(search)) {
+                            option.classList.remove('hidden');
+                        } else {
+                            option.classList.add('hidden');
+                        }
+                    });
+                });
 
                 selectedOption.addEventListener('click', function () {
                     optionsContainer.classList.toggle('hidden');

@@ -328,11 +328,55 @@ nav {
     }
 }
 
+pre {
+    background-color: #FFFFFF09!important;
+}
+
+.math-grid {
+    @apply grid border border-text-100 w-min mx-auto;
+
+    > div {
+        @apply flex items-center justify-center w-full h-full px-3 py-1 min-h-6 min-w-14;
+    }
+
+    .f-null {
+        @apply relative before:absolute before:w-0.5 before:bg-text-100 before:bottom-0 before:top-0;
+    }
+
+    .f-undefined {
+        @apply relative before:absolute before:w-1.5 before:border-x-2 before:border-text-100 before:bottom-0 before:top-0 flex flex-row w-full gap-3;
+
+        div {
+            @apply max-w-1/2 min-w-1/2 flex flex-row;
+        }
+
+        div:nth-child(1) {
+            @apply justify-end;
+        }
+
+        div:nth-child(2) {
+            @apply justify-start;
+        }
+    }
+
+    .first-col {
+        @apply border-r border-r-text-100;
+    }
+
+    .first-row, .second-row {
+        @apply border-b border-b-text-100;
+    }
+
+    .func {
+        @apply row-span-3;
+    }
+}
+
 .math-list {
-    @apply list-decimal list-inside whitespace-normal;
+    @apply list-decimal list-outside whitespace-normal;
 
     li {
-        @apply ml-4;
+        @apply ml-4 whitespace-pre-wrap;
     }
 }
 

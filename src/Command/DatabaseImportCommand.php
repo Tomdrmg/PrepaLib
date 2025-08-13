@@ -377,11 +377,12 @@ class DatabaseImportCommand extends Command
                 $listContent = substr($listContent, 4, -1);
             }
 
-            while (preg_match('/\\\\item\s+(.*?)([ \t\r\n]*)(?=(?:\s*\\\\item)|\z)/s', $listContent, $matches2)) {
-                $listContent = str_replace($matches2[0], '<li>'.$matches2[1].'</li>'.$matches2[2], $listContent);
+            while (preg_match('/\\\\item(?!\[)\s+(.*?)([ \t\r\n]*)(?=(?:\s*\\\\item(?!\[))|\z)/s', $listContent, $matches2)) {
+                $listContent = str_replace($matches2[0], '\\item['.$matches2[1].']'.$matches2[2], $listContent);
             }
 
-            $content = str_replace($matches[0], '<ul class="math-list"'.($dot ? 'style="list-style-type: disc"' : ($none ? 'style="list-style-type: none' : '')).'>'.$listContent.'</ul>', $content);
+            $listName = $dot ? "\\listd" : ($none ? "\\listn" : "\\list");
+            $content = str_replace($matches[0], $listName.'['.$listContent.']', $content);
         }
 
         return $content;

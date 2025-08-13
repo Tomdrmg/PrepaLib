@@ -21,6 +21,7 @@ use App\Form\Model\ExerciseModel;
 use App\Form\Model\HintModel;
 use App\Form\SubjectType;
 use App\Form\TagType;
+use App\Repository\ExerciseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,6 +34,9 @@ final class AdminController extends AbstractController
     #[Route('/admin', name: 'app_admin_dashboard')]
     public function dashboard(EntityManagerInterface $entityManager): Response
     {
+        /**
+         * @var ExerciseRepository $exerciseRepo
+         */
         $exerciseRepo = $entityManager->getRepository(Exercise::class);
 
         return $this->render('admin/dashboard/dashboard.html.twig', [
@@ -41,7 +45,7 @@ final class AdminController extends AbstractController
                 "users" => $entityManager->getRepository(User::class)->count(),
                 "exercises" => $exerciseRepo->count(),
                 "completed" => -1,
-                "corrected" => $exerciseRepo->countCorrected() * 100 / max(1, $exerciseRepo->count())
+                "corrected" => round($exerciseRepo->countCorrected() * 100 / max(1, $exerciseRepo->count()), 2)
             ]
         ]);
     }

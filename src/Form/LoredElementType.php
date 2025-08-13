@@ -16,6 +16,7 @@ class LoredElementType extends AbstractType
         $builder
             ->add('lore', TextType::class, [
                 'label' => 'Micro Description',
+                'empty_data' => '',
                 'attr' => ['maxlength' => 255],
                 'required' => false,
             ])
