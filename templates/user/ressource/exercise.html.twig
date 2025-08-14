@@ -108,13 +108,13 @@
 
                     <div class="flex flex-col gap-4">
                         {% for answer in exercise.shortAnswers %}
-                            <div class="p-4 min-h-24 bg-foreground-400/50 rounded ring ring-inset ring-foreground-300 relative">
+                            <div class="p-4 min-h-24 bg-foreground-400/50 rounded ring ring-inset ring-foreground-300 relative flex">
                                 <div class="cursor-pointer spoiler opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center p-4 absolute top-0 bottom-0 left-0 right-0 bg-foreground-400 rounded ring ring-inset ring-foreground-300 z-10">
                                     <span class="text-sm text-center font-bold">Réponse: {{ answer.lore }}</span>
                                     <span class="italic text-center text-sm">Cliquer pour découvrir.</span>
                                 </div>
 
-                                <div class="text-xs md:text-sm overflow-auto whitespace-pre-wrap pb-2.5 latex min-h-full min-w-full">{{ answer.element.content|raw }}</div>
+                                <div class="text-xs md:text-sm overflow-auto whitespace-pre-wrap latex min-h-full min-w-full">{{ answer.element.content|raw }}</div>
                             </div>
                         {% endfor %}
                     </div>
