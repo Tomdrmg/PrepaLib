@@ -32,7 +32,6 @@ class ExerciseType extends AbstractType
             ])
             ->add('solution', ElementType::class, [
                 'label' => 'Solution (LaTeX)',
-                'required' => false
             ])
             ->add('shortAnswers', CollectionType::class, [
                 'label' => 'Réponses Courtes',

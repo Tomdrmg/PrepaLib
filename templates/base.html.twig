@@ -31,6 +31,25 @@
         {{ encore_entry_script_tags('app') }}
         <script>
             function transformText(text) {
+                // CADS
+                text.replaceAll(/\\cad /g, 'c\'est-à-dire')
+
+                // CENTERS
+                while (text.lastIndexOf("\\center{") !== -1) {
+                    let start = text.lastIndexOf("\\center{");
+                    let end = start + "\\center{".length;
+                    let braces = 1;
+
+                    while (braces > 0 && end < text.length) {
+                        if (text[end] === '{') braces++;
+                        else if (text[end] === '}') braces--;
+                        end++;
+                    }
+
+                    let content = text.slice(start + "\\center{".length, end - 1);
+                    text = `${text.slice(0, start)}<div class="flex items-center justify-center">${content.trim()}</div>${text.slice(end)}`;
+                }
+
                 // CODES
                 while (text.lastIndexOf("\\code{") !== -1) {
                     let start = text.lastIndexOf("\\code{");
@@ -316,9 +335,11 @@
                         Lincl: '\\fbox{$\\supseteq$}',
                         conj: ['\\overline{ #1 }', 1],
                         func: ["#1 : #2 \\longrightarrow #3", 3],
+                        funclambda: ["#1 \\longrightarrow #2", 2],
                         funcf: ["\\begin{array}{c} #1:& #2 & \\longrightarrow & #3 \\\\ & #4 & \\longmapsto & #5 \\end{array}", 5],
                         funcflambda: ["\\begin{array}{c} #1 & \\longrightarrow & #2 \\\\ #3 & \\longmapsto & #4 \\end{array}", 4],
                         funcv: ["#1 : #2 \\longmapsto #3", 3],
+                        funcvlambda: ["#1 \\longmapsto #2", 2],
                         odif: ["\\text{ d}#1", 1],
                         par: ["\\left(#1\\right)", 1],
                         cro: ["\\left[#1\\right]", 1],
