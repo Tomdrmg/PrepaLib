@@ -47,7 +47,7 @@
                     }
 
                     let content = text.slice(start + "\\center{".length, end - 1);
-                    text = `${text.slice(0, start)}<div class="flex items-center justify-center">${content.trim()}</div>${text.slice(end)}`;
+                    text = `${text.slice(0, start)}<div class="h-full w-full flex items-center justify-center">${content.trim()}</div>${text.slice(end)}`;
                 }
 
                 // CODES
