@@ -376,7 +376,7 @@ pre {
     @apply list-decimal list-outside whitespace-normal;
 
     li {
-        @apply ml-4 whitespace-pre-wrap;
+        @apply ml-8 whitespace-pre-wrap my-1.5;
     }
 }
 
