@@ -1,0 +1,33 @@
+{% extends 'mails/base.html.twig' %}
+
+{% block title %}Réinitialisation du mot de passe{% endblock %}
+
+{% block content %}
+    <h1 style="font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; color: #ffffff;">
+        Réinitialisation du mot de passe
+    </h1>
+
+    <p style="color: #E5E7EB; line-height: 1.5;">
+        Bonjour {{ firstname }} {{ lastname }},<br/>
+        Vous avez demandé à réinitialiser votre mot de passe.
+        Cliquez sur le bouton ci-dessous pour définir un nouveau mot de passe.
+        Ce lien expire dans <strong style="font-weight: 600; color:#ffffff;">{{ expires }} minutes</strong>.
+    </p>
+
+    <div style="text-align: center; margin:24px 0;">
+        <a href="{{ reset_url }}"
+           style="display: inline-block; background-color: #3B82F6; color: #ffffff; font-weight: 600; padding:12px 24px; border-radius: 0.5rem; text-decoration: none; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);">
+            Réinitialiser mon mot de passe
+        </a>
+    </div>
+
+    <p style="font-size: 0.875rem; line-height: 1.5; color: #9CA3AF;">
+        Si vous n'êtes pas à l'origine de cette réinitialisation, ignorez simplement ce message.<br/>
+        Le lien expirera automatiquement.
+    </p>
+
+    <p style="font-size: 0.875rem; line-height: 1.5; color: #9CA3AF;">
+        Si le bouton ne fonctionne pas, veuillez utiliser ce lien :<br/>
+        <a href="{{ reset_url }}" style="color: #60A5FA; text-decoration: underline;">{{ reset_url }}</a>
+    </p>
+{% endblock %}

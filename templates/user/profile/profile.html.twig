@@ -34,6 +34,11 @@
                     {{ form_widget(profileForm.email) }}
                     {{ form_errors(profileForm.email) }}
                 </div>
+                <div class="flex items-center gap-1">
+                    {{ form_widget(profileForm.wantsNews) }}
+                    {{ form_label(profileForm.wantsNews, null, {'label_attr': {'style':'margin:0;'}}) }}
+                    {{ form_errors(profileForm.wantsNews) }}
+                </div>
 
                 {{ form_widget(profileForm.submit) }}
                 {{ form_end(profileForm) }}

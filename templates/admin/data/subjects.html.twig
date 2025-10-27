@@ -40,6 +40,8 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-24">ID</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-32">Icône</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase">Nom</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-24">Questions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-24">Fiches</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-text-300 uppercase w-24">Exercices</th>
                     </tr>
                     </thead>
@@ -54,6 +56,8 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100 group-hover:text-text-200 group-hover:underline transition">{{ subject.name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100">{{ subject.countQuestions() }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100">{{ subject.countRevisionSheets() }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100">{{ subject.countExercises() }}</td>
                         </tr>
                     {% else %}

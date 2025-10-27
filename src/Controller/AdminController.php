@@ -2,23 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\Chapter;
 use App\Entity\Element;
-use App\Entity\ElementList;
-use App\Entity\EssentialPart;
 use App\Entity\Exercise;
 use App\Entity\ExerciseCategory;
-use App\Entity\Hint;
+use App\Entity\RevisionQuestion;
+use App\Entity\RevisionSheet;
 use App\Entity\Subject;
-use App\Entity\SubjectEssential;
 use App\Entity\Tag;
-use App\Entity\TagList;
 use App\Entity\User;
-use App\Form\EssentialType;
 use App\Form\ExerciseCategoryType;
 use App\Form\ExerciseType;
-use App\Form\Model\ExerciseModel;
-use App\Form\Model\HintModel;
 use App\Form\SubjectType;
 use App\Form\TagType;
 use App\Repository\ExerciseRepository;
@@ -41,10 +34,10 @@ final class AdminController extends AbstractController
 
         return $this->render('admin/dashboard/dashboard.html.twig', [
             "stats" => [
-                "chapters" => $entityManager->getRepository(Chapter::class)->count(),
+                "questions" => $entityManager->getRepository(RevisionQuestion::class)->count(),
                 "users" => $entityManager->getRepository(User::class)->count(),
                 "exercises" => $exerciseRepo->count(),
-                "completed" => -1,
+                "cards" => $entityManager->getRepository(RevisionSheet::class)->count(),
                 "corrected" => round($exerciseRepo->countCorrected() * 100 / max(1, $exerciseRepo->count()), 2)
             ]
         ]);
@@ -302,27 +295,5 @@ final class AdminController extends AbstractController
         $this->addFlash("success", "Le tag a bien été supprimer.");
 
         return $this->redirectToRoute('app_admin_tags');
-    }
-
-    #[Route('/admin/{subject}/essential', name: 'app_admin_essential')]
-    public function subjectEssential(Subject $subject, Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $essential = $subject->getEssential()?: new SubjectEssential();
-        $form = $this->createForm(EssentialType::class, $essential);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $essential->setSubject($subject);
-            $entityManager->persist($essential);
-
-            $entityManager->flush();
-            $this->addFlash("success", "L'essentiel ".$subject->getName()." a bien été modifié.");
-            return $this->redirectToRoute('app_admin_essential', ['subject' => $subject->getId()]);
-        }
-
-        return $this->render('admin/data/essential.html.twig', [
-            "subject" => $subject,
-            "form" => $form->createView()
-        ]);
     }
 }

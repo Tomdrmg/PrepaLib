@@ -52,9 +52,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $resetTokenRequestedAt = null;
 
+    #[ORM\Column]
+    private bool $wantsNews = true;
+
+    /**
+     * @var Collection<int, RevisionPref>
+     */
+    #[ORM\OneToMany(targetEntity: RevisionPref::class, mappedBy: 'user')]
+    private Collection $revisionPrefs;
+
     public function __construct()
     {
         $this->exercisePrefs = new ArrayCollection();
+        $this->revisionPrefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -212,6 +222,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResetTokenRequestedAt(?\DateTimeImmutable $resetTokenRequestedAt): static
     {
         $this->resetTokenRequestedAt = $resetTokenRequestedAt;
+
+        return $this;
+    }
+
+    public function isWantsNews(): ?bool
+    {
+        return $this->wantsNews;
+    }
+
+    public function setWantsNews(bool $wantsNews): static
+    {
+        $this->wantsNews = $wantsNews;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RevisionPref>
+     */
+    public function getRevisionPrefs(): Collection
+    {
+        return $this->revisionPrefs;
+    }
+
+    public function addRevisionPref(RevisionPref $revisionPref): static
+    {
+        if (!$this->revisionPrefs->contains($revisionPref)) {
+            $this->revisionPrefs->add($revisionPref);
+            $revisionPref->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRevisionPref(RevisionPref $revisionPref): static
+    {
+        if ($this->revisionPrefs->removeElement($revisionPref)) {
+            // set the owning side to null (unless already changed)
+            if ($revisionPref->getUser() === $this) {
+                $revisionPref->setUser(null);
+            }
+        }
 
         return $this;
     }

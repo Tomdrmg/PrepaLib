@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\Chapter;
+use App\Entity\RevisionSheet;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Chapter>
+ * @extends ServiceEntityRepository<RevisionSheet>
  */
-class ChapterRepository extends ServiceEntityRepository
+class RevisionSheetRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Chapter::class);
+        parent::__construct($registry, RevisionSheet::class);
     }
 
     //    /**
-    //     * @return Chapter[] Returns an array of Chapter objects
+    //     * @return RevisionSheet[] Returns an array of RevisionSheet objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
+    //        return $this->createQueryBuilder('r')
+    //            ->andWhere('r.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
+    //            ->orderBy('r.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Chapter
+    //    public function findOneBySomeField($value): ?RevisionSheet
     //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
+    //        return $this->createQueryBuilder('r')
+    //            ->andWhere('r.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

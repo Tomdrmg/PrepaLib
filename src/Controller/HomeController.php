@@ -4,8 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Chapter;
 use App\Entity\Exercise;
+use App\Entity\RevisionElement;
+use App\Entity\RevisionQuestion;
+use App\Entity\RevisionSheet;
 use App\Entity\User;
 use App\Repository\ExerciseRepository;
+use App\Repository\RevisionElementRepository;
+use App\Repository\RevisionSheetRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,10 +28,10 @@ final class HomeController extends AbstractController
 
         return $this->render('user/home/home.html.twig', [
             "stats" => [
-                "chapters" => $entityManager->getRepository(Chapter::class)->count(),
+                "questions" => $entityManager->getRepository(RevisionQuestion::class)->count(),
                 "users" => $entityManager->getRepository(User::class)->count(),
                 "exercises" => $exerciseRepo->count(),
-                "completed" => -1,
+                "cards" => $entityManager->getRepository(RevisionSheet::class)->count(),
                 "corrected" => round($exerciseRepo->countCorrected() * 100 / max(1, $exerciseRepo->count()), 2)
             ]
         ]);

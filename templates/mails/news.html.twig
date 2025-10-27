@@ -1,0 +1,32 @@
+{% extends 'mails/base.html.twig' %}
+
+{% block title %}Nouvelles ressources disponibles{% endblock %}
+
+{% block content %}
+    <h1 style="font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; color: #ffffff;">
+        Nouvelles ressources disponibles
+    </h1>
+
+    <p style="color: #E5E7EB; line-height: 1.5;">
+        Bonjour {{ firstname }} {{ lastname }},<br/>
+        De nouvelles ressources sont disponibles sur notre site.<br/>
+        {{ content|raw }}
+    </p>
+
+    <div style="text-align: center; margin:24px 0;">
+        <a href="{{ url('app_home') }}"
+           style="display: inline-block; background-color: #3B82F6; color: #ffffff; font-weight: 600; padding:12px 24px; border-radius: 0.5rem; text-decoration: none; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);">
+            Me rendre sur le site
+        </a>
+    </div>
+
+    <p style="font-size: 0.875rem; line-height: 1.5; color: #9CA3AF;">
+        Si vous ne souhaitez plus recevoir les nouveautés de la plateforme,<br/>
+        vous pouvez vous désinscrire sur la page dédiée à <a href="{{ url('app_profile') }}" style="color: #60A5FA; text-decoration: underline;">votre profil</a>.
+    </p>
+
+    <p style="font-size: 0.875rem; line-height: 1.5; color: #9CA3AF;">
+        Si le bouton ne fonctionne pas, veuillez utiliser ce lien :<br/>
+        <a href="{{ url('app_profile') }}" style="color: #60A5FA; text-decoration: underline;">{{ url('app_profile') }}</a>
+    </p>
+{% endblock %}

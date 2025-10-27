@@ -1,0 +1,65 @@
+{% extends 'admin/admin.base.html.twig' %}
+
+{% block title %}Informer des Nouveautés{% endblock %}
+
+{% block main_class %}items-center justify-center p-4 pt-[88px]{% endblock %}
+
+{% block main %}
+    <div class="w-full max-w-lg my-8">
+        <div class="mb-8 text-center">
+            <i class="fa-solid fa-newspaper text-5xl mx-auto text-accent-purple-700"></i>
+
+            <h1 class="text-3xl font-bold text-text-100 mt-4">PrépaLib</h1>
+            <p class="text-text-300 mt-2">Informer des nouveautés</p>
+        </div>
+
+        <div class="rounded-xl bg-foreground-500 overflow-hidden">
+            <div class="p-8">
+                {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                <div>
+                    {{ form_label(form.text) }}
+                    {{ form_widget(form.text) }}
+                    {{ form_errors(form.text) }}
+                </div>
+
+                {{ form_widget(form.submit) }}
+                {{ form_end(form) }}
+            </div>
+
+            <div class="mx-4 mb-6">
+                <h2 class="font-semibold text-text-300 mb-2">Aperçu du mail :</h2>
+                <iframe id="mailPreviewIframe" style="width:100%; height: 500px; border:1px solid #4B5563; border-radius:8px;">
+
+                </iframe>
+            </div>
+
+            <div class="px-8 py-2 bg-foreground-300/50 border-t border-foreground-300 text-center flex flex-col">
+                <div>
+                </div>
+            </div>
+        </div>
+        <script>
+            const mailTemplate = `{{ include('mails/news.html.twig', {
+                content: '%%content%%',
+                firstname: app.user.firstname,
+                lastname: app.user.lastname,
+            }) | e('js') }}`;
+
+            const input = document.getElementById('news_text');
+            const iframe = document.getElementById('mailPreviewIframe');
+
+            function updatePreview() {
+                let html = mailTemplate
+                    .replaceAll('%%content%%', input.value || 'Votre texte ici...');
+
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                doc.open();
+                doc.write(html);
+                doc.close();
+            }
+
+            updatePreview();
+            input.addEventListener('input', updatePreview);
+        </script>
+    </div>
+{% endblock %}

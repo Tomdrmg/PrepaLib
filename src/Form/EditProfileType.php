@@ -2,6 +2,7 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -22,6 +23,9 @@ class EditProfileType extends AbstractType
             ])
             ->add('lastname', TextType::class, [
                 'label' => 'Nom'
+            ])
+            ->add('wantsNews', CheckboxType::class, [
+                'label' => 'Savoir quand de nouvelles ressources sont disponibles'
             ])
             ->add('submit', SubmitType::class, ['label' => 'Mettre à jour']);
     }

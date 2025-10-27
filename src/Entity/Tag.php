@@ -22,12 +22,6 @@ class Tag
     private ?string $color = null;
 
     /**
-     * @var Collection<int, CourseElement>
-     */
-    #[ORM\ManyToMany(targetEntity: CourseElement::class, mappedBy: 'tags')]
-    private Collection $courseElements;
-
-    /**
      * @var Collection<int, Exercise>
      */
     #[ORM\ManyToMany(targetEntity: Exercise::class, mappedBy: 'tags')]
@@ -38,6 +32,9 @@ class Tag
      */
     #[ORM\ManyToMany(targetEntity: ExerciseCategory::class, mappedBy: 'tags')]
     private Collection $exerciseCategories;
+
+    #[ORM\ManyToOne(inversedBy: 'tags')]
+    private ?RevisionSheet $revisionSheet = null;
 
     public function __construct()
     {
@@ -71,33 +68,6 @@ class Tag
     public function setColor(string $color): static
     {
         $this->color = $color;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, CourseElement>
-     */
-    public function getCourseElements(): Collection
-    {
-        return $this->courseElements;
-    }
-
-    public function addCourseElement(CourseElement $courseElement): static
-    {
-        if (!$this->courseElements->contains($courseElement)) {
-            $this->courseElements->add($courseElement);
-            $courseElement->addTag($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCourseElement(CourseElement $courseElement): static
-    {
-        if ($this->courseElements->removeElement($courseElement)) {
-            $courseElement->removeTag($this);
-        }
 
         return $this;
     }
@@ -152,6 +122,18 @@ class Tag
         if ($this->exerciseCategories->removeElement($exerciseCategory)) {
             $exerciseCategory->removeTag($this);
         }
+
+        return $this;
+    }
+
+    public function getRevisionSheet(): ?RevisionSheet
+    {
+        return $this->revisionSheet;
+    }
+
+    public function setRevisionSheet(?RevisionSheet $revisionSheet): static
+    {
+        $this->revisionSheet = $revisionSheet;
 
         return $this;
     }

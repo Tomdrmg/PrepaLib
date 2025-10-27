@@ -8,6 +8,7 @@ use App\Form\Model\ForgotPassword;
 use App\Form\Model\ResetPassword;
 use App\Form\RegistrationFormType;
 use App\Form\ResetPasswordType;
+use App\Service\MailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -82,7 +83,7 @@ class SecurityController extends AbstractController
      * @throws TransportExceptionInterface
      */
     #[Route(path: '/password/forgot', name: 'app_forgot_password')]
-    public function forgotPassword(Request $request, EntityManagerInterface $entityManager, AuthenticationUtils $authenticationUtils, MailerInterface $mailer): Response
+    public function forgotPassword(Request $request, EntityManagerInterface $entityManager, AuthenticationUtils $authenticationUtils, MailService $mailService): Response
     {
         $user = $this->getUser();
 
@@ -96,27 +97,10 @@ class SecurityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $form->get('email')->getData()]);
             if ($user) {
-                $resetToken = Uuid::v4()->toRfc4122();
-                $user->setResetToken($resetToken);
-                $user->setResetTokenRequestedAt(new \DateTimeImmutable());
-                $entityManager->flush();
-
-                $resetUrl = $this->generateUrl('app_reset_password', ['token' => $resetToken], UrlGeneratorInterface::ABSOLUTE_URL);
-                $email = (new Email())
-                    ->from(new Address('noreply@prepalib.arkean.fr', 'Noreply - PrepaLib'))
-                    ->to(new Address($model->email))
-                    ->subject('Réinitialisation du mot de passe')
-                    ->text("Bonjour,\n\nVous avez demandé la réinitialisation de votre mot de passe.\n\nCliquez ici : $resetUrl")
-                    ->html("
-                        <p>Bonjour,</p>
-                        <p>Vous avez demandé la réinitialisation de votre mot de passe.</p>
-                        <p><a href=\"$resetUrl\">Cliquez ici pour continuer</a></p>
-                    ");
-
-                $mailer->send($email);
+                $mailService->sendReset($user);
             }
 
-            $this->addFlash("info", "Si cette adresse email est bien associée à un compte, vous recevrez un mail pour réinitialiser votre mot de passe.");
+            $this->addFlash("info", "Si cette adresse email est bien associée à un compte, vous allez recevoir un mail pour réinitialiser votre mot de passe.");
         }
 
         return $this->render('user/security/forgot.html.twig', [

@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\ElementList;
+use App\Entity\RevisionQuestion;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ElementList>
+ * @extends ServiceEntityRepository<RevisionQuestion>
  */
-class ElementListRepository extends ServiceEntityRepository
+class RevisionQuestionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ElementList::class);
+        parent::__construct($registry, RevisionQuestion::class);
     }
 
     //    /**
-    //     * @return ElementList[] Returns an array of ElementList objects
+    //     * @return RevisionQuestion[] Returns an array of RevisionQuestion objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
+    //        return $this->createQueryBuilder('r')
+    //            ->andWhere('r.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('e.id', 'ASC')
+    //            ->orderBy('r.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?ElementList
+    //    public function findOneBySomeField($value): ?RevisionQuestion
     //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
+    //        return $this->createQueryBuilder('r')
+    //            ->andWhere('r.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

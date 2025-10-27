@@ -13,6 +13,24 @@
                     {% if admin %}
                         <div class="relative nav-item">
                             <div class="rounded hover:bg-accent-purple-600 transition flex items-center h-10 w-16 justify-center duration-300">
+                                <i class="fa-solid fa-paper-plane text-2xl"></i>
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                            <div class="nav-menu absolute right-0 pt-2 w-48 z-10 transition duration-500">
+                                <div class="bg-foreground-500 rounded-md shadow-lg py-1">
+                                    <span class="block px-4 py-2 text-center font-semibold">Mails</span>
+                                    <hr/>
+                                    <a href="{{ path('app_mail_news') }}" class="px-4 py-2 hover:bg-accent-purple-700 flex items-center gap-2">
+                                        <i class="fa-solid fa-newspaper aspect-square text-lg"></i>
+                                        Nouveautés
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative nav-item">
+                            <div class="rounded hover:bg-accent-purple-600 transition flex items-center h-10 w-16 justify-center duration-300">
                                 <i class="fa-solid fa-database text-2xl"></i>
                                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>

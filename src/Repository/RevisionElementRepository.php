@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\SubjectEssential;
+use App\Entity\RevisionElement;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<SubjectEssential>
+ * @extends ServiceEntityRepository<RevisionElement>
  */
-class SubjectEssentialRepository extends ServiceEntityRepository
+class RevisionElementRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, SubjectEssential::class);
+        parent::__construct($registry, RevisionElement::class);
     }
 
     //    /**
-    //     * @return SubjectEssential[] Returns an array of SubjectEssential objects
+    //     * @return RevisionElement[] Returns an array of RevisionElement objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
+    //        return $this->createQueryBuilder('r')
+    //            ->andWhere('r.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
+    //            ->orderBy('r.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?SubjectEssential
+    //    public function findOneBySomeField($value): ?RevisionElement
     //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
+    //        return $this->createQueryBuilder('r')
+    //            ->andWhere('r.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

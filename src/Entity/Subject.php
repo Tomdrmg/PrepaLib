@@ -18,12 +18,6 @@ class Subject
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    /**
-     * @var Collection<int, Course>
-     */
-    #[ORM\OneToMany(targetEntity: Course::class, mappedBy: 'subject')]
-    private Collection $courses;
-
     #[ORM\Column(length: 255)]
     private ?string $faicon = null;
 
@@ -33,13 +27,16 @@ class Subject
     #[ORM\OneToMany(targetEntity: ExerciseCategory::class, mappedBy: 'subject')]
     private Collection $exerciseCategories;
 
-    #[ORM\OneToOne(mappedBy: 'subject', cascade: ['persist', 'remove'])]
-    private ?SubjectEssential $essential = null;
+    /**
+     * @var Collection<int, RevisionSheet>
+     */
+    #[ORM\OneToMany(targetEntity: RevisionSheet::class, mappedBy: 'subject')]
+    private Collection $revisionSheets;
 
     public function __construct()
     {
-        $this->courses = new ArrayCollection();
         $this->exerciseCategories = new ArrayCollection();
+        $this->revisionSheets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -55,36 +52,6 @@ class Subject
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Course>
-     */
-    public function getCourses(): Collection
-    {
-        return $this->courses;
-    }
-
-    public function addCourse(Course $course): static
-    {
-        if (!$this->courses->contains($course)) {
-            $this->courses->add($course);
-            $course->setSubject($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCourse(Course $course): static
-    {
-        if ($this->courses->removeElement($course)) {
-            // set the owning side to null (unless already changed)
-            if ($course->getSubject() === $this) {
-                $course->setSubject(null);
-            }
-        }
 
         return $this;
     }
@@ -148,6 +115,28 @@ class Subject
         return $total;
     }
 
+    public function getHighestRevisionSheets(): Collection
+    {
+        return $this->revisionSheets->filter(function ($sheet) {
+            return $sheet->getParent() === null;
+        });
+    }
+
+    public function countRevisionSheets(): int
+    {
+        return $this->getHighestRevisionSheets()->count();
+    }
+
+    public function countQuestions(): int
+    {
+        $total = 0;
+        foreach ($this->revisionSheets as $sheet) {
+            $total += $sheet->countQuestions();
+        }
+
+        return $total;
+    }
+
     public function getExercises(): Collection
     {
         $allExercises = new ArrayCollection();
@@ -163,19 +152,32 @@ class Subject
         return $allExercises;
     }
 
-    public function getEssential(): ?SubjectEssential
+    /**
+     * @return Collection<int, RevisionSheet>
+     */
+    public function getRevisionSheets(): Collection
     {
-        return $this->essential;
+        return $this->revisionSheets;
     }
 
-    public function setEssential(SubjectEssential $essential): static
+    public function addRevisionSheet(RevisionSheet $revisionSheet): static
     {
-        // set the owning side of the relation if necessary
-        if ($essential->getSubject() !== $this) {
-            $essential->setSubject($this);
+        if (!$this->revisionSheets->contains($revisionSheet)) {
+            $this->revisionSheets->add($revisionSheet);
+            $revisionSheet->setSubject($this);
         }
 
-        $this->essential = $essential;
+        return $this;
+    }
+
+    public function removeRevisionSheet(RevisionSheet $revisionSheet): static
+    {
+        if ($this->revisionSheets->removeElement($revisionSheet)) {
+            // set the owning side to null (unless already changed)
+            if ($revisionSheet->getSubject() === $this) {
+                $revisionSheet->setSubject(null);
+            }
+        }
 
         return $this;
     }
