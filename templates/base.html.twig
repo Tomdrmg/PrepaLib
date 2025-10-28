@@ -50,6 +50,10 @@
                     text = `${text.slice(0, start)}<div class="h-full w-full flex items-center justify-center"><div>${content.trim()}</div></div>${text.slice(end)}`;
                 }
 
+                text = text.replace(/`\[([^\]`]+)]([^`]+)`/g, function(_, lang, content) {
+                    return `<code class="language-${lang.trim()}">${content.trim()}</code>`;
+                });
+
                 // CODES
                 while (text.lastIndexOf("\\code{") !== -1) {
                     let start = text.lastIndexOf("\\code{");
