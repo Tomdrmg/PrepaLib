@@ -8,7 +8,7 @@
     <div class="container px-2 py-8 md:px-4 md:py-10">
 
         <div class="flex px-3 flex-col gap-3 md:flex-row items-center justify-between">
-            <span class="text-xs text-text-300">{{ exercise.path }}</span>
+            <a href="{{ path('app_exercises', {'subject': exercise.category.subject.id}) }}" class="text-xs text-text-300 hover:text-text-100">{{ exercise.path }}</a>
 
             <div class="flex flex-row py-1 px-2 prefs-{{ exercise.id }} bg-foreground-500 rounded-t-lg">
                 {% set pref = exercise.getPrefFor(app.user) %}
@@ -195,6 +195,9 @@
                 {{ form_errors(form.text) }}
 
                 {{ form_widget(form.submit) }}
+                <div class="mt-4">
+                    <a href="{{ path('app_exercises', {'subject': exercise.category.subject.id}) }}" class="btn info">Retour aux exercices</a>
+                </div>
                 {{ form_end(form) }}
             </div>
         </div>
