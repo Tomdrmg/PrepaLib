@@ -50,7 +50,7 @@
                     text = `${text.slice(0, start)}<div class="h-full w-full flex items-center justify-center"><div>${content.trim()}</div></div>${text.slice(end)}`;
                 }
 
-                text = text.replace(/`([^\s`]+) ([^`]+)`/g, function(_, lang, content) {
+                text = text.replace(/`([^\s`]*) ([^`]+)`/g, function(_, lang, content) {
                     return `<code class="language-${lang.trim()}">${content.trim()}</code>`;
                 });
 
