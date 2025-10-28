@@ -57,13 +57,33 @@ class ExerciseRepository extends ServiceEntityRepository
         }
 
         if ($done !== null) {
-            $qb->andWhere('p.done = :done')
-                ->setParameter('done', $done);
+            if ($done) {
+                $qb->andWhere('p.done = :done')
+                    ->setParameter('done', true);
+            } else {
+                $qb->andWhere(
+                    $qb->expr()->orX(
+                        $qb->expr()->eq('p.done', ':done'),
+                        $qb->expr()->isNull('p.id')
+                    )
+                )
+                    ->setParameter('done', false);
+            }
         }
 
         if ($favorite !== null) {
-            $qb->andWhere('p.favorite = :favorite')
-                ->setParameter('favorite', $favorite);
+            if ($favorite) {
+                $qb->andWhere('p.favorite = :favorite')
+                    ->setParameter('favorite', true);
+            } else {
+                $qb->andWhere(
+                    $qb->expr()->orX(
+                        $qb->expr()->eq('p.favorite', ':favorite'),
+                        $qb->expr()->isNull('p.id')
+                    )
+                )
+                    ->setParameter('favorite', false);
+            }
         }
 
         if ($search) {
