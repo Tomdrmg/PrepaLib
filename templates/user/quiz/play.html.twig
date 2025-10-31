@@ -74,19 +74,19 @@
                             <div class="mb-4">
                                 <p class="text-text-300 text-sm mb-2">Optionnel : Changer la difficulté de la question</p>
                                 <div class="flex justify-center gap-2" id="difficulty-buttons">
-                                    <button onclick="updateDifficulty(0)" class="simple difficulty-btn mastered {% if currentQuestion.difficulty == 0 %}active{% endif %}">
+                                    <button onclick="updateDifficulty(0); event.stopPropagation()" class="simple difficulty-btn mastered {% if currentQuestion.difficulty == 0 %}active{% endif %}">
                                         <i class="fa-regular fa-grin-stars"></i>
                                     </button>
-                                    <button onclick="updateDifficulty(1)" class="simple difficulty-btn known {% if currentQuestion.difficulty == 1 %}active{% endif %}">
+                                    <button onclick="updateDifficulty(1); event.stopPropagation()" class="simple difficulty-btn known {% if currentQuestion.difficulty == 1 %}active{% endif %}">
                                         <i class="fa-regular fa-smile"></i>
                                     </button>
-                                    <button onclick="updateDifficulty(2)" class="simple difficulty-btn familiar {% if currentQuestion.difficulty == 2 %}active{% endif %}">
+                                    <button onclick="updateDifficulty(2); event.stopPropagation()" class="simple difficulty-btn familiar {% if currentQuestion.difficulty == 2 %}active{% endif %}">
                                         <i class="fa-regular fa-meh"></i>
                                     </button>
-                                    <button onclick="updateDifficulty(3)" class="simple difficulty-btn unknown {% if currentQuestion.difficulty == 3 %}active{% endif %}">
+                                    <button onclick="updateDifficulty(3); event.stopPropagation()" class="simple difficulty-btn unknown {% if currentQuestion.difficulty == 3 %}active{% endif %}">
                                         <i class="fa-regular fa-frown"></i>
                                     </button>
-                                    <button onclick="updateDifficulty(-1)" class="simple difficulty-btn never-seen {% if currentQuestion.difficulty == -1 %}active{% endif %}">
+                                    <button onclick="updateDifficulty(-1); event.stopPropagation()" class="simple difficulty-btn never-seen {% if currentQuestion.difficulty == -1 %}active{% endif %}">
                                         <i class="fa-regular fa-dizzy"></i>
                                     </button>
                                 </div>
