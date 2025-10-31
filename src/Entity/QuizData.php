@@ -45,7 +45,7 @@ class QuizData
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?subject $subject = null;
+    private ?Subject $subject = null;
 
     public function __construct()
     {
