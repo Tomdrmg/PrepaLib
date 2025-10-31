@@ -99,6 +99,9 @@ class ExerciseRepository extends ServiceEntityRepository
             }
         }
 
+        $qb->orderBy('c.sortNumber', 'ASC')
+            ->addOrderBy('e.sortNumber', 'ASC');
+
         $exercises = $qb->getQuery()->getResult();
 
         if (!empty($tagIds)) {
