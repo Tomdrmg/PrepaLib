@@ -12,10 +12,9 @@
     <div class="container px-2 py-4 md:px-4 md:py-8">
         <div class="flex flex-row flex-wrap w-full justify-center">
             {% set hasExercise = subject.countExercises > 0  %}
-            {# { % set hasEssential = subject.essential and subject.essential.parts is not empty %} #}
+            {% set hasSheets = subject.countRevisionSheets > 0 %}
 
-            {# {% if not hasExercise and not hasEssential %} #}
-            {% if not hasExercise %}
+            {% if not hasExercise and not hasSheets %}
                 <div class="flex items-center justify-center">
                     <span class="text-center text-lg">Aucune ressource n'a encore été ajoutée dans cette matière.</span>
                 </div>
@@ -39,24 +38,23 @@
                 </div>
             {% endif %}
 
-            {# {% if hasEssential %}
+            {% if hasSheets %}
                 <div class="w-full md:w-1/2 p-4 h-60">
-                    <a href="{{ path('app_essential', {'subject': subject.id}) }}" class="gap-3 relative group ring ring-inset ring-foreground-400 transition duration-300 w-full h-full flex items-center justify-center bg-foreground-500 rounded-lg shadow hover:bg-foreground-400">
+                    <a href="{{ path('app_sheets', {'subject': subject.id}) }}" class="gap-3 relative group ring ring-inset ring-foreground-400 transition duration-300 w-full h-full flex items-center justify-center bg-foreground-500 rounded-lg shadow hover:bg-foreground-400">
 
                     <i class="text-4xl fa-solid fa-toolbox"></i>
 
                     <div class="flex flex-col">
-                    <span class="font-bold text-2xl">L'essentiel</span>
-                                    <span class="text-xs md:text-sm italic">L'essentiel à connaître</span>
+                        <span class="font-bold text-2xl">Fiches de cours</span>
+                        <span class="text-xs md:text-sm italic">L'essentiel à connaître</span>
                     </div>
 
-                    <div
-                        class="-z-10 before:absolute before:top-0 before:left-0 before:w-full before:h-full before:rounded-xl before:[transform:rotateZ(0)] before:transition-transform after:absolute after:top-0 after:left-0 after:w-full after:h-full after:rounded-xl after:[transform:rotateZ(0)] after:transition-transform before:bg-accent-purple-500 after:bg-accent-purple-500 absolute top-0 left-0 w-full h-full transition-all duration-1000 p-5 sm:p-10 text-lg [transform:rotateY(180deg)] rounded-xl shadow group-hover:before:rotate-[-2deg] group-hover:after:rotate-[2deg]">
+                    <div class="-z-10 before:absolute before:top-0 before:left-0 before:w-full before:h-full before:rounded-xl before:[transform:rotateZ(0)] before:transition-transform after:absolute after:top-0 after:left-0 after:w-full after:h-full after:rounded-xl after:[transform:rotateZ(0)] after:transition-transform before:bg-accent-purple-500 after:bg-accent-purple-500 absolute top-0 left-0 w-full h-full transition-all duration-1000 p-5 sm:p-10 text-lg [transform:rotateY(180deg)] rounded-xl shadow group-hover:before:rotate-[-2deg] group-hover:after:rotate-[2deg]">
 
                     </div>
                     </a>
                 </div>
-            {% endif %}#}
+            {% endif %}
         </div>
     </div>
 {% endblock %}

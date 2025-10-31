@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Exercise;
 use App\Entity\ExercisePref;
+use App\Entity\RevisionElement;
+use App\Entity\RevisionPref;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,9 +16,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class PreferenceController extends AbstractController
 {
-    #[Route('/api/exercise/{exercise}/preference/set', name: 'api_set_preference', methods: ['PUT'])]
+    #[Route('/api/exercise/{exercise}/preference/set', name: 'api_set_exercise_preference', methods: ['PUT'])]
     #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
-    public function setPreference(Exercise $exercise, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function setExercisePreference(Exercise $exercise, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $user = $this->getUser();
 
@@ -62,6 +64,42 @@ final class PreferenceController extends AbstractController
                 return new JsonResponse(['success' => false, 'error' => 'comment doit être une chaîne de caractères'], 400);
             }
         }
+
+        if (array_key_exists('difficulty', $data)) {
+            if (is_int($data['difficulty'])) {
+                $pref->setDifficulty($data['difficulty']);
+                $updated = true;
+            } else {
+                return new JsonResponse(['success' => false, 'error' => 'difficulty doit être un entier'], 400);
+            }
+        }
+
+        if (!$updated) {
+            return new JsonResponse(['success' => false, 'error' => 'Aucune donnée valide à mettre à jour'], 400);
+        }
+
+        $entityManager->flush();
+        return new JsonResponse(['success' => true, 'pref' => $pref->toArray()]);
+    }
+
+    #[Route('/api/sheets/{element}/preference/set', name: 'api_set_revision_element_preference', methods: ['PUT'])]
+    #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
+    public function setRevisionElementPreference(RevisionElement $element, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $user = $this->getUser();
+
+        $pref = $element->getPrefFor($user);
+        if (!$pref) {
+            $pref = new RevisionPref();
+            $pref->setUser($user);
+            $pref->setRevisionElement($element);
+            $pref->setDifficulty(-1);
+            $entityManager->persist($pref);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        $updated = false;
 
         if (array_key_exists('difficulty', $data)) {
             if (is_int($data['difficulty'])) {

@@ -200,7 +200,7 @@
                 setLoading();
 
                 if (edit.difficulty !== null) {
-                    exerciseListComponent.querySelectorAll(`.prefs-${exerciseId} .difficulty-element`).forEach(btn => {
+                    exerciseListComponent.querySelectorAll(`.exercise-prefs-${exerciseId} .difficulty-element`).forEach(btn => {
                         if (parseInt(btn.dataset.difficulty) === edit.difficulty) {
                             const classes = btn.dataset.selectedColor.split(' ');
                             let b = true;
@@ -241,7 +241,7 @@
                                             ${exercise.firstCategory.name}
                                         </div>
 
-                                        <div class="grid grid-cols-1 prefs-${exercise.id} md:grid-cols-[1fr_auto] md:grid-rows-[auto_auto] mt-5 rounded transition text-text-200 ring ring-inset ring-[var(--category-color)]">
+                                        <div class="grid grid-cols-1 exercise-prefs-${exercise.id} md:grid-cols-[1fr_auto] md:grid-rows-[auto_auto] mt-5 rounded transition text-text-200 ring ring-inset ring-[var(--category-color)]">
                                             <div class="p-4">
                                                 <span class="text-sm md:text-base font-semibold md:font-bold">${exercise.title}</span>
                                             </div>

@@ -1,0 +1,48 @@
+{% extends "admin/admin.base.html.twig" %}
+
+{% block title %}{{ subject.name }} | Fiche | {{ sheet.title }}{% endblock %}
+
+{% block main_class %}items-center p-2 md:p-4 pt-[88px]!{% endblock %}
+
+{% block main %}
+    <div class="container px-4 py-8 gap-8 flex flex-col justify-center items-center">
+        <div class="text-center">
+            <i class="h-16! w-16 {{ subject.faicon }}"></i>
+            <h1 class="text-3xl font-bold text-text-100 mt-4">PrépaLib</h1>
+            <p class="text-text-300 mt-2">Modifier la fiche: {{ sheet.title }}</p>
+        </div>
+
+        <div class="rounded-xl bg-foreground-500 overflow-hidden max-w-3xl w-full">
+            <div class="p-8">
+                {{ form_start(editForm, {'attr': {'class': 'space-y-6'}}) }}
+                <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                    <div class="flex-1">
+                        {{ form_label(editForm.title) }}
+                        {{ form_widget(editForm.title) }}
+                        {{ form_errors(editForm.title) }}
+                    </div>
+                    <div class="flex-1">
+                        {{ form_label(editForm.sortNumber) }}
+                        {{ form_widget(editForm.sortNumber) }}
+                        {{ form_errors(editForm.sortNumber) }}
+                    </div>
+                </div>
+
+                <button type="submit">Modifier</button>
+                <div class="mt-4 mb-0">
+                    <a class="btn alert" href="{{ path('app_admin_delete_sheet', {'sheet': sheet.id}) }}">Supprimer</a>
+                </div>
+                {{ form_end(editForm) }}
+            </div>
+            <div class="px-8 py-2 bg-foreground-300/50 border-t border-foreground-300 text-center flex flex-col">
+            </div>
+        </div>
+
+        <div class="overflow-x-auto bg-foreground-500 shadow rounded-lg w-full">
+            <div class="p-6">
+                <h1 class="text-xl font-bold mb-4">{{ subject.name }} | Fiche | {{ sheet.title }}</h1>
+                <twig:SheetTree sheet="{{ sheet }}" :admin="true" form="{{ fullForm }}" backPath="{{ path('app_admin_sheets', {'subject': subject.id}) }}"/>
+            </div>
+        </div>
+    </div>
+{% endblock %}

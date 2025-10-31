@@ -12,7 +12,7 @@ final class ListInput
 
     public FormView $field;
 
-    public ?string $subClass;
+    public ?string $subClass = null;
 
     public bool $une = false;
 }

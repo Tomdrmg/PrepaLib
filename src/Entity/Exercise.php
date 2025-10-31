@@ -229,7 +229,7 @@ class Exercise
             return $pref->getUser() === $user;
         })->first();
 
-        return $pref ? $pref : null;
+        return $pref ?: null;
     }
 
     public function getSortNumber(): ?int

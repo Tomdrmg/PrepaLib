@@ -279,7 +279,7 @@ label {
     @apply block text-sm font-normal text-text-300 mb-1;
 }
 
-input[type="password"], input[type="email"], input[type="text"] {
+input[type="password"], input[type="email"], input[type="text"], input[type="number"], input[type="date"], select {
     @apply w-full px-4 py-3 bg-foreground-300 border border-foreground-200 rounded-lg placeholder-text-300 focus:outline-none focus:ring-2 focus:ring-accent-purple-600 focus:border-transparent transition;
 }
 
@@ -292,25 +292,251 @@ textarea {
     resize: vertical;
 }
 
-form button, a.btn {
-    @apply py-3 px-4 bg-accent-purple-700 hover:bg-accent-purple-800 font-medium rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-accent-purple-600 focus:ring-offset-2 focus:ring-offset-background-500 m-0;
+button:not(.simple), a.btn {
+    @apply cursor-pointer py-3 px-4 bg-accent-purple-700 hover:bg-accent-purple-800 font-medium rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-accent-purple-600 focus:ring-offset-2 focus:ring-offset-background-500 m-0;
 }
 
-a.btn.info {
+button:not(.simple).info, a.btn.info {
     @apply bg-accent-blue-700 hover:bg-accent-blue-800 focus:ring-accent-blue-600
 }
 
-a.btn {
-    @apply flex justify-center
+button:not(.simple).alert, a.btn.alert {
+    @apply bg-accent-red-700 hover:bg-accent-red-800 focus:ring-accent-red-600
 }
 
-button[type="submit"], a.btn {
+button:not(.simple).success, a.btn.success {
+    @apply bg-accent-green-700 hover:bg-accent-green-800 focus:ring-accent-green-600
+}
+
+a.btn {
+    @apply flex justify-center text-center
+}
+
+button[type="submit"] {
     @apply w-full
+}
+
+/* Style pour les inputs range */
+input[type="range"] {
+    @apply w-full h-2 bg-foreground-300 border border-foreground-200 rounded-lg appearance-none cursor-pointer transition;
+}
+
+/* Webkit (Chrome, Safari, Edge) */
+input[type="range"]::-webkit-slider-thumb {
+    @apply appearance-none h-5 w-5 bg-accent-purple-700 rounded-full border-2 border-foreground-300 cursor-pointer hover:bg-accent-purple-800 transition;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-thumb {
+    @apply h-5 w-5 bg-accent-purple-700 rounded-full border-2 border-foreground-300 cursor-pointer hover:bg-accent-purple-800 transition;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Track */
+input[type="range"]::-webkit-slider-track {
+    @apply w-full h-2 bg-foreground-300 border border-foreground-200 rounded-lg cursor-pointer;
+}
+
+input[type="range"]::-moz-range-track {
+    @apply w-full h-2 bg-foreground-300 border border-foreground-200 rounded-lg cursor-pointer;
 }
 
 option {
     @apply font-noto-sans;
 }
+
+/* Container pour range avec valeur affichée */
+.range-container {
+    @apply relative mb-6;
+}
+
+.range-value {
+    @apply absolute -bottom-7 left-1/2 transform -translate-x-1/2 bg-accent-purple-700 text-white text-xs font-medium px-2 py-1 rounded-lg whitespace-nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.range-value::after {
+    content: '';
+    @apply absolute bottom-full left-1/2 transform -translate-x-1/2;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid theme('colors.accent-purple.700');
+}
+
+/* Style pour les groupes de formulaire avec ranges */
+.form-group {
+    @apply mb-6;
+}
+
+.range-with-label {
+    @apply flex items-center justify-between mb-2;
+}
+
+.range-with-label label {
+    @apply mb-0;
+}
+
+.range-min-max {
+    @apply flex justify-between text-xs text-text-300 -mt-5;
+}
+
+/* Style pour les inputs file */
+input[type="file"] {
+    @apply hidden;
+}
+
+/* Container personnalisé pour l'input file */
+.file-input-container {
+    @apply relative mb-6;
+}
+
+.file-input-label {
+    @apply flex flex-col items-center justify-center w-full px-4 py-6 bg-foreground-300 border-2 border-dashed border-foreground-200 rounded-lg cursor-pointer hover:bg-foreground-300 hover:border-accent-purple-600 transition duration-300 relative after:absolute after:top-0 after:left-0 after:right-0 after:bottom-0 after:bg-accent-purple-100 after:opacity-0 after:rounded-lg after:pointer-events-none after:transition after:duration-300;
+}
+
+.file-input-label.dragover {
+    @apply border-accent-purple-600 after:opacity-10;
+}
+
+.file-input-content {
+    @apply flex flex-col items-center justify-center text-center;
+}
+
+.file-input-icon {
+    @apply w-8 h-8 mb-2 text-text-300;
+}
+
+.file-input-text {
+    @apply text-sm text-text-300;
+}
+
+.file-input-text strong {
+    @apply text-accent-purple-700 font-medium;
+}
+
+.file-input-hint {
+    @apply text-xs text-text-400 mt-1;
+}
+
+/* Style pour l'affichage du fichier sélectionné */
+.file-selected {
+    @apply mt-3 p-3 bg-foreground-300 border border-foreground-200 rounded-lg;
+}
+
+.file-selected-content {
+    @apply flex items-center justify-between;
+}
+
+.file-info {
+    @apply flex items-center;
+}
+
+.file-icon {
+    @apply w-5 h-5 text-accent-purple-700 mr-2;
+}
+
+.file-name {
+    @apply text-sm text-text-300 font-medium truncate max-w-xs;
+}
+
+.file-remove {
+    @apply text-text-400 hover:text-red-500 transition cursor-pointer;
+}
+
+.file-remove-icon {
+    @apply w-4 h-4;
+}
+
+/* Preview d'image */
+.file-preview {
+    @apply mt-3;
+}
+
+.file-preview-image {
+    @apply max-w-full max-h-48 rounded-lg border border-foreground-200;
+}
+
+/* États de validation */
+.file-input-label.has-error {
+    @apply border-red-500 after:bg-accent-red-100 after:opacity-10;
+}
+
+.file-input-label.has-success {
+    @apply border-green-500 after:bg-accent-green-100 after:opacity-10;
+}
+
+/* Loading state */
+.file-input-label.is-loading {
+    @apply opacity-70 cursor-not-allowed;
+}
+
+.loading-spinner {
+    @apply w-5 h-5 border-2 border-foreground-200 border-t-accent-purple-700 rounded-full animate-spin;
+}
+
+/* Variante compacte */
+.file-input-compact .file-input-label {
+    @apply py-3;
+}
+
+.file-input-compact .file-input-content {
+    @apply flex-row gap-3;
+}
+
+.file-input-compact .file-input-icon {
+    @apply w-5 h-5 mb-0;
+}
+
+.file-input-compact .file-input-text {
+    @apply text-xs;
+}
+
+/* Style spécifique pour les selects */
+select {
+    @apply appearance-none bg-no-repeat bg-[position:right_8px_center] pr-10;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-size: 1.5rem 1.5rem;
+}
+
+select:focus {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238b5cf6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+}
+
+/* Style pour les options */
+option {
+    @apply font-noto-sans bg-foreground-300 text-text-300 py-2;
+}
+
+option:checked {
+    @apply bg-accent-purple-600 text-white;
+}
+
+/* Style spécifique pour les dates */
+input[type="date"] {
+    @apply relative;
+}
+
+/* Webkit (Chrome, Safari) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    @apply bg-transparent absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer;
+    filter: invert(0.5);
+}
+
+input[type="date"]:focus::-webkit-calendar-picker-indicator {
+    filter: invert(0.7) sepia(1) saturate(5) hue-rotate(250deg);
+}
+
+/* Firefox */
+input[type="date"]::-moz-calendar-picker-indicator {
+    @apply bg-transparent cursor-pointer;
+    filter: invert(0.5);
+}
+
+input[type="date"]:focus::-moz-calendar-picker-indicator {
+    filter: invert(0.7) sepia(1) saturate(5) hue-rotate(250deg);
+}
+
 
 .collection {
     @apply space-y-4;

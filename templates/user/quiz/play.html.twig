@@ -1,0 +1,364 @@
+{% extends 'user/user.base.html.twig' %}
+
+{% block title %}Quiz en cours{% endblock %}
+
+{% block main_class %}items-center justify-center p-4 pt-[88px]{% endblock %}
+
+{% block main %}
+    <div class="w-full max-w-2xl my-8">
+        <div class="mb-6 text-center">
+            <h1 class="text-2xl font-bold text-text-100">Quiz en cours</h1>
+            <h2 class="text-xl font-bold text-text-200 mt-1">{{ subject.name }}</h2>
+            <p class="text-text-300 mt-2">Question <span id="question-number">{{ questionNumber }}</span>/<span id="total-questions">{{ totalQuestions }}</span></p>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="flex justify-center gap-4 mb-6">
+            <div class="text-center">
+                <div class="text-lg font-bold text-accent-green-500" id="success-count">0</div>
+                <div class="text-sm text-text-300">Réussites</div>
+            </div>
+            <div class="text-center">
+                <div class="text-lg font-bold text-accent-red-500" id="failures-count">0</div>
+                <div class="text-sm text-text-300">Échecs</div>
+            </div>
+        </div>
+
+        <!-- Carte du quiz -->
+        <div class="relative" id="quiz-container">
+            <div class="flip-card" id="flip-card">
+                <div class="flip-card-inner" id="flip-card-inner">
+                    <!-- Face avant (question) -->
+                    <div class="flip-card-front bg-foreground-500 rounded-xl p-3 sm:p-6 md:p-8 shadow-lg border border-foreground-300 cursor-pointer" onclick="flipCard()">
+                        <div class="text-center h-full flex flex-col justify-center">
+                            <div class="h-12 w-12 mb-3 mx-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-accent-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-text-100 mb-4">Question</h2>
+                            <div class="text-start text-text-200 text-lg mb-6 flex-grow whitespace-pre text-wrap! latex" id="question-content">{{ currentQuestion.question_content|raw }}</div>
+                            <div class="text-text-400 text-sm mt-4">
+                                Cliquez n'importe où sur la carte pour voir la réponse
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Face arrière (réponse) -->
+                    <div class="flip-card-back bg-foreground-400 rounded-xl p-3 sm:p-6 md:p-8 shadow-lg border border-foreground-300 cursor-pointer" onclick="flipCard()">
+                        <div class="text-center h-full flex flex-col justify-center">
+                            <div class="h-12 w-12 mb-3 mx-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-accent-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-text-100 mb-4">Réponse</h2>
+                            <div class="overflow-scroll bg-foreground-300 rounded-lg p-2 text-start text-text-200 text-lg flex-grow whitespace-pre text-wrap! latex" id="answer-content">{{ currentQuestion.answer_content|raw }}</div>
+
+                            <!-- Boutons de résultat -->
+                            <div class="my-6">
+                                <p class="text-text-300 text-sm mb-3">Avez-vous trouvé la bonne réponse ?</p>
+                                <div class="flex justify-center gap-4">
+                                    <button onclick="submitAnswer(true)" class="btn success">
+                                        <i class="fa-solid fa-check mr-2"></i>
+                                        Oui
+                                    </button>
+                                    <button onclick="submitAnswer(false)" class="btn alert">
+                                        <i class="fa-solid fa-xmark mr-2"></i>
+                                        Non
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Évaluation optionnelle de la difficulté -->
+                            <div class="mb-4">
+                                <p class="text-text-300 text-sm mb-2">Optionnel : Changer la difficulté de la question</p>
+                                <div class="flex justify-center gap-2" id="difficulty-buttons">
+                                    <button onclick="updateDifficulty(0)" class="simple difficulty-btn mastered {% if currentQuestion.difficulty == 0 %}active{% endif %}">
+                                        <i class="fa-regular fa-grin-stars"></i>
+                                    </button>
+                                    <button onclick="updateDifficulty(1)" class="simple difficulty-btn known {% if currentQuestion.difficulty == 1 %}active{% endif %}">
+                                        <i class="fa-regular fa-smile"></i>
+                                    </button>
+                                    <button onclick="updateDifficulty(2)" class="simple difficulty-btn familiar {% if currentQuestion.difficulty == 2 %}active{% endif %}">
+                                        <i class="fa-regular fa-meh"></i>
+                                    </button>
+                                    <button onclick="updateDifficulty(3)" class="simple difficulty-btn unknown {% if currentQuestion.difficulty == 3 %}active{% endif %}">
+                                        <i class="fa-regular fa-frown"></i>
+                                    </button>
+                                    <button onclick="updateDifficulty(-1)" class="simple difficulty-btn never-seen {% if currentQuestion.difficulty == -1 %}active{% endif %}">
+                                        <i class="fa-regular fa-dizzy"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="text-text-400 text-sm">
+                                Cliquez n'importe où sur la carte pour revenir à la question
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran de fin -->
+        <div id="quiz-finished" class="hidden text-center mt-8">
+            <div class="bg-foreground-500 rounded-xl p-8 shadow-lg border border-foreground-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-accent-green-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h2 class="text-2xl font-bold text-text-100 mb-4">Quiz terminé !</h2>
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="text-center p-4 bg-foreground-400 rounded-lg">
+                        <div class="text-2xl font-bold text-accent-green-500" id="final-success">0</div>
+                        <div class="text-text-300">Réponses correctes</div>
+                    </div>
+                    <div class="text-center p-4 bg-foreground-400 rounded-lg">
+                        <div class="text-2xl font-bold text-accent-red-500" id="final-failures">0</div>
+                        <div class="text-text-300">Réponses incorrectes</div>
+                    </div>
+                </div>
+                <div class="flex gap-3 justify-center">
+                    <a href="{{ path('app_sheets', {'subject': subject.id}) }}" class="btn primary">Quitter</a>
+                    <a href="{{ path('app_play_quiz') }}" class="btn simple">Recommencer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-foreground-500 rounded-xl p-6 text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-purple-500 mx-auto mb-4"></div>
+            <p class="text-text-100">Chargement de la prochaine question...</p>
+        </div>
+    </div>
+
+    <style>
+        .flip-card {
+            perspective: 1000px;
+            height: 600px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        .difficulty-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-foreground-300);
+        }
+
+        .difficulty-btn:hover {
+            transform: scale(1.1);
+            border-color: currentColor;
+        }
+
+        .difficulty-btn.active {
+            border-color: currentColor;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .difficulty-btn.never-seen {
+            color: #a855f7;
+        }
+
+        .difficulty-btn.mastered {
+            color: #3b82f6;
+        }
+
+        .difficulty-btn.known {
+            color: #22c55e;
+        }
+
+        .difficulty-btn.familiar {
+            color: #eab308;
+        }
+
+        .difficulty-btn.unknown {
+            color: #ef4444;
+        }
+
+        .btn.success {
+            background-color: #22c55e;
+            color: white;
+        }
+
+        .btn.success:hover {
+            background-color: #16a34a;
+        }
+    </style>
+
+    <script>
+        let currentRevisionElementId = {{ currentQuestion.revision_element_id ?? 'null' }};
+        let isFlipped = false;
+        let hasSubmittedAnswer = false;
+        let currentDifficulty = {{ currentQuestion.difficulty }};
+
+        function flipCard() {
+            const flipCard = document.getElementById('flip-card');
+            isFlipped = !isFlipped;
+            flipCard.classList.toggle('flipped', isFlipped);
+        }
+
+        async function submitAnswer(isCorrect) {
+            if (hasSubmittedAnswer) return;
+
+            hasSubmittedAnswer = true;
+            showLoading();
+
+            try {
+                // Passer à la question suivante
+                const response = await fetch('{{ path('app_quiz_next') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        is_correct: isCorrect
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.finished) {
+                    showFinalResults(data.stats);
+                } else {
+                    updateQuestion(data.question);
+                    updateStats(data.stats);
+                    // Remettre la carte à l'endroit pour la nouvelle question
+                    if (isFlipped) {
+                        flipCard();
+                    }
+                }
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue. Veuillez réessayer.');
+            } finally {
+                hideLoading();
+                hasSubmittedAnswer = false;
+            }
+        }
+
+        function updateDifficulty(difficulty) {
+            if (!currentRevisionElementId) return;
+
+            // Utiliser votre fonction RevisionElementPref.setPref
+            RevisionElementPref.setPref(
+                currentRevisionElementId,
+                { 'difficulty': difficulty },
+                // Callback de succès
+                function() {
+                    currentDifficulty = difficulty;
+                    updateDifficultyDisplay();
+                },
+                // Callback d'erreur
+                function(error) {
+                    console.error('Erreur lors de la mise à jour de la difficulté:', error);
+                    alert('Erreur lors de la mise à jour de la difficulté');
+                }
+            );
+        }
+
+        function updateDifficultyDisplay() {
+            // Mettre à jour les boutons
+            const buttons = document.querySelectorAll('.difficulty-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                // Extraire la difficulté du bouton depuis l'événement onclick
+                const onclickAttr = btn.getAttribute('onclick');
+                const match = onclickAttr.match(/updateDifficulty\((-?\d)\)/);
+                if (match) {
+                    const btnDifficulty = parseInt(match[1]);
+                    if (btnDifficulty === currentDifficulty) {
+                        btn.classList.add('active');
+                    }
+                }
+            });
+        }
+
+        function updateQuestion(question) {
+            document.getElementById('question-content').innerHTML = question.question;
+            renderLatex(document.getElementById('question-content'));
+            document.getElementById('answer-content').innerHTML = question.answer;
+            renderLatex(document.getElementById('answer-content'));
+            document.getElementById('question-number').textContent = question.questionNumber;
+            document.getElementById('total-questions').textContent = question.totalQuestions;
+            currentRevisionElementId = question.revision_element_id;
+
+            currentDifficulty = question.difficulty;
+            updateDifficultyDisplay();
+        }
+
+        function updateStats(stats) {
+            document.getElementById('success-count').textContent = stats.success;
+            document.getElementById('failures-count').textContent = stats.failures;
+        }
+
+        function showFinalResults(stats) {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-finished').classList.remove('hidden');
+            document.getElementById('final-success').textContent = stats.success;
+            document.getElementById('final-failures').textContent = stats.failures;
+        }
+
+        function showLoading() {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+        }
+
+        // Raccourci clavier pour retourner la carte
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+
+        // Initialiser les stats
+        updateStats({
+            success: 0,
+            failures: 0
+        });
+
+        // Initialiser l'affichage de la difficulté
+        updateDifficultyDisplay();
+    </script>
+{% endblock %}

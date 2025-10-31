@@ -340,7 +340,10 @@
                         conj: ['\\overline{ #1 }', 1],
                         func: ["#1 : #2 \\longrightarrow #3", 3],
                         funclambda: ["#1 \\longrightarrow #2", 2],
-                        funcf: ["\\begin{array}{c} #1:& #2 & \\longrightarrow & #3 \\\\ & #4 & \\longmapsto & #5 \\end{array}", 5],
+                        funcf: [
+                            "#1:\\;\\vtop{\\hbox{$\\left\\{\\begin{array}{r@{\\ }c@{\\ }l} #2 & \\longrightarrow & #3 \\\\ #4 & \\longmapsto & #5 \\end{array}\\right.$}}",
+                            5
+                        ],
                         funcflambda: ["\\begin{array}{c} #1 & \\longrightarrow & #2 \\\\ #3 & \\longmapsto & #4 \\end{array}", 4],
                         funcv: ["#1 : #2 \\longmapsto #3", 3],
                         funcvlambda: ["#1 \\longmapsto #2", 2],
@@ -535,7 +538,7 @@
         <script>
             const ExercisePref = (function() {
                 function setPref(exerciseId, data, after = function () {}, afterError = function () {}) { // data example: {"favorite": true}
-                    const url = "{{ path('api_set_preference', {'exercise': 'EXERCISE_ID'}) }}".replaceAll('EXERCISE_ID', exerciseId);
+                    const url = "{{ path('api_set_exercise_preference', {'exercise': 'EXERCISE_ID'}) }}".replaceAll('EXERCISE_ID', exerciseId);
                     fetch(url, {
                         method: 'PUT',
                         headers: {
@@ -563,7 +566,7 @@
 
                 function updatePrefContainers(prefs) {
                     for (const pref of prefs) {
-                        document.querySelectorAll(`.prefs-${pref.exercise}`).forEach(container => {
+                        document.querySelectorAll(`.exercise-prefs-${pref.exercise}`).forEach(container => {
                             const doneT = container.querySelector(".done .true");
                             if (pref.done) doneT.classList.remove("hidden!");
                             else doneT.classList.add("hidden!");
@@ -614,6 +617,59 @@
                     setPref: setPref
                 }
             })();
+
+            const RevisionElementPref = (function() {
+                function setPref(elementId, data, after = function () {}, afterError = function () {}) { // data example: {"difficulty": 2}
+                    const url = "{{ path('api_set_revision_element_preference', {'element': 'ELEMENT_ID'}) }}".replaceAll('ELEMENT_ID', elementId);
+                    fetch(url, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(data)
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erreur HTTP : ' + response.status);
+                            }
+
+                            return response.json();
+                        })
+                        .then(data => {
+                            updatePrefContainers([data.pref]);
+                            after()
+                        })
+                        .catch(error => {
+                            console.error('Erreur fetch :', error); // TODO : NOTIFICATION
+                            afterError();
+                        });
+                }
+
+                function updatePrefContainers(prefs) {
+                    for (const pref of prefs) {
+                        document.querySelectorAll(`.revision-prefs-${pref.revisionElement}`).forEach(container => {
+                            const difficultyContainer = container.querySelector(".difficulty");
+                            const unselectedColor = difficultyContainer.dataset.unselectedColor;
+
+                            difficultyContainer.querySelectorAll(".difficulty-element").forEach(element => {
+                                const selectedColor = element.dataset.selectedColor;
+                                if (parseInt(element.dataset.difficulty) === pref.difficulty) {
+                                    element.classList.remove(unselectedColor);
+                                    element.classList.add(selectedColor);
+                                } else {
+                                    element.classList.remove(selectedColor);
+                                    element.classList.add(unselectedColor);
+                                }
+                            })
+                        });
+                    }
+                }
+
+                return {
+                    setPref: setPref
+                }
+            })();
         </script>
     {% endblock %}
 </head>
@@ -645,8 +701,7 @@
 
                     <span class="flex-1">{{ message|raw }}</span>
 
-                    <button type="button" class="ml-2 text-gray-400 hover:text-gray-200"
-                            @click="show = false">
+                    <button type="button" class="ml-2 text-gray-400 hover:text-gray-200 simple" @click="show = false">
                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg"
                              fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

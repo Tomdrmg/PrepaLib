@@ -1,0 +1,387 @@
+<div{{ attributes }} id="sheet-tree-{{ sheet.id }}" style="position: relative; display: flex; flex-direction: column; gap: 0.75rem">
+    {% set admin = admin and form %}
+
+    <div class="tree-loader absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center hidden! z-10 bg-foreground-500/60">
+        <svg aria-hidden="true" class="w-8 h-8 text-foreground-300 animate-spin fill-accent-purple-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+        </svg>
+        <span class="sr-only">Chargement...</span>
+    </div>
+
+    {% if admin %}
+        <div class="form-popup hidden fixed items-center justify-center z-50 top-0 bottom-0 left-0 right-0 bg-background-900/60">
+            <div class=" rounded-xl bg-foreground-500 w-full max-w-3xl">
+                <div class="p-8">
+                    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+                    {{ form_widget(form.id) }}
+                    {{ form_widget(form.parent) }}
+
+                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                        <div class="md:flex-2">
+                            {{ form_label(form.title) }}
+                            {{ form_widget(form.title) }}
+                            {{ form_errors(form.title) }}
+                        </div>
+                        <div class="md:flex-1">
+                            {{ form_label(form.sortNumber) }}
+                            {{ form_widget(form.sortNumber) }}
+                            {{ form_errors(form.sortNumber) }}
+                        </div>
+                    </div>
+
+                    <button type="submit">Valider</button>
+                    {{ form_end(form) }}
+                </div>
+
+                <div class="px-8 py-2 bg-foreground-300/50 border-t rounded-b-xl border-foreground-300 text-center flex flex-col">
+                    <span onclick="SheetTree{{ sheet.id }}.setNew()" class="resetSheetButton text-text-300 hover:text-text-200 text-sm transition duration-500 mb-2">Vous êtes en train de modifier une fiche existante. Cliquez ici pour passer en mode création.</span>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% macro render_element(mainSheet, user, admin, element) %}
+        <div class="flex flex-row">
+            <div class="w-10 flex flex-row justify-end gap-2">
+                {% if element.questions is not empty %}
+                    <div data-id="{{ element.id }}" class="element-questions cursor-pointer w-4 h-4 text-center">
+                        <i class="fa-regular fa-question-circle"></i>
+                    </div>
+                    <div id="questions-for-{{ element.id }}" class="pointer-events-none opacity-0! opacity-100 transform duration-300 fixed z-40 left-0 right-0 top-0 bottom-0 bg-background-900/40 flex justify-center items-center">
+                        <div class="bg-foreground-500 container p-4 gap-4 max-h-[90vh] overflow-y-scroll rounded-lg flex flex-col">
+                            <div class="flex justify-center items-center flex-col">
+                                <span class="font-extrabold uppercase text-center text-xl">Questions</span>
+                                <span class="text-center italic text-sm text-text-300">Cliquez n'importe où pour fermer</span>
+                            </div>
+                            {% for question in element.questions %}
+                                <div class="relative bg-foreground-500 border border-accent-purple-500 rounded-xs p-3 before:content-[var(--label)] before:top-0 before:left-1/2 before:tracking-wide before:transform-[translate(-50%,-50%)] before:absolute before:bg-foreground-500 before:px-2 before:text-sm before:uppercase before:font-bold" style="--label: 'Question {{ loop.index }}'">
+                                    <span class="font-bold uppercase">Question:</span>
+                                    <div class="whitespace-pre latex text-wrap! bg-foreground-400 p-2 mt-1 rounded-xs">{{ question.question.content }}</div>
+                                    <br/>
+                                    <span class="font-bold uppercase">Réponse:</span>
+                                    <div class="whitespace-pre latex text-wrap! bg-foreground-400 p-2 mt-1 rounded-xs">{{ question.answer.content }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if element.details and element.details.content|trim is not empty %}
+                    <div data-id="{{ element.id }}" class="element-details cursor-pointer w-4 h-4 text-center">
+                        <i class="fa-regular fa-circle-right"></i>
+                    </div>
+                    <div id="details-for-{{ element.id }}" class="pointer-events-none opacity-0! opacity-100 transform duration-300 fixed z-40 left-0 right-0 top-0 bottom-0 bg-background-900/40 flex justify-center items-center">
+                        <div class="bg-foreground-500 container p-4 gap-4 max-h-[90vh] overflow-y-scroll rounded-lg flex flex-col">
+                            <div class="flex justify-center items-center flex-col">
+                                <span class="font-extrabold uppercase text-center text-xl">Détails</span>
+                                <span class="text-center italic text-sm text-text-300">Cliquez n'importe où pour fermer</span>
+                            </div>
+                            <div class="whitespace-pre latex text-wrap! bg-foreground-400 p-2 mt-1 rounded-xs">{{ element.details.content }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 text-current" fill="currentColor">
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+            </div>
+            <div class="grow flex {% if element.style == 0 %}md:flex-row{% endif %} flex-row">
+                <div class="shrink-0">
+                    <span class="latex whitespace-pre text-wrap!">{{ element.first.content }} {{ element.separatorText }} </span>
+                </div>
+                <div class="flex-1 min-w-1/2">
+                    <span class="latex whitespace-pre text-wrap!">{{ element.second.content }}</span>
+                </div>
+            </div>
+            <div class="flex flex-row gap-3 w-36 justify-end {% if user %}revision-prefs-{{ element.id }}{% endif %}">
+                {% if admin %}
+                    <div data-href="{{ path('app_admin_edit_sheet_element', {'element': element.id}) }}" class="cursor-pointer flex items-center justify-center">
+                        <i class="fa-solid fa-pencil"></i>
+                    </div>
+                    <div data-href="{{ path('app_admin_delete_sheet_element', {'element': element.id}) }}" class="cursor-pointer flex items-center justify-center">
+                        <i class="fa-solid fa-trash"></i>
+                    </div>
+                {% elseif user %}
+                    {% set pref = element.getPrefFor(user) %}
+                    <div data-unselected-color="text-text-300" class="w-3/4 md:w-auto difficulty p-2 flex flex-row gap-2 justify-center">
+                        <div onclick="SheetTree{{ mainSheet.id }}.setTreePref({{ element.id }}, {'difficulty': 0})"
+                             data-selected-color="text-accent-blue-500" data-difficulty="0"
+                             class="difficulty-element {{ pref and pref.difficulty == 0 ? 'text-accent-blue-500' : 'text-text-300'}} text-lg cursor-pointer flex justify-center items-center">
+                            <i class="fa-regular fa-grin-stars text-lg"></i>
+                        </div>
+                        <div onclick="SheetTree{{ mainSheet.id }}.setTreePref({{ element.id }}, {'difficulty': 1})"
+                             data-selected-color="text-accent-green-500" data-difficulty="1"
+                             class="difficulty-element {{ pref and pref.difficulty == 1 ? 'text-accent-green-500' : 'text-text-300'}} text-lg cursor-pointer flex justify-center items-center">
+                            <i class="fa-regular fa-smile text-lg"></i>
+                        </div>
+                        <div onclick="SheetTree{{ mainSheet.id }}.setTreePref({{ element.id }}, {'difficulty': 2})"
+                             data-selected-color="text-accent-yellow-500" data-difficulty="2"
+                             class="difficulty-element {{ pref and pref.difficulty == 2 ? 'text-accent-yellow-500' : 'text-text-300'}} text-lg cursor-pointer flex justify-center items-center">
+                            <i class="fa-regular fa-meh text-lg"></i>
+                        </div>
+                        <div onclick="SheetTree{{ mainSheet.id }}.setTreePref({{ element.id }}, {'difficulty': 3})"
+                             data-selected-color="text-accent-red-500" data-difficulty="3"
+                             class="difficulty-element {{ pref and pref.difficulty == 3 ? 'text-accent-red-500' : 'text-text-300'}} text-lg cursor-pointer flex justify-center items-center">
+                            <i class="fa-regular fa-frown text-lg"></i>
+                        </div>
+                        <div onclick="SheetTree{{ mainSheet.id }}.setTreePref({{ element.id }}, {'difficulty': -1})"
+                             data-selected-color="text-accent-purple-50" data-difficulty="-1"
+                             class="difficulty-element {{ not pref or pref.difficulty == -1 ? 'text-accent-purple-500' : 'text-text-300'}} text-lg cursor-pointer flex justify-center items-center">
+                            <i class="fa-regular fa-dizzy text-lg"></i>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endmacro %}
+
+    {% macro render_sheet(mainSheet, user, admin, sheet, i) %}
+        {% for element in sheet.revisionElements %}
+            {{ _self.render_element(mainSheet, user, admin, element) }}
+        {% endfor %}
+
+        {% if i <= 1 %}
+            {% for child in sheet.children|sort((a, b) => a.sortNumber <=> b.sortNumber) %}
+                <div class="flex flex-row">
+                    <div class="w-10">
+
+                    </div>
+                    <div>
+                        {% if i == 0 %}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 text-current" fill="currentColor">
+                                <polygon points="8,5 19,12 8,19" />
+                            </svg>
+                        {% elseif i == 1 %}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 text-current" fill="currentColor">
+                                <rect x="5" y="11" width="14" height="2" rx="1" />
+                            </svg>
+                        {% endif %}
+                    </div>
+                    <div class="grow">
+                        <span class="{% if i == 0 %}font-extrabold text-lg{% elseif i == 1 %}font-semibold{% endif %}">{{ child.title }}</span>
+                    </div>
+                    <div class="flex flex-row gap-3 w-36 justify-end">
+                        {% if admin %}
+                            <div data-href="{{ path('app_admin_add_sheet_element', {'sheet': child.id}) }}" class="cursor-pointer flex items-center justify-center">
+                                <i class="fa-solid fa-file-circle-plus"></i>
+                            </div>
+                            <div data-sheet-title="{{ child.title }}" data-sheet-id="{{ child.id }}" class="sheet-add-sub cursor-pointer flex items-center justify-center">
+                                <i class="fa-solid fa-folder-plus"></i>
+                            </div>
+                            <div data-sheet-title="{{ child.title }}" data-sheet-sort-number="{{ child.sortNumber }}" data-sheet-id="{{ child.id }}" data-sheet-parent-id="{% if child.parent %}{{ child.parent.id }}{% else %}null{% endif %}" class="sheet-edit cursor-pointer flex items-center justify-center">
+                                <i class="fa-solid fa-edit"></i>
+                            </div>
+                            <div data-href="{{ path('app_admin_delete_sheet', {'sheet': child.id}) }}" class="cursor-pointer flex items-center justify-center">
+                                <i class="fa-solid fa-trash"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {{ _self.render_sheet(mainSheet, user, admin, child, i+1) }}
+            {% endfor %}
+        {% endif %}
+    {% endmacro %}
+
+    {{ _self.render_sheet(sheet, user, admin, sheet, 0) }}
+
+    <div class="mt-4 flex flex-col md:flex-row gap-3">
+        {% if backPath %}
+            <a href="{{ backPath }}" class="btn">Retour</a>
+        {% endif %}
+
+        {% if admin %}
+            <button data-sheet-title="{{ sheet.title }}" data-sheet-id="{{ sheet.id }}" class="sheet-add-sub">Ajouter une fiche</button>
+            <button data-href="{{ path('app_admin_add_sheet_element', {'sheet': sheet.id}) }}">Ajouter un élément</button>
+        {% endif %}
+    </div>
+
+    <script>
+        const SheetTree{{ sheet.id }} = (function () {
+            let sheetTreeComponent;
+            let treeLoader;
+
+            function setLoading() {
+                treeLoader.classList.remove('hidden!');
+            }
+
+            function stopLoading() {
+                treeLoader.classList.add('hidden!');
+            }
+
+            {% if user %}
+            function setTreePref(elementId, edit) {
+                setLoading();
+
+                if (edit.difficulty !== null) {
+                    sheetTreeComponent.querySelectorAll(`.revision-prefs-${elementId} .difficulty-element`).forEach(btn => {
+                        if (parseInt(btn.dataset.difficulty) === edit.difficulty) {
+                            const classes = btn.dataset.selectedColor.split(' ');
+                            let b = true;
+
+                            for (const cl of classes) {
+                                if (!btn.classList.contains(cl)) b = false;
+                            }
+
+                            if (b) edit.difficulty = -1;
+                        }
+                    });
+                }
+
+                RevisionElementPref.setPref(elementId, edit, stopLoading, stopLoading);
+            }
+            {% endif %}
+
+            {% if admin %}
+            let formPopup;
+            let formTitle;
+            let formSortNumber;
+            let formId;
+            let formParent;
+            let resetButton;
+
+            // Form
+            function cancelForm() {
+                formPopup.classList.add("hidden");
+                formPopup.classList.remove("flex");
+                formTitle.value = "";
+                formSortNumber.value = 0;
+                formId.value = null;
+                formParent.value = null;
+                resetButton.classList.add("hidden");
+            }
+
+            function setNew() {
+                formId.value = null;
+                resetButton.classList.add("hidden");
+            }
+
+            function edit(title, sortNumber, id, parentId) {
+                if (parentId) {
+                    formPopup.classList.remove("hidden");
+                    formPopup.classList.add("flex");
+                    formTitle.value = title;
+                    formSortNumber.value = sortNumber;
+                    formId.value = id;
+                    formParent.value = parentId;
+                    resetButton.classList.remove("hidden");
+                }
+            }
+
+            function add(parentId) {
+                formPopup.classList.remove("hidden");
+                formPopup.classList.add("flex");
+                formTitle.value = "";
+                formId.value = null;
+                formSortNumber.value = 0;
+                formParent.value = parentId;
+                resetButton.classList.add("hidden");
+            }
+            {% endif %}
+
+            function init() {
+                sheetTreeComponent = document.getElementById('sheet-tree-{{ sheet.id }}');
+                treeLoader = sheetTreeComponent.querySelector('.tree-loader');
+
+                {% if admin %}
+                formPopup = sheetTreeComponent.querySelector('.form-popup');
+                formTitle = document.getElementById("{{ form.title.vars.id }}");
+                formSortNumber = document.getElementById("{{ form.sortNumber.vars.id }}");
+                formId = document.getElementById("{{ form.id.vars.id }}");
+                formParent = document.getElementById("{{ form.parent.vars.id }}");
+                resetButton = sheetTreeComponent.querySelector(".resetSheetButton");
+
+                //init
+                formPopup.addEventListener('click', function (event) {
+                    if (event.target === event.currentTarget) {
+                        cancelForm();
+                    }
+                });
+
+                sheetTreeComponent.querySelectorAll('.sheet-add-sub').forEach(e => {
+                    e.addEventListener('click', (event) => {
+                        add(e.dataset.sheetId);
+                        event.stopPropagation();
+                    });
+                });
+
+                sheetTreeComponent.querySelectorAll('.sheet-edit').forEach(e => {
+                    e.addEventListener('click', (event) => {
+                        edit(e.dataset.sheetTitle, e.dataset.sheetSortNumber, e.dataset.sheetId, e.dataset.sheetParentId);
+                        event.stopPropagation();
+                    });
+                });
+                {% endif %}
+
+                //links
+                sheetTreeComponent.querySelectorAll('tr[data-href]').forEach(row => {
+                    row.addEventListener('click', () => {
+                        window.location.href = row.dataset.href;
+                    });
+                });
+
+                sheetTreeComponent.querySelectorAll('div[data-href]').forEach(e => {
+                    e.addEventListener('click', (event) => {
+                        window.location.href = e.dataset.href;
+                        event.stopPropagation();
+                    });
+                });
+
+                sheetTreeComponent.querySelectorAll('button[data-href]').forEach(e => {
+                    e.addEventListener('click', (event) => {
+                        window.location.href = e.dataset.href;
+                        event.stopPropagation();
+                    });
+                });
+
+                // Questions popups
+                sheetTreeComponent.querySelectorAll('.element-questions').forEach(e => {
+                    const questions = sheetTreeComponent.querySelector('#questions-for-' + e.dataset.id);
+                    e.addEventListener('click', (event) => {
+                        questions.classList.remove('opacity-0!');
+                        questions.classList.remove('pointer-events-none');
+                    })
+
+                    questions.addEventListener('click', (event) => {
+                        questions.classList.add('opacity-0!');
+                        questions.classList.add('pointer-events-none');
+                    })
+                })
+
+                // Details popups
+                sheetTreeComponent.querySelectorAll('.element-details').forEach(e => {
+                    const details = sheetTreeComponent.querySelector('#details-for-' + e.dataset.id);
+                    e.addEventListener('click', (event) => {
+                        details.classList.remove('opacity-0!');
+                        details.classList.remove('pointer-events-none');
+                    })
+
+                    details.addEventListener('click', (event) => {
+                        details.classList.add('opacity-0!');
+                        details.classList.add('pointer-events-none');
+                    })
+                })
+            }
+
+            return {
+                init: init,
+                {% if user %}
+                setTreePref: setTreePref,
+                setLoading: setLoading,
+                stopLoading: stopLoading,
+                {% endif %}
+                {% if admin %}
+                cancelForm: cancelForm,
+                edit: edit,
+                add: add,
+                setNew: setNew,
+                {% endif %}
+            }
+        })();
+
+        document.addEventListener('DOMContentLoaded', SheetTree{{ sheet.id }}.init);
+        window.addEventListener('load', SheetTree{{ sheet.id }}.onWindowLoad);
+    </script>
+</div>

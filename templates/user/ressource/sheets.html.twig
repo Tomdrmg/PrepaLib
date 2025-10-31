@@ -1,0 +1,226 @@
+{% extends "user/user.base.html.twig" %}
+
+{% block title %}{{ subject.name }} | Fiches{% endblock %}
+
+{% block main_class %}items-center p-2 md:p-4 pt-[88px]!{% endblock %}
+
+{% block main %}
+    <div class="container px-4 py-8 flex flex-col gap-3">
+        <div class="items-center mx-4 md:mx-6 flex gap-4 flex-row relative p-4 text-accent-red-500 bg-accent-red-500/15 rounded overflow-hidden before:absolute before:top-0 before:bottom-0 before:left-0 before:w-1.5 before:bg-accent-red-500">
+            <i class="fa-solid fa-warning text-xl"></i>
+            <span class="text-sm md:text-normal">Ces fiches ne garantissent pas que tous les points importants du cours soient présents.</span>
+        </div>
+
+        <div class="items-center mx-4 md:mx-6 flex gap-4 flex-row relative p-4 text-accent-blue-500 bg-accent-blue-500/15 rounded overflow-hidden before:absolute before:top-0 before:bottom-0 before:left-0 before:w-1.5 before:bg-accent-blue-500">
+            <i class="fa-solid fa-info-circle text-xl"></i>
+            <span class="text-sm md:text-normal">Vous trouverez dans les fiches ci‑dessous différents boutons : un point d’interrogation pour visualiser les questions pouvant vous être posées dans les quiz, et un point d’information pour afficher davantage de détails.</span>
+        </div>
+
+        <div class="w-full flex flex-col sm:flex-row items-center justify-center gap-3 my-10" id="quiz-controls">
+            <button id="toggle-quiz-mode">
+                <i class="fa-solid fa-clipboard-question text-xl"></i> <span class="mx-2 border-r border-1 border-r-text-100"></span> Lancer un quiz
+            </button>
+            <div id="quiz-selection" class="hidden flex flex-col items-center gap-3 w-full sm:w-auto">
+                <span id="selected-count" class="text-sm text-text-300 font-noto-sans text-center sm:text-left">0 fiche(s) sélectionnée(s)</span>
+                <div class="flex flex-row gap-2 w-full sm:w-auto justify-center sm:justify-start">
+                    <button id="confirm-selection" class="success">
+                        <i class="fa-solid fa-check text-xl"></i> <span class="mx-2 border-r border-1 border-r-text-100"></span> Valider
+                    </button>
+                    <button id="cancel-selection" class="alert">
+                        <i class="fa-solid fa-xmark text-xl"></i> <span class="mx-2 border-r border-1 border-r-text-100"></span> Annuler
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mx-auto max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center w-full">
+            {% for sheet in subject.highestRevisionSheets|sort((a, b) => a.sortNumber <=> b.sortNumber) %}
+                <div class="w-full max-w-xs transform transition-transform duration-200 group sheet-container hover:scale-105 hover:shadow-lg" data-sheet-id="{{ sheet.id }}">
+                    <div class="relative rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 bg-background-300">
+                        <!-- Overlay de sélection -->
+                        <div class="selection-overlay absolute inset-0 bg-accent-purple-500 bg-opacity-20 border-2 border-transparent rounded-lg hidden z-10 transition-all duration-300"></div>
+
+                        <!-- Checkbox de sélection -->
+                        <div class="selection-checkbox absolute top-2 left-2 w-6 h-6 bg-background-100 border-2 border-foreground-300 rounded-full hidden z-20 flex items-center justify-center transition-all duration-300">
+                            <svg class="w-4 h-4 text-accent-purple-500 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+
+                        <!-- Lien normal (désactivé en mode export) -->
+                        <a href="{{ path('app_sheet', {'sheet': sheet.id}) }}" class="sheet-link w-full max-w-xs">
+                            <div class="bg-foreground-500 border-2 border-dashed border-accent-purple-500 rounded-lg h-full aspect-[1/1.4] flex flex-col items-center justify-center cursor-pointer hover:bg-foreground-400 transition-colors">
+                                <span class="font-bold text-2xl text-center">{{ sheet.title }}</span>
+                                <span class="text-xs md:text-sm italic text-center">Cliquer pour accéder</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <style>
+        .sheet-selected .selection-overlay {
+            display: block !important;
+            border-color: var(--color-accent-purple-500) !important;
+            background-color: rgba(192, 132, 252, 0.2) !important;
+        }
+        .sheet-selected .selection-checkbox {
+            display: flex !important;
+            border-color: var(--color-accent-purple-500) !important;
+            background-color: var(--color-background-100);
+        }
+        .sheet-selected .selection-checkbox svg {
+            display: block !important;
+        }
+        .quiz-mode-active .sheet-link {
+            pointer-events: none;
+        }
+        .quiz-mode-active .sheet-container {
+            cursor: pointer;
+        }
+        .quiz-mode-active .sheet-container:hover .selection-overlay {
+            display: block !important;
+            border-color: var(--color-accent-purple-300) !important;
+            background-color: rgba(175, 145, 220, 0.2) !important;
+        }
+
+        /* Animation de sélection */
+        .sheet-container {
+            transition: all 0.3s ease;
+        }
+
+        .sheet-selected {
+            transform: scale(0.98);
+        }
+
+        .quiz-mode-active .sheet-container:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Cacher le bouton export en mode export */
+        .quiz-mode-active #toggle-quiz-mode {
+            display: none !important;
+        }
+
+        /* Responsive amélioré */
+        @media (max-width: 640px) {
+            #quiz-selection {
+                width: 100%;
+            }
+
+            #quiz-selection .flex-row {
+                width: 100%;
+            }
+
+            #confirm-selection,
+            #cancel-selection {
+                min-width: 120px;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleQuizButton = document.getElementById('toggle-quiz-mode');
+            const quizSelection = document.getElementById('quiz-selection');
+            const selectedCount = document.getElementById('selected-count');
+            const confirmSelectionBtn = document.getElementById('confirm-selection');
+            const cancelSelectionBtn = document.getElementById('cancel-selection');
+            const sheetContainers = document.querySelectorAll('.sheet-container');
+
+            let quizMode = false;
+            let selectedSheets = new Set();
+
+            // Basculer le mode export
+            toggleQuizButton.addEventListener('click', function() {
+                quizMode = !quizMode;
+
+                if (quizMode) {
+                    document.body.classList.add('quiz-mode-active');
+                    quizSelection.classList.remove('hidden');
+                    toggleQuizButton.classList.add('hidden');
+                } else {
+                    exitQuizMode();
+                }
+
+                updateSelectionCount();
+            });
+
+            // Gérer la sélection des fiches
+            sheetContainers.forEach(container => {
+                container.addEventListener('click', function(e) {
+                    if (!quizMode) return;
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const sheetId = this.dataset.sheetId;
+
+                    if (selectedSheets.has(sheetId)) {
+                        selectedSheets.delete(sheetId);
+                        this.classList.remove('sheet-selected');
+                    } else {
+                        selectedSheets.add(sheetId);
+                        this.classList.add('sheet-selected');
+                    }
+
+                    updateSelectionCount();
+                });
+            });
+
+            // Valider la sélection
+            confirmSelectionBtn.addEventListener('click', function() {
+                if (selectedSheets.size === 0) {
+                    alert('Veuillez sélectionner au moins une fiche');
+                    return;
+                }
+
+                const ids = Array.from(selectedSheets).join(',');
+                console.log(ids);
+                // TODO
+                window.location.href = "{{ path('app_start_quiz', {'subject': subject.id, 'ids': '0,0,0'}) }}".replace('0,0,0', ids);
+            });
+
+            // Annuler la sélection
+            cancelSelectionBtn.addEventListener('click', exitQuizMode);
+
+            function updateSelectionCount() {
+                selectedCount.textContent = `${selectedSheets.size} fiche(s) sélectionnée(s)`;
+                confirmSelectionBtn.disabled = selectedSheets.size === 0;
+
+                if (selectedSheets.size === 0) {
+                    confirmSelectionBtn.classList.remove('bg-accent-green-600', 'hover:bg-accent-green-700');
+                    confirmSelectionBtn.classList.add('bg-foreground-400', 'hover:bg-foreground-500');
+                } else {
+                    confirmSelectionBtn.classList.remove('bg-foreground-400', 'hover:bg-foreground-500');
+                    confirmSelectionBtn.classList.add('bg-accent-green-600', 'hover:bg-accent-green-700');
+                }
+            }
+
+            function exitQuizMode() {
+                quizMode = false;
+                document.body.classList.remove('quiz-mode-active');
+                quizSelection.classList.add('hidden');
+                toggleQuizButton.classList.remove('hidden');
+
+                selectedSheets.clear();
+                sheetContainers.forEach(container => {
+                    container.classList.remove('sheet-selected');
+                });
+
+                updateSelectionCount();
+            }
+
+            // Empêcher le lien de fonctionner en mode export
+            document.querySelectorAll('.sheet-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (quizMode) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

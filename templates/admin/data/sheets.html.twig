@@ -1,0 +1,31 @@
+{% extends "admin/admin.base.html.twig" %}
+
+{% block title %}{{ subject.name }} | Fiches{% endblock %}
+
+{% block main_class %}items-center p-2 md:p-4 pt-[88px]!{% endblock %}
+
+{% block main %}
+    <div class="container px-4 py-8">
+        <div class="mx-auto max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
+            <a href="{{ path('app_admin_add_sheet', {'subject': subject.id}) }}" class="w-full max-w-xs transform transition-transform duration-200 hover:scale-105 hover:shadow-lg">
+                <div class="bg-foreground-500 border-2 border-dashed border-accent-green-500 rounded-lg h-full aspect-[1/1.4] flex flex-col items-center justify-center cursor-pointer group hover:bg-foreground-250 transition-colors">
+                    <svg class="w-12 h-12 text-text-400 mb-3 group-hover:text-text-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span class="text-text-400 font-medium group-hover:text-text-300 transition-colors">
+                        Ajouter une fiche
+                    </span>
+                </div>
+            </a>
+
+            {% for sheet in subject.highestRevisionSheets|sort((a, b) => a.sortNumber <=> b.sortNumber) %}
+                <a href="{{ path('app_admin_sheet', {'sheet': sheet.id}) }}" class="w-full max-w-xs transform transition-transform duration-200 hover:scale-105 hover:shadow-lg">
+                    <div class="bg-foreground-500 border-2 border-dashed border-accent-purple-500 rounded-lg h-full aspect-[1/1.4] flex flex-col items-center justify-center cursor-pointer group hover:bg-foreground-250 transition-colors">
+                        <span class="font-bold text-2xl text-center">{{ sheet.title }}</span>
+                        <span class="text-xs md:text-sm italic text-center">Cliquer pour accéder</span>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

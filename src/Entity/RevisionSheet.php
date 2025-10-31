@@ -10,8 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: RevisionSheetRepository::class)]
 class RevisionSheet
 {
-    private static int $MAX_DEPTH = 3;
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -32,12 +30,6 @@ class RevisionSheet
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
     private Collection $children;
 
-    /**
-     * @var Collection<int, Tag>
-     */
-    #[ORM\OneToMany(targetEntity: Tag::class, mappedBy: 'revisionSheet')]
-    private Collection $tags;
-
     #[ORM\ManyToOne(inversedBy: 'revisionSheets')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Subject $subject = null;
@@ -51,7 +43,6 @@ class RevisionSheet
     public function __construct()
     {
         $this->children = new ArrayCollection();
-        $this->tags = new ArrayCollection();
         $this->revisionElements = new ArrayCollection();
     }
 
@@ -126,36 +117,6 @@ class RevisionSheet
         return $this;
     }
 
-    /**
-     * @return Collection<int, Tag>
-     */
-    public function getTags(): Collection
-    {
-        return $this->tags;
-    }
-
-    public function addTag(Tag $tag): static
-    {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->setRevisionSheet($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTag(Tag $tag): static
-    {
-        if ($this->tags->removeElement($tag)) {
-            // set the owning side to null (unless already changed)
-            if ($tag->getRevisionSheet() === $this) {
-                $tag->setRevisionSheet(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getSubject(): ?subject
     {
         return $this->subject;
@@ -177,6 +138,32 @@ class RevisionSheet
         }
 
         return $total;
+    }
+
+    public function countQuestionsRec(): int
+    {
+        $total = $this->countQuestions();
+
+        foreach ($this->getChildren() as $child) {
+            $total += $child->countQuestions();
+        }
+
+        return $total;
+    }
+
+    public function getRevisionElementsRec(): array
+    {
+        $elements = [];
+
+        foreach ($this->revisionElements as $element) {
+            $elements[] = $element;
+        }
+
+        foreach ($this->getChildren() as $sheet) {
+            $elements = array_merge($elements, $sheet->getRevisionElementsRec());
+        }
+
+        return $elements;
     }
 
     /**
@@ -207,5 +194,10 @@ class RevisionSheet
         }
 
         return $this;
+    }
+
+    public function getHighestParent(): RevisionSheet
+    {
+        return $this->parent === null ? $this : $this->parent->getHighestParent();
     }
 }

@@ -35,18 +35,21 @@ class RevisionElement
     #[ORM\OneToMany(targetEntity: RevisionPref::class, mappedBy: 'revisionElement')]
     private Collection $revisionPrefs;
 
-    #[ORM\Column(length: 255)]
-    private ?string $title = null;
-
     /**
      * @var Collection<int, RevisionQuestion>
      */
-    #[ORM\OneToMany(targetEntity: RevisionQuestion::class, mappedBy: 'revisionElement')]
+    #[ORM\OneToMany(targetEntity: RevisionQuestion::class, mappedBy: 'revisionElement', cascade: ['persist', 'remove'])]
     private Collection $questions;
 
     #[ORM\ManyToOne(inversedBy: 'revisionElements')]
     #[ORM\JoinColumn(nullable: false)]
     private ?RevisionSheet $revisionSheet = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $separatorText = null;
+
+    #[ORM\Column]
+    private ?int $style = null;
 
     public function __construct()
     {
@@ -189,5 +192,40 @@ class RevisionElement
         $this->revisionSheet = $revisionSheet;
 
         return $this;
+    }
+
+    public function getSeparatorText(): ?string
+    {
+        return $this->separatorText;
+    }
+
+    public function setSeparatorText(string $separatorText): static
+    {
+        $this->separatorText = $separatorText;
+
+        return $this;
+    }
+
+    public function getStyle(): ?int
+    {
+        return $this->style;
+    }
+
+    public function setStyle(int $style): static
+    {
+        $this->style = $style;
+
+        return $this;
+    }
+
+    public function getPrefFor(?User $user): ?RevisionPref
+    {
+        if (!$user) return null;
+
+        $pref = $this->getRevisionPrefs()->filter(function (RevisionPref $pref) use ($user) {
+            return $pref->getUser() === $user;
+        })->first();
+
+        return $pref ?: null;
     }
 }

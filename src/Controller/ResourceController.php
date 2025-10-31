@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Exercise;
 use App\Entity\ExerciseCategory;
 use App\Entity\ExercisePref;
+use App\Entity\RevisionSheet;
 use App\Entity\Subject;
 use App\Entity\User;
 use App\Form\CommentType;
@@ -199,14 +200,24 @@ final class ResourceController extends AbstractController
         ]);
     }
 
-    #[Route('/ressources/{subject}/essential', name: 'app_essential')]
-    public function subjectEssential(Subject $subject): Response
+    #[Route('/ressources/{subject}/sheets', name: 'app_sheets')]
+    public function subjectSheets(Subject $subject): Response
     {
-        if (!$subject->getEssential() || $subject->getEssential()->getParts()->isEmpty())
+        if ($subject->countRevisionSheets() == 0)
             return $this->redirectToRoute('app_subject', ['subject' => $subject->getId()]);
 
-        return $this->render('user/ressource/essential.html.twig', [
-            "subject" => $subject
+        return $this->render('user/ressource/sheets.html.twig', [
+            "subject" => $subject,
+            "sheets" => $subject->getRevisionSheets(),
+        ]);
+    }
+
+    #[Route('/ressources/sheet/{sheet}', name: 'app_sheet')]
+    public function sheet(RevisionSheet $sheet): Response
+    {
+        return $this->render('user/ressource/sheet.html.twig', [
+            "subject" => $sheet->getSubject(),
+            "sheet" => $sheet,
         ]);
     }
 }

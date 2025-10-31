@@ -64,4 +64,12 @@ class RevisionPref
 
         return $this;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'difficulty' => $this->getDifficulty(),
+            'revisionElement' => $this->getRevisionElement()->getId()
+        ];
+    }
 }

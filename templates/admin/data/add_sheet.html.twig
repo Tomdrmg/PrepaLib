@@ -1,0 +1,46 @@
+{% extends 'admin/admin.base.html.twig' %}
+
+{% block title %}{{ subject.name }} | Nouvelle Fiche{% endblock %}
+
+{% block main_class %}items-center justify-center p-4 pt-[88px]{% endblock %}
+
+{% block main %}
+    <div class="w-full max-w-md my-8">
+        <div class="mb-8 text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-accent-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M7 2h7l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 10v8m-4-4h8" />
+            </svg>
+
+            <h1 class="text-3xl font-bold text-text-100 mt-4">PrépaLib</h1>
+            <p class="text-text-300 mt-2">Ajouter une fiche</p>
+        </div>
+
+        <div class="rounded-xl bg-foreground-500 overflow-hidden">
+            <div class="p-8">
+                {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+                <div>
+                    {{ form_label(form.sortNumber, null) }}
+                    {{ form_widget(form.sortNumber) }}
+                    {{ form_errors(form.sortNumber) }}
+                </div>
+
+                <div>
+                    {{ form_label(form.title, null) }}
+                    {{ form_widget(form.title) }}
+                    {{ form_errors(form.title) }}
+                </div>
+
+                <button type="submit">
+                    Ajouter
+                </button>
+                {{ form_end(form) }}
+            </div>
+            <div class="px-8 py-2 bg-foreground-300/50 border-t border-foreground-300 text-center flex flex-col">
+            </div>
+        </div>
+    </div>
+{% endblock %}

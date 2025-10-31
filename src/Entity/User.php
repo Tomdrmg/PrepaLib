@@ -61,6 +61,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: RevisionPref::class, mappedBy: 'user')]
     private Collection $revisionPrefs;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?QuizData $quizData = null;
+
     public function __construct()
     {
         $this->exercisePrefs = new ArrayCollection();
@@ -264,6 +267,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $revisionPref->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getQuizData(): ?QuizData
+    {
+        return $this->quizData;
+    }
+
+    public function setQuizData(QuizData $quizData): static
+    {
+        // set the owning side of the relation if necessary
+        if ($quizData->getUser() !== $this) {
+            $quizData->setUser($this);
+        }
+
+        $this->quizData = $quizData;
 
         return $this;
     }

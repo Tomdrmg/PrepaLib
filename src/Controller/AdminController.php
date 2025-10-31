@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Element;
 use App\Entity\Exercise;
 use App\Entity\ExerciseCategory;
+use App\Entity\RevisionElement;
 use App\Entity\RevisionQuestion;
 use App\Entity\RevisionSheet;
 use App\Entity\Subject;
@@ -12,15 +13,20 @@ use App\Entity\Tag;
 use App\Entity\User;
 use App\Form\ExerciseCategoryType;
 use App\Form\ExerciseType;
+use App\Form\FullRevisionSheetType;
+use App\Form\RevisionElementType;
+use App\Form\RevisionSheetType;
 use App\Form\SubjectType;
 use App\Form\TagType;
 use App\Repository\ExerciseRepository;
+use App\Repository\RevisionSheetRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use function Symfony\Component\Translation\t;
 
 final class AdminController extends AbstractController
 {
@@ -31,13 +37,17 @@ final class AdminController extends AbstractController
          * @var ExerciseRepository $exerciseRepo
          */
         $exerciseRepo = $entityManager->getRepository(Exercise::class);
+        /**
+         * @var RevisionSheetRepository $sheetsRepo
+         */
+        $sheetsRepo = $entityManager->getRepository(RevisionSheet::class);
 
         return $this->render('admin/dashboard/dashboard.html.twig', [
             "stats" => [
                 "questions" => $entityManager->getRepository(RevisionQuestion::class)->count(),
                 "users" => $entityManager->getRepository(User::class)->count(),
                 "exercises" => $exerciseRepo->count(),
-                "cards" => $entityManager->getRepository(RevisionSheet::class)->count(),
+                "cards" => $sheetsRepo->countWithoutParent(),
                 "corrected" => round($exerciseRepo->countCorrected() * 100 / max(1, $exerciseRepo->count()), 2)
             ]
         ]);
@@ -295,5 +305,167 @@ final class AdminController extends AbstractController
         $this->addFlash("success", "Le tag a bien été supprimer.");
 
         return $this->redirectToRoute('app_admin_tags');
+    }
+
+    #[Route('/admin/{subject}/sheets', name: 'app_admin_sheets')]
+    public function sheets(Subject $subject): Response
+    {
+        return $this->render('admin/data/sheets.html.twig', [
+            'subject' => $subject
+        ]);
+    }
+
+    #[Route('/admin/{subject}/sheets/add', name: 'app_admin_add_sheet')]
+    public function addSheet(Subject $subject, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $sheet = new RevisionSheet();
+        $form = $this->createForm(RevisionSheetType::class, $sheet);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $sheet->setSubject($subject);
+
+            $entityManager->persist($sheet);
+            $entityManager->flush();
+
+            $this->addFlash("success", "La fiche a bien été créée.");
+            return $this->redirectToRoute('app_admin_sheets', ['subject' => $subject->getId()]);
+        }
+
+        return $this->render('admin/data/add_sheet.html.twig', [
+            'subject' => $subject,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/sheet/{sheet}', name: 'app_admin_sheet')]
+    public function sheet(RevisionSheet $sheet, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        if ($sheet->getParent() !== null) {
+            return $this->redirectToRoute('app_admin_sheet', ['sheet' => $sheet->getParent()->getId()]);
+        }
+
+        $subject = $sheet->getSubject();
+
+        $editForm = $this->createForm(RevisionSheetType::class, $sheet);
+        $editForm->handleRequest($request);
+
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $entityManager->flush();
+
+            $this->addFlash("success", "La fiche a bien été modifiée.");
+            return $this->redirectToRoute('app_admin_sheet', ['sheet' => $sheet->getId()]);
+        }
+
+        $formSheet = new RevisionSheet();
+        $fullForm = $this->createForm(FullRevisionSheetType::class, $formSheet);
+        $fullForm->handleRequest($request);
+
+        if ($fullForm->isSubmitted() && $fullForm->isValid() && $fullForm->get('parent')->getData() !== null) {
+            $formSheet->setParent($entityManager->getRepository(RevisionSheet::class)->find($fullForm->get('parent')->getData()));
+            $editId = $fullForm->get('id')->getData();
+
+            if ($editId !== null) {
+                $storedSheet = $entityManager->getRepository(RevisionSheet::class)->find($editId);
+                if ($storedSheet === null) {
+                    $this->addFlash('warning', 'Cette fiche n\'existe pas.');
+                    return $this->redirectToRoute('app_admin_sheet', ['sheet' => $sheet->getId()]);
+                }
+
+                $storedSheet->setTitle($formSheet->getTitle());
+                $storedSheet->setParent($formSheet->getParent());
+                $storedSheet->setSortNumber($formSheet->getSortNumber());
+
+                $this->addFlash('success', 'La fiche à bien été modifié');
+            } else {
+                $formSheet->setSubject($subject);
+                $entityManager->persist($formSheet);
+                $this->addFlash("success", "La fiche a bien été créée.");
+            }
+
+            $entityManager->flush();
+            return $this->redirectToRoute('app_admin_sheet', ['sheet' => $sheet->getId()]);
+        }
+
+        return $this->render('admin/data/sheet.html.twig', [
+            'sheet' => $sheet,
+            'subject' => $subject,
+            'editForm' => $editForm->createView(),
+            'fullForm' => $fullForm->createView(),
+        ]);
+    }
+
+    #[Route('/admin/sheet/delete/{sheet}', name: 'app_admin_delete_sheet')]
+    public function deleteSheet(RevisionSheet $sheet, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($sheet);
+        $entityManager->flush();
+        $this->addFlash("success", "La fiche a bien été supprimée.");
+
+        if ($sheet->getParent() === null) {
+            return $this->redirectToRoute('app_admin_sheets', ['subject' => $sheet->getSubject()->getId()]);
+        } else {
+            return $this->redirectToRoute('app_admin_sheet', ['sheet' => $sheet->getHighestParent()->getId()]);
+        }
+    }
+
+    #[Route('/admin/sheet/{sheet}/new/element', name:'app_admin_add_sheet_element')]
+    public function addSheetElement(RevisionSheet $sheet, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $subject = $sheet->getSubject();
+
+        $element = new RevisionElement();
+        $form = $this->createForm(RevisionElementType::class, $element);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $element->setRevisionSheet($sheet);
+
+            $entityManager->persist($element);
+            $entityManager->flush();
+
+            $this->addFlash("success", "Cet élément a bien été crée.");
+            return $this->redirectToRoute('app_admin_sheet', ['sheet' => $sheet->getId()]);
+        }
+
+        return $this->render('admin/data/revision_element.html.twig', [
+            'sheet' => $sheet,
+            'subject' => $subject,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/sheet/edit/element/{element}', name:'app_admin_edit_sheet_element')]
+    public function editSheetElement(RevisionElement $element, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $sheet = $element->getRevisionSheet();
+        $subject = $sheet->getSubject();
+
+        $form = $this->createForm(RevisionElementType::class, $element);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($element);
+            $entityManager->flush();
+
+            $this->addFlash("success", "Cet élément a bien été modifié.");
+            return $this->redirectToRoute('app_admin_sheet', ['sheet' => $sheet->getId()]);
+        }
+
+        return $this->render('admin/data/revision_element.html.twig', [
+            'sheet' => $sheet,
+            'subject' => $subject,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/sheet/delete/element/{element}', name: 'app_admin_delete_sheet_element')]
+    public function deleteSheetElement(RevisionElement $element, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($element);
+        $entityManager->flush();
+        $this->addFlash("success", "L'élément a bien été supprimée.");
+
+        return $this->redirectToRoute('app_admin_sheet', ['sheet' => $element->getRevisionSheet()->getId()]);
     }
 }

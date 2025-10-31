@@ -14,7 +14,7 @@ class ElementType extends AbstractType
     {
         $builder->add('content', TextareaType::class, [
             'label' => false,
-            'attr' => ['rows' => 6, 'class' => 'latex-input'],
+            'attr' => ['rows' => 6, 'class' => $options['input_class'] ?? 'latex-input'],
             'empty_data' => '',
         ]);
     }
@@ -23,6 +23,7 @@ class ElementType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Element::class,
+            'input_class' => 'latex-input'
         ]);
     }
 }

@@ -16,6 +16,15 @@ class RevisionSheetRepository extends ServiceEntityRepository
         parent::__construct($registry, RevisionSheet::class);
     }
 
+    public function countWithoutParent(): int
+    {
+        return (int) $this->createQueryBuilder('f')
+            ->select('COUNT(f.id)')
+            ->where('f.parent IS NULL')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     //    /**
     //     * @return RevisionSheet[] Returns an array of RevisionSheet objects
     //     */
