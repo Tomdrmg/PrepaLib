@@ -49,7 +49,7 @@ class RevisionElement
     private ?string $separatorText = null;
 
     #[ORM\Column]
-    private ?int $style = null;
+    private ?int $style = 0;
 
     public function __construct()
     {

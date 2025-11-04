@@ -421,6 +421,14 @@ final class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $element->setRevisionSheet($sheet);
 
+            if ($element->getFirst() === null || $element->getFirst()->getContent() === null) {
+                $e = new Element();
+                $e->setContent("");
+                $element->setFirst($e);
+            }
+
+            $element->setSeparatorText($element->getSeparatorText()?:"");
+
             $entityManager->persist($element);
             $entityManager->flush();
 
@@ -445,6 +453,14 @@ final class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($element->getFirst() === null || $element->getFirst()->getContent() === null) {
+                $e = new Element();
+                $e->setContent("");
+                $element->setFirst($e);
+            }
+
+            $element->setSeparatorText($element->getSeparatorText()?:"");
+
             $entityManager->persist($element);
             $entityManager->flush();
 

@@ -22,7 +22,8 @@ class RevisionElementType extends AbstractType
                 'label' => 'Priorité pour le tri'
             ])
             ->add('separatorText', TextType::class, [
-                'label' => 'Séparateur'
+                'label' => 'Séparateur',
+                'required' => false
             ])
             ->add('style', NumberType::class, [
                 'label' => 'Style (0 ou 1)'
@@ -30,6 +31,7 @@ class RevisionElementType extends AbstractType
             ->add('first', ElementType::class, [
                 'label' => '"Clé"',
                 'input_class' => '',
+                'required' => false
             ])
             ->add('second', ElementType::class, [
                 'label' => '"Valeur"',
@@ -37,6 +39,7 @@ class RevisionElementType extends AbstractType
             ])
             ->add('details', ElementType::class, [
                 'label' => 'Détails',
+                'required' => false
             ])
             ->add('questions', CollectionType::class, [
                 'entry_type' => RevisionQuestionType::class,
