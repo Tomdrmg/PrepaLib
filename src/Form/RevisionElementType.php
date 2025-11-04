@@ -23,18 +23,19 @@ class RevisionElementType extends AbstractType
             ])
             ->add('separatorText', TextType::class, [
                 'label' => 'Séparateur',
+                'empty_data' => '',
                 'required' => false
             ])
             ->add('style', NumberType::class, [
                 'label' => 'Style (0 ou 1)'
             ])
             ->add('first', ElementType::class, [
-                'label' => '"Clé"',
+                'label' => 'titre',
                 'input_class' => '',
                 'required' => false
             ])
             ->add('second', ElementType::class, [
-                'label' => '"Valeur"',
+                'label' => 'Description',
                 'input_class' => ''
             ])
             ->add('details', ElementType::class, [
