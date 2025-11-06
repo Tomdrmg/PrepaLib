@@ -72,14 +72,21 @@
             exerciseListBtn.addEventListener('click', () => {
                 if (!exerciseListBtn.classList.contains('selected')) {
                    setView(exerciseTreeBtn, exerciseListBtn, exerciseTreeView, exerciseListView);
+                   localStorage.setItem("currentView", "list");
                 }
             })
 
             exerciseTreeBtn.addEventListener('click', () => {
                 if (!exerciseTreeBtn.classList.contains('selected')) {
                     setView(exerciseListBtn, exerciseTreeBtn, exerciseListView, exerciseTreeView);
+                    localStorage.setItem("currentView", "tree");
                 }
             })
+
+            let lastCurrentView = localStorage.getItem("currentView");
+            if (lastCurrentView === "tree") {
+                setView(exerciseListBtn, exerciseTreeBtn, exerciseListView, exerciseTreeView);
+            }
         })
     </script>
 {% endblock %}
