@@ -608,14 +608,16 @@
                             const nonCommentedText = container.querySelector(".non-commented-text");
                             const commentContainer = container.querySelector(".comment-container");
 
-                            if (pref.comment.trim() === "") {
-                                nonCommentedText.classList.remove("hidden");
-                                commentContainer.classList.add("hidden");
-                                commentContainer.innerText = "";
-                            } else {
-                                nonCommentedText.classList.add("hidden");
-                                commentContainer.classList.remove("hidden");
-                                commentContainer.innerText = pref.comment;
+                            if (nonCommentedText && commentContainer) {
+                                if (pref.comment.trim() === "") {
+                                    nonCommentedText.classList.remove("hidden");
+                                    commentContainer.classList.add("hidden");
+                                    commentContainer.innerText = "";
+                                } else {
+                                    nonCommentedText.classList.add("hidden");
+                                    commentContainer.classList.remove("hidden");
+                                    commentContainer.innerText = pref.comment;
+                                }
                             }
                         });
                     }

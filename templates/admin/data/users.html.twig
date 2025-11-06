@@ -31,7 +31,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100">{% if user.wantsNews %}OUI{% else %}NON{% endif %}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-text-100">
                                 {% for role in user.roles|sort %}
-                                    <span class="inline-block bg-foreground-300 text-accent-blue-500 text-xs px-2 py-1 rounded mr-1">{{ role|replace({'ROLE_': ''}) }}</span>
+                                    <span class="inline-block bg-foreground-300 {% if role == "ROLE_ADMIN" %}text-accent-red-500{% elseif role == "ROLE_PLUS" %}text-accent-purple-500{% else %}text-accent-blue-500{% endif%} text-xs px-2 py-1 rounded mr-1">{{ role|replace({'ROLE_': ''}) }}</span>
                                 {% endfor %}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-xs">
