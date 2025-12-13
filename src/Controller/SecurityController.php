@@ -55,6 +55,11 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($entityManager->getRepository(User::class)->findOneBy(["email" => $form->get('email')->getData()])) {
+                $this->addFlash("error", "Cette adresse email est déjà utilisé.");
+                return $this->redirectToRoute("app_register");
+            }
+
             $user->setPassword(
                 $passwordHasher->hashPassword(
                     $user,
