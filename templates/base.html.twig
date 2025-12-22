@@ -141,6 +141,36 @@
                     text = text.slice(0, start) + latexContent + text.slice(end);
                 }
 
+                // IFF ARRAY
+                while (text.lastIndexOf("\\iffarray{") !== -1) {
+                    let start = text.lastIndexOf("\\iffarray{");
+                    let end = start + "\\iffarray{".length;
+                    let braces = 1;
+
+                    while (braces > 0 && end < text.length) {
+                        if (text[end] === '{') braces++;
+                        else if (text[end] === '}') braces--;
+                        end++;
+                    }
+
+                    let latexContent = '';
+                    if (braces === 0) {
+                        let content = text.slice(start + "\\iffarray{".length, end - 1);
+                        let elements = content.split("\\\\\\")
+
+                        if (elements.length > 0) {
+                            latexContent += '\\begin{array}{r c l} '
+                            latexContent += elements[0]
+                            for (let i = 1; i < elements.length; i++) {
+                                latexContent += ' & \\iff & ' + elements[i] + ' \\\\'
+                            }
+                            latexContent += '\\end{array}'
+                        }
+                    }
+
+                    text = text.slice(0, start) + latexContent + text.slice(end);
+                }
+
                 // VARIATION TABLE
                 while (text.lastIndexOf("\\vartab{") !== -1) {
                     const start = text.lastIndexOf("\\vartab{");
@@ -376,6 +406,7 @@
                         intervintei: ["\\rrbracket #1; #2 \\rrbracket", 2],
                         intervintee: ["\\rrbracket #1; #2 \\llbracket", 2],
                         pinf: ["{+\\infty}"],
+                        uinf: ["{\\infty}"],
                         minf: ["{-\\infty}"],
                         braces: ["\\left\\{ #1 \\right\\}", 1],
                         cotan: ["\\text{cotan }"],
@@ -386,6 +417,7 @@
                         egqd: ["\\underset{ #1 }{=}", 1],
                         simqd: ["\\underset{ #1 }{\\sim}", 1],
                         norme: ["\\lVert #1 \\rVert", 1],
+                        normesub: ["\\lvert\\!\\lvert\\!\\lvert #1 \\rvert\\!\\rvert\\!\\rvert", 1],
                         sym: ["\\mathcal S_{ #1 }\\par{ #2 }", 2],
                         ps: ["\\langle #1 \\mid #2 \\rangle", 2],
                         ortho: ["^\\perp"],
@@ -452,6 +484,30 @@
                         Xscr: ["\\mathscr{X}"],
                         Yscr: ["\\mathscr{Y}"],
                         Zscr: ["\\mathscr{Z}"],
+                        serie: ['\\displaystyle\\sum #1', 1],
+                        series: ['\\displaystyle\\small\\sum #1\\normalsize', 1],
+                        seriei: ['\\displaystyle\\sum_{n \\geqslant #1} #2', 2],
+                        serieis: ['\\displaystyle\\small\\sum_{n \\geqslant #1} #2\\normalsize', 2],
+                        sommepar: ['\\displaystyle\\sum_{k = #1}^{ #2 } #3', 3],
+                        sommepars: ['\\displaystyle\\small\\sum_{k = #1}^{ #2 } #3\\normalsize', 3],
+                        somme: ['\\displaystyle\\sum_{k = #1}^\\pinf #2', 2],
+                        sommes: ['\\displaystyle\\small\\sum_{k = #1}^\\pinf #2\\normalsize', 2],
+                        restepar: ['\\sommepar{ #1 }{ \\pinf }{ #2 }', 2],
+                        restepars: ['\\sommepars{ #1 }{ \\pinf }{ #2 }', 2],
+                        equivqd: ['\\underset{ #1 \\to #2 }{\\sim}', 2],
+                        eqqd: ['\\underset{ #1 \\to #2 }{=}', 2],
+                        limarrowqd: ['\\underset{ #1 \\to #2 }{\\longrightarrow}', 2],
+                        limqd: ['\\underset{ #1 \\to #2 }{\\lim}', 2],
+                        Sp: ['\\text{Sp}\\par{ #1 }', 1],
+                        sep: ['\\text{sep}\\par{ #1, #2 }', 2],
+                        syst: ['\\left\\{\\;\\;\\begin{array}{l} #1 \\end{array}\\right.', 1],
+                        normeinf: ['\\norme { #1 }_\\uinf', 1],
+                        normeun: ['\\norme { #1 }_1', 1],
+                        normede: ['\\norme { #1 }_2', 1],
+                        ronde: ['\\overset \\circ { #1 }', 1],
+                        barre: ['\\overline{ #1 }', 1],
+                        max: ['\\underset { #1 } {\\text{max}}', 1],
+                        sup: ['\\underset { #1 } {\\text{sup}}', 1]
                     }
                 },
                 options: {
@@ -600,14 +656,16 @@
                             const nonCommentedText = container.querySelector(".non-commented-text");
                             const commentContainer = container.querySelector(".comment-container");
 
-                            if (pref.comment.trim() === "") {
-                                nonCommentedText.classList.remove("hidden");
-                                commentContainer.classList.add("hidden");
-                                commentContainer.innerText = "";
-                            } else {
-                                nonCommentedText.classList.add("hidden");
-                                commentContainer.classList.remove("hidden");
-                                commentContainer.innerText = pref.comment;
+                            if (nonCommentedText && commentContainer) {
+                                if (pref.comment.trim() === "") {
+                                    nonCommentedText.classList.remove("hidden");
+                                    commentContainer.classList.add("hidden");
+                                    commentContainer.innerText = "";
+                                } else {
+                                    nonCommentedText.classList.add("hidden");
+                                    commentContainer.classList.remove("hidden");
+                                    commentContainer.innerText = pref.comment;
+                                }
                             }
                         });
                     }

@@ -37,7 +37,7 @@
                                 </svg>
                             </div>
                             <h2 class="text-xl font-bold text-text-100 mb-4">Question</h2>
-                            <div class="text-start text-text-200 text-lg mb-6 flex-grow whitespace-pre text-wrap! latex" id="question-content">{{ currentQuestion.question_content|raw }}</div>
+                            <div class="content-center text-text-200 text-lg mb-6 flex-grow whitespace-pre text-wrap! latex" id="question-content">{{ currentQuestion.question_content|raw }}</div>
                             <div class="text-text-400 text-sm mt-4">
                                 Cliquez n'importe où sur la carte pour voir la réponse
                             </div>
@@ -53,7 +53,7 @@
                                 </svg>
                             </div>
                             <h2 class="text-xl font-bold text-text-100 mb-4">Réponse</h2>
-                            <div class="overflow-scroll bg-foreground-300 rounded-lg p-2 text-start text-text-200 text-lg flex-grow whitespace-pre text-wrap! latex" id="answer-content">{{ currentQuestion.answer_content|raw }}</div>
+                            <div class="overflow-scroll content-center bg-foreground-300 rounded-lg p-2 text-text-200 text-lg flex-grow whitespace-pre text-wrap! latex" id="answer-content">{{ currentQuestion.answer_content|raw }}</div>
 
                             <!-- Boutons de résultat -->
                             <div class="my-6">
@@ -256,6 +256,7 @@
 
                 if (data.finished) {
                     showFinalResults(data.stats);
+                    updateStats(data.stats);
                 } else {
                     updateQuestion(data.question);
                     updateStats(data.stats);

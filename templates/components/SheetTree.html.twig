@@ -58,10 +58,10 @@
                             {% for question in element.questions %}
                                 <div class="relative bg-foreground-500 border border-accent-purple-500 rounded-xs p-3 before:content-[var(--label)] before:top-0 before:left-1/2 before:tracking-wide before:transform-[translate(-50%,-50%)] before:absolute before:bg-foreground-500 before:px-2 before:text-sm before:uppercase before:font-bold" style="--label: 'Question {{ loop.index }}'">
                                     <span class="font-bold uppercase">Question:</span>
-                                    <div class="whitespace-pre latex text-wrap! bg-foreground-400 p-2 mt-1 rounded-xs">{{ question.question.content|raw }}</div>
+                                    <div class="whitespace-pre latex text-wrap! bg-foreground-400 p-2 mt-1 rounded-xs flex items-center justify-center">{{ question.question.content|raw }}</div>
                                     <br/>
                                     <span class="font-bold uppercase">Réponse:</span>
-                                    <div class="whitespace-pre latex text-wrap! bg-foreground-400 p-2 mt-1 rounded-xs">{{ question.answer.content|raw }}</div>
+                                    <div class="whitespace-pre latex text-wrap! bg-foreground-400 p-2 mt-1 rounded-xs flex items-center justify-center">{{ question.answer.content|raw }}</div>
                                 </div>
                             {% endfor %}
                         </div>

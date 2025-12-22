@@ -26,6 +26,7 @@ class RevisionElementType extends AbstractType
             ])
             ->add('details', ElementType::class, [
                 'label' => 'Détails',
+                'required' => false
             ])
             ->add('questions', CollectionType::class, [
                 'entry_type' => RevisionQuestionType::class,

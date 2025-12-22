@@ -12,7 +12,7 @@
     <div class="container px-2 py-4 md:px-4 md:py-8">
         <div class="flex flex-row flex-wrap w-full justify-center">
             {% set hasExercise = subject.countExercises > 0  %}
-            {% set hasSheets = subject.countRevisionSheets > 0 %}
+            {% set hasSheets = subject.countRevisionSheets > 0 and is_granted("ROLE_PLUS") %}
 
             {% if not hasExercise and not hasSheets %}
                 <div class="flex items-center justify-center">

@@ -25,13 +25,17 @@ final class HomeController extends AbstractController
          * @var ExerciseRepository $exerciseRepo
          */
         $exerciseRepo = $entityManager->getRepository(Exercise::class);
+        /**
+         * @var RevisionSheetRepository $sheetsRepo
+         */
+        $sheetsRepo = $entityManager->getRepository(RevisionSheet::class);
 
         return $this->render('user/home/home.html.twig', [
             "stats" => [
                 "questions" => $entityManager->getRepository(RevisionQuestion::class)->count(),
                 "users" => $entityManager->getRepository(User::class)->count(),
                 "exercises" => $exerciseRepo->count(),
-                "cards" => $entityManager->getRepository(RevisionSheet::class)->count(),
+                "cards" => $sheetsRepo->countWithoutParent(),
                 "corrected" => round($exerciseRepo->countCorrected() * 100 / max(1, $exerciseRepo->count()), 2)
             ]
         ]);

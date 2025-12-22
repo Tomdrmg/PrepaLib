@@ -307,7 +307,7 @@ final class AdminController extends AbstractController
         return $this->redirectToRoute('app_admin_tags');
     }
 
-    #[Route('/admin/{subject}/sheets', name: 'app_admin_sheets')]
+    #[Route('/admin/sheets/{subject}/sheets', name: 'app_admin_sheets')]
     public function sheets(Subject $subject): Response
     {
         return $this->render('admin/data/sheets.html.twig', [
@@ -315,7 +315,7 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/{subject}/sheets/add', name: 'app_admin_add_sheet')]
+    #[Route('/admin/sheets/{subject}/sheets/add', name: 'app_admin_add_sheet')]
     public function addSheet(Subject $subject, Request $request, EntityManagerInterface $entityManager): Response
     {
         $sheet = new RevisionSheet();
@@ -338,7 +338,7 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/sheet/{sheet}', name: 'app_admin_sheet')]
+    #[Route('/admin/sheets/sheet/{sheet}', name: 'app_admin_sheet')]
     public function sheet(RevisionSheet $sheet, Request $request, EntityManagerInterface $entityManager): Response
     {
         if ($sheet->getParent() !== null) {
@@ -395,7 +395,7 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/sheet/delete/{sheet}', name: 'app_admin_delete_sheet')]
+    #[Route('/admin/sheets/sheet/delete/{sheet}', name: 'app_admin_delete_sheet')]
     public function deleteSheet(RevisionSheet $sheet, EntityManagerInterface $entityManager): Response
     {
         $entityManager->remove($sheet);
@@ -409,7 +409,7 @@ final class AdminController extends AbstractController
         }
     }
 
-    #[Route('/admin/sheet/{sheet}/new/element', name:'app_admin_add_sheet_element')]
+    #[Route('/admin/sheets/sheet/{sheet}/new/element', name:'app_admin_add_sheet_element')]
     public function addSheetElement(RevisionSheet $sheet, Request $request, EntityManagerInterface $entityManager): Response
     {
         $subject = $sheet->getSubject();
@@ -420,6 +420,14 @@ final class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $element->setRevisionSheet($sheet);
+
+            if ($element->getFirst() === null || $element->getFirst()->getContent() === null) {
+                $e = new Element();
+                $e->setContent("");
+                $element->setFirst($e);
+            }
+
+            $element->setSeparatorText($element->getSeparatorText()?:"");
 
             $entityManager->persist($element);
             $entityManager->flush();
@@ -435,7 +443,7 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/sheet/edit/element/{element}', name:'app_admin_edit_sheet_element')]
+    #[Route('/admin/sheets/sheet/edit/element/{element}', name:'app_admin_edit_sheet_element')]
     public function editSheetElement(RevisionElement $element, Request $request, EntityManagerInterface $entityManager): Response
     {
         $sheet = $element->getRevisionSheet();
@@ -445,6 +453,14 @@ final class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($element->getFirst() === null || $element->getFirst()->getContent() === null) {
+                $e = new Element();
+                $e->setContent("");
+                $element->setFirst($e);
+            }
+
+            $element->setSeparatorText($element->getSeparatorText()?:"");
+
             $entityManager->persist($element);
             $entityManager->flush();
 
@@ -459,7 +475,7 @@ final class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/sheet/delete/element/{element}', name: 'app_admin_delete_sheet_element')]
+    #[Route('/admin/sheets/sheet/delete/element/{element}', name: 'app_admin_delete_sheet_element')]
     public function deleteSheetElement(RevisionElement $element, EntityManagerInterface $entityManager): Response
     {
         $entityManager->remove($element);

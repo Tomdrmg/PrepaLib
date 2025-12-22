@@ -25,6 +25,35 @@
                     {{ form_errors(form.content) }}
                 </div>
 
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const preview = document.getElementById('revision-element-preview');
+                        const styleInput = document.getElementById("{{ form.style.vars.id }}");
+                        const firstInput = document.getElementById("{{ form.first.children.content.vars.id }}");
+                        const secondInput = document.getElementById("{{ form.second.children.content.vars.id }}");
+                        const separatorInput = document.getElementById("{{ form.separatorText.vars.id }}");
+
+                        function update() {
+                            preview.innerHTML = `
+                                <div class="flex ${parseInt(styleInput.value, 10) === 0 ? "md:flex-row flex-col" : "flex-col"}">
+                                    <div class="shrink-0">
+                                        <span class="whitespace-pre text-wrap!">${ firstInput.value } ${ separatorInput.value } </span>
+                                    </div>
+                                    <div class="flex-1 min-w-1/2">
+                                        <span class="whitespace-pre text-wrap!">${ secondInput.value }</span>
+                                    </div>
+                                </div>`;
+
+                            renderLatex(preview);
+                        }
+
+                        update();
+                        [styleInput, firstInput, secondInput, separatorInput].forEach((item) => {
+                            item.addEventListener('input', update);
+                        })
+                    })
+                </script>
+
                 <div>
                     {{ form_label(form.details) }}
                     {{ form_widget(form.details, {'attr': {'class': 'w-full'}}) }}

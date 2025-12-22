@@ -38,11 +38,13 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/admin/sheets, roles: ROLE_PLUS }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/contribute, roles: ROLE_USER }
-        - { path: ^/ressource, roles: ROLE_USER }
-        - { path: ^/quiz, roles: ROLE_USER }
+        - { path: ^/ressources/sheets, roles: ROLE_PLUS }
+        - { path: ^/ressources, roles: ROLE_USER }
+        - { path: ^/quiz, roles: ROLE_PLUS }
 
 when@test:
     security:
