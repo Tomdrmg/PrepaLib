@@ -17,11 +17,7 @@ class RevisionElement
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Element $first = null;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Element $second = null;
+    private ?Element $content = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Element $details = null;
@@ -45,12 +41,6 @@ class RevisionElement
     #[ORM\JoinColumn(nullable: false)]
     private ?RevisionSheet $revisionSheet = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $separatorText = null;
-
-    #[ORM\Column]
-    private ?int $style = null;
-
     public function __construct()
     {
         $this->revisionPrefs = new ArrayCollection();
@@ -62,26 +52,14 @@ class RevisionElement
         return $this->id;
     }
 
-    public function getFirst(): ?Element
+    public function getContent(): ?Element
     {
-        return $this->first;
+        return $this->content;
     }
 
-    public function setFirst(Element $first): static
+    public function setContent(Element $content): static
     {
-        $this->first = $first;
-
-        return $this;
-    }
-
-    public function getSecond(): ?Element
-    {
-        return $this->second;
-    }
-
-    public function setSecond(Element $second): static
-    {
-        $this->second = $second;
+        $this->content = $content;
 
         return $this;
     }
@@ -140,18 +118,6 @@ class RevisionElement
         return $this;
     }
 
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, RevisionQuestion>
      */
@@ -190,30 +156,6 @@ class RevisionElement
     public function setRevisionSheet(?RevisionSheet $revisionSheet): static
     {
         $this->revisionSheet = $revisionSheet;
-
-        return $this;
-    }
-
-    public function getSeparatorText(): ?string
-    {
-        return $this->separatorText;
-    }
-
-    public function setSeparatorText(string $separatorText): static
-    {
-        $this->separatorText = $separatorText;
-
-        return $this;
-    }
-
-    public function getStyle(): ?int
-    {
-        return $this->style;
-    }
-
-    public function setStyle(int $style): static
-    {
-        $this->style = $style;
 
         return $this;
     }

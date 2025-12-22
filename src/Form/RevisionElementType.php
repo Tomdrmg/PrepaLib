@@ -21,19 +21,8 @@ class RevisionElementType extends AbstractType
             ->add('sortNumber', NumberType::class, [
                 'label' => 'Priorité pour le tri'
             ])
-            ->add('separatorText', TextType::class, [
-                'label' => 'Séparateur'
-            ])
-            ->add('style', NumberType::class, [
-                'label' => 'Style (0 ou 1)'
-            ])
-            ->add('first', ElementType::class, [
-                'label' => '"Clé"',
-                'input_class' => '',
-            ])
-            ->add('second', ElementType::class, [
-                'label' => '"Valeur"',
-                'input_class' => ''
+            ->add('content', ElementType::class, [
+                'label' => 'Contenu'
             ])
             ->add('details', ElementType::class, [
                 'label' => 'Détails',
