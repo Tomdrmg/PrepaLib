@@ -415,19 +415,17 @@ final class AdminController extends AbstractController
         $subject = $sheet->getSubject();
 
         $element = new RevisionElement();
+        $newSortNumber = 0;
+        foreach ($sheet->getRevisionElements() as $revisionElement) {
+            $newSortNumber = max($newSortNumber, $revisionElement->getSortNumber() + 1);
+        }
+        $element->setSortNumber($newSortNumber);
+
         $form = $this->createForm(RevisionElementType::class, $element);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $element->setRevisionSheet($sheet);
-
-            if ($element->getFirst() === null || $element->getFirst()->getContent() === null) {
-                $e = new Element();
-                $e->setContent("");
-                $element->setFirst($e);
-            }
-
-            $element->setSeparatorText($element->getSeparatorText()?:"");
 
             $entityManager->persist($element);
             $entityManager->flush();
@@ -453,14 +451,6 @@ final class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($element->getFirst() === null || $element->getFirst()->getContent() === null) {
-                $e = new Element();
-                $e->setContent("");
-                $element->setFirst($e);
-            }
-
-            $element->setSeparatorText($element->getSeparatorText()?:"");
-
             $entityManager->persist($element);
             $entityManager->flush();
 

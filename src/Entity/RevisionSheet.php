@@ -27,7 +27,7 @@ class RevisionSheet
     /**
      * @var Collection<int, self>
      */
-    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent', cascade: ['persist', 'remove'])]
     private Collection $children;
 
     #[ORM\ManyToOne(inversedBy: 'revisionSheets')]
@@ -37,7 +37,7 @@ class RevisionSheet
     /**
      * @var Collection<int, RevisionElement>
      */
-    #[ORM\OneToMany(targetEntity: RevisionElement::class, mappedBy: 'revisionSheet')]
+    #[ORM\OneToMany(targetEntity: RevisionElement::class, mappedBy: 'revisionSheet', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $revisionElements;
 
     public function __construct()
